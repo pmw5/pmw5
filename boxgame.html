@@ -1,0 +1,821 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <title>Zoo Foraging — Peek Above / Peek Below</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <style>
+    :root{
+      /* Light zoo palette */
+      --bg:#faf7f0;              /* light sand */
+      --bg-2:#fffdf8;
+      --ink:#263238;             /* deep slate */
+      --muted:#6b7a7c;
+      --accent:#2e7d32;          /* forest green */
+      --accent-2:#4aa34f;
+      --good:#2e7d32;
+      --bad:#d64545;
+      --warn:#b8860b;
+
+      --wood1:#c6a27c;
+      --wood2:#b88e68;
+      --wood3:#a3784f;
+
+      --lid1:#5555ff;
+      --lid2:#1111aa;
+      --lidedge:#3333cc;
+      --edge:#8a6a4b;
+
+      --bar-h: 84px;
+      --gap: 18px;
+      --radius: 18px;
+      --shadow: 0 18px 40px rgba(0,0,0,.08);
+      --shadow-2: 0 10px 24px rgba(0,0,0,.08);
+    }
+    *{box-sizing:border-box}
+    html, body { height:100% }
+    body{
+      margin:0;
+      font-family: Figtree, Roboto, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, "Apple Color Emoji","Segoe UI Emoji";
+      color:var(--ink);
+      background:
+        radial-gradient(1200px 900px at 10% -10%, rgba(46,125,50,.06) 0%, transparent 60%),
+        radial-gradient(1300px 1000px at 100% 0%, rgba(232,217,185,.45) 0%, transparent 60%),
+        linear-gradient(180deg, var(--bg), var(--bg-2));
+    }
+
+    button{
+        font-family: Figtree, Roboto, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, "Apple Color Emoji","Segoe UI Emoji";
+
+    }
+
+    /* App layout: top bar, stage, bottom bar */
+    .app{
+      height:100vh;
+      display:flex;
+      flex-direction:column;
+      gap:0;
+    }
+    .bar{
+      height:var(--bar-h);
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      position:relative;
+      padding: 0 14px;
+    }
+    .bar .stats{
+      position:absolute;
+      right: clamp(8px, 2vw, 18px);
+      display:flex; gap:8px; align-items:center;
+      font-weight:800; color: var(--muted);
+      font-size: clamp(.95rem, .85rem + .4vw, 1.05rem);
+    }
+    .chip{
+      background: rgba(0,0,0,.04);
+      border:1px solid rgba(0,0,0,.08);
+      padding:8px 10px; border-radius:999px;
+      box-shadow: var(--shadow-2);
+    }
+
+    /* Big kiosk buttons (only two) */
+    .btn{
+      appearance:none; cursor:pointer; user-select:none;
+      border:none; border-radius: 16px;
+      font-weight:900; letter-spacing:.25px;
+      color:#0e2a12;
+      background: linear-gradient(180deg, var(--accent), var(--accent-2));
+      padding: 16px 100px;
+      min-width: min(420px, 80vw);
+      font-size: clamp(1.1rem, 1rem + .6vw, 1.4rem);
+      box-shadow: 0 10px 0 rgba(46,125,50,.35), 0 18px 30px rgba(46,125,50,.15);
+      transition: transform .06s ease, filter .15s ease;
+      touch-action: manipulation;
+    }
+    .btn:active { transform: translateY(2px); box-shadow: 0 6px 0 rgba(46,125,50,.35), 0 12px 24px rgba(46,125,50,.15); }
+
+    /* Stage: four crates fill the space */
+    .stage{
+      flex:1 1 auto;
+      padding: var(--gap);
+      display:grid;
+      gap: var(--gap);
+      grid-template-columns: repeat(4, 1fr);
+      grid-template-rows: repeat(1, 1fr);
+      /* Keep near fullscreen */
+      min-height: 0; /* allows the grid to shrink within viewport */
+    }
+    @media (min-aspect-ratio: 4/3){
+      .stage{ gap: clamp(14px, 2vw, 28px); }
+    }
+
+    /* Card / crate visuals */
+    .card{
+      position:relative;
+      background: linear-gradient(180deg, rgba(255,255,255,.85), rgba(255,255,255,.65));
+      border:1px solid rgba(0,0,0,.08);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      padding: clamp(10px, 1.2vw, 16px);
+      display:flex; flex-direction:column; gap:10px;
+      outline-offset: 2px;
+    }
+    .card:focus { outline: 4px solid rgba(46,125,50,.35); }
+    .title{
+      display:flex; align-items:center; justify-content:space-between;
+      color: var(--muted); font-weight:800;
+      font-size: clamp(1rem, .9rem + .5vw, 1.15rem);
+      padding: 0 6px;
+    }
+
+    .crate{
+      position:relative;
+      flex:1 1 auto;
+      border-radius: 16px;
+      display:grid; place-items:center;
+      background:
+        radial-gradient(60% 30% at 50% 100%, rgba(0,0,0,.08) 0%, transparent 70%),
+        linear-gradient(180deg, rgba(0,0,0,.02), rgba(0,0,0,.0));
+      user-select:none;
+    }
+    .inner{
+      position:relative;
+      width: min(92%, 520px);
+      height: min(80%, 320px);
+      max-height: 46vh;
+      transform-style: preserve-3d;
+      transition: transform .5s ease;
+    }
+    .box-body{
+      position:absolute; inset: 22px 0 0 0; height: calc(100% - 22px);
+      background:
+        repeating-linear-gradient( 90deg, var(--wood1) 0 22px, var(--wood2) 22px 44px),
+        linear-gradient(180deg, rgba(255,255,255,.25), rgba(0,0,0,.08));
+      border:2px solid var(--edge);
+      border-radius: 12px;
+      box-shadow: inset 0 8px 14px rgba(0,0,0,.15), 0 14px 30px rgba(0,0,0,.1);
+    }
+    .lid{
+      position:absolute; inset: 32px 0 auto 0; height: 32px;
+      background:
+        repeating-linear-gradient( 90deg, var(--lid1) 0 22px, var(--lid2) 22px 44px),
+        linear-gradient(180deg, rgba(255,255,255,.3), rgba(0,0,0,.12));
+      border:2px solid var(--lidedge);
+      border-bottom-width: 5px;
+      border-radius: 12px 12px 8px 8px;
+      transform-origin: 50% 100%;
+      transition: transform .5s ease;
+      box-shadow: 0 6px 12px rgba(0,0,0,.18);
+    }
+    /* Global peek animations */
+    .peeking-top .lid[data-has-lid="true"]{ transform: translateY(-40px) rotate(-2deg); }
+    .peeking-bottom .inner{ transform: translateY(-12px) rotateX(10deg); }
+
+    /* Contents & badges */
+    .contents{
+      position:absolute; inset: 0; display:grid; place-items:center;
+      font-size: clamp(2.4rem, 6vw, 4rem);
+      opacity:.0; transform: translateY(10px) scale(.96);
+      transition: opacity .25s ease, transform .25s ease;
+      filter: drop-shadow(0 6px 8px rgba(0,0,0,.15));
+    }
+    .contents.show{ opacity:1; transform: translateY(0) scale(1); }
+    .contents.food{ color: #d18200; }
+    .contents.empty{ color: #98a1a1; font-size: clamp(2rem, 5vw, 3.2rem); }
+
+    .peek-badges{
+      position:absolute; inset: 10px 10px auto auto;
+      display:flex; flex-direction:column; gap:8px; z-index:3; pointer-events:none;
+    }
+    .badge{
+      padding:6px 10px; border-radius:999px; font-weight:900; letter-spacing:.3px;
+      background: rgba(255,255,255,.8);
+      border:1px solid rgba(0,0,0,.12);
+      color: var(--ink);
+      transform: translateY(-8px); opacity:0;
+      transition: transform .2s ease, opacity .2s ease;
+      box-shadow: var(--shadow-2);
+    }
+    .badge.show{ transform: translateY(0); opacity:1; }
+    .badge.good{ color: var(--good); border-color: rgba(46,125,50,.35); }
+    .badge.bad{ color: var(--bad); border-color: rgba(214,69,69,.35); }
+    .badge.info{ color: #37474f; border-color: rgba(0,0,0,.12); }
+
+    /* Click/tap affordance and feedback */
+    .tap-to-choose{
+      position:absolute; inset:auto 0 8px 0; text-align:center;
+      color: #3c553e; font-weight:800; opacity:.75;
+      font-size: clamp(.9rem, .8rem + .4vw, 1.05rem);
+      pointer-events:none;
+    }
+    .card.flash-ok{ outline: 6px solid rgba(46,125,50,.6); }
+    .card.flash-bad{ outline: 6px solid rgba(214,69,69,.6); }
+
+    /* Toast message */
+    .toast{
+      position:fixed; left:50%; top: var(--bar-h);
+      transform: translate(-50%, -20px);
+      background: rgba(255,255,255,.95);
+      border:1px solid rgba(0,0,0,.12);
+      border-radius: 12px;
+      padding: 10px 14px;
+      font-weight:800; color: var(--ink);
+      box-shadow: var(--shadow);
+      opacity:0; transition: opacity .2s ease, transform .2s ease;
+      z-index: 10;
+      max-width: min(90vw, 640px);
+      text-align:center;
+    }
+    .toast.show{ opacity:1; transform: translate(-50%, 0); }
+    
+/* === How to Play Overlay === */
+.overlay[hidden]{ display:none !important; }
+.overlay{
+  position: fixed; inset: 0; z-index: 9999;
+  display:grid; place-items:center;
+  background: radial-gradient(60% 60% at 50% 40%, rgba(0,0,0,.10), rgba(0,0,0,.25));
+  backdrop-filter: blur(4px);
+  padding: clamp(16px, 3vw, 32px);
+}
+.modal{
+  width: min(920px, 94vw);
+  background:
+    linear-gradient(180deg, #ffffff,#cccccc);
+  border:1px solid rgba(255,255,255,.12);
+  border-radius: 20px;
+  box-shadow: 0 30px 60px rgba(0,0,0,.45);
+  color: var(--text);
+  display:flex; flex-direction:column; gap: 16px;
+}
+.modal-header{
+  display:flex; align-items:center; justify-content:space-between;
+  padding: clamp(14px, 2.5vw, 22px) clamp(18px, 3vw, 26px) 0 clamp(18px, 3vw, 26px);
+}
+.modal-title{ display:flex; align-items:center; gap: 14px; }
+.modal-title .emoji{ font-size: clamp(1.6rem, 1rem + 3vw, 2.8rem); filter: drop-shadow(0 8px 16px rgba(0,0,0,.35)); }
+.modal h2{ margin:0; font-size: clamp(1.3rem, 1rem + 1.2vw, 2rem); }
+
+.modal-body{
+  padding: 4px clamp(18px, 3vw, 26px) 0 clamp(18px, 3vw, 26px);
+  display:flex; flex-direction:column; gap: 14px;
+}
+.modal-body .lead{
+  font-size: clamp(1.05rem, .9rem + .5vw, 1.35rem);
+
+}
+.steps{
+  margin: 0; padding-left: 1.25em;
+  display:flex; flex-direction:column; gap: 8px;
+  font-size: clamp(1rem, .9rem + .4vw, 1.2rem);
+}
+.legend-row{
+  display:flex; gap: 8px; flex-wrap: wrap;
+}
+.legend.chip{
+  padding:10px 12px; border-radius:999px;
+  background: rgba(255,255,255,.06);
+  border:1px solid rgba(255,255,255,.12);
+  font-weight:900;
+}
+.legend.chip.good{ background: rgba(84,209,102,.18); border-color: rgba(84,209,102,.45); }
+.legend.chip.bad{ background: rgba(255,107,107,.18); border-color: rgba(255,107,107,.45); }
+.legend.chip.warn{ background: rgba(255,204,102,.18); border-color: rgba(255,204,102,.45); }
+.modal-body .note{ color: var(--muted); font-size: clamp(.95rem, .8rem + .3vw, 1.05rem); }
+
+.modal-actions{
+  display:flex; gap: 12px; align-items:center; justify-content:center;
+  padding: 0 clamp(18px, 3vw, 26px) clamp(16px, 3vw, 24px) clamp(18px, 3vw, 26px);
+}
+.start-btn{
+  background: linear-gradient(180deg, #ffc857, #ffb227);
+  color:#4a2f00;
+  border:2px solid #8b5a16;
+  border-radius: 16px;
+  font-weight: 900;
+  box-shadow: 0 6px 0 #72490d, 0 10px 20px rgba(0,0,0,.35);
+  padding: clamp(14px, 1.6vw, 18px) clamp(18px, 2vw, 22px);
+  font-size: clamp(1.1rem, 1rem + .5vw, 1.4rem);
+  min-width: 220px;
+}
+.ghost-btn{
+  background: transparent;
+  color: var(--text);
+  border:2px solid rgba(255,255,255,.25);
+  border-radius: 16px;
+  font-weight: 800;
+  padding: clamp(12px, 1.4vw, 16px) clamp(16px, 1.8vw, 20px);
+  font-size: clamp(1rem, .9rem + .4vw, 1.2rem);
+  box-shadow: 0 6px 16px rgba(0,0,0,.25) inset;
+}
+.howto-button{
+background: linear-gradient(180deg, #ffc857, #ffb227);
+  color:#4a2f00;
+  border:2px solid #8b5a16;
+  font-weight: 900;
+}
+
+  </style>
+</head>
+
+<!-- How to Play Overlay -->
+
+
+<body>
+    <div id="howToOverlay" class="overlay" role="dialog" aria-modal="true" aria-labelledby="howToTitle" hidden>
+  <div class="modal">
+    <div class="modal-header">
+      <div class="modal-title">
+        <h2 id="howToTitle">How to Play</h2>
+      </div>
+    </div>
+
+    <div class="modal-body">
+      <p class = "lead">Your goal is to retrieve the <strong>FOOD</strong> hidden inside these crates, but some crates also have a <strong>LID</strong> which you can't remove. Looking from the front, you can't see which crates contain food or have a lid.</p>
+
+      <ul class="steps">
+        <li><strong>Peek Above:</strong> Look briefly at the top of the crates to reveal which have a <em>lid</em>.</li>
+        <li><strong>Peek Below:</strong> Tilt all crates to reveal whether they contain <em>food</em>.</li>
+        <li><strong>Choose a Crate:</strong> Tap a crate to make your selection.</li>
+      </ul>
+
+      <p class="note">Tip: You will only be able to access the food if a crate has <strong>no lid</strong>.</p>
+    </div>
+
+    <div class="modal-actions">
+      <button id="startBtn" class="start-btn" type="button" aria-label="Start the game">Tap to Start</button>
+    </div>
+  </div>
+</div>
+  <div class="app">
+
+    
+<!-- Idle / Continue Playing Overlay -->
+<div id="idleOverlay" class="overlay" role="dialog" aria-modal="true" aria-labelledby="idleTitle" hidden>
+  <div class="modal">
+    <div class="modal-header">
+      <div class="modal-title">
+        <span class="emoji" aria-hidden="true">⏳</span>
+        <h2 id="idleTitle">Are you still there?</h2>
+      </div>
+    </div>
+
+    <div class="modal-body">
+      <p class="lead">Tap below to continue playing or return the the main menu</p>
+      <p><strong>Returning to the main menu in <span id="idleCountdown">30</span> seconds…</strong></p>
+    </div>
+
+    <div class="modal-actions">
+      <button id="idleContinueBtn" class="start-btn" type="button" aria-label="Continue playing">Continue Playing</button>
+      <button id="idleEndBtn" class="start-btn" type="button" aria-label="Return to menu">Exit</button>
+    </div>
+  </div>
+</div>
+
+    <!-- Top bar: ONE button + small stats -->
+    <div class="bar">
+      <div class="stats" aria-hidden="true">
+        <div class="chip">Score: <span id="score">0</span></div>
+        <div class="chip">Attempts: <span id="attempts">0</span></div>
+        <div class="chip">Acc: <span id="accuracy">0%</span></div>
+        <div class="chip">Streak: <span id="streak">0</span></div>
+        <button id="howToBtn" class="chip howto-button" title="How to Play">How to Play</button>
+      </div>
+    </div>
+<div class=" bar">
+    <button id="peekTopAll" class="btn" title="Peek lids on all crates">Peek Above</button>
+</div>
+
+    <!-- Crates Stage -->
+    <main id="grid" class="stage" role="list" aria-label="Crates"></main>
+
+    <!-- Bottom bar: ONE button -->
+    <div class="bar">
+      <button id="peekBottomAll" class="btn" title="Peek contents on all crates">Peek Below</button>
+    </div>
+    <div class="bar">
+    </div>
+  </div>
+
+  <!-- Toast result -->
+  <div id="toast" class="toast" role="status" aria-live="polite"></div>
+
+  <script>
+  ;(() => {
+    /*** Game State ***/
+    const BOX_COUNT = 4;
+    const COMBOS = [
+      { hasFood: true,  hasLid: true  },
+      { hasFood: true,  hasLid: false },
+      { hasFood: false, hasLid: true  },
+      { hasFood: false, hasLid: false }
+    ];
+
+    let boxes = [];    // randomized per round
+    let revealed = []; // { lid: boolean, content: boolean }
+    let accepting = true;
+
+    // Score
+    let score = 0, attempts = 0, streak = 0;
+
+    // Elements
+    const grid = document.getElementById('grid');
+    const toast = document.getElementById('toast');
+    const scoreEl = document.getElementById('score');
+    const attemptsEl = document.getElementById('attempts');
+    const accuracyEl = document.getElementById('accuracy');
+    const streakEl = document.getElementById('streak');
+    const peekTopAllBtn = document.getElementById('peekTopAll');
+    const peekBottomAllBtn = document.getElementById('peekBottomAll');
+
+    /*** Utilities ***/
+    const shuffle = (arr) => {
+      const a = arr.slice();
+      for (let i=a.length-1;i>0;i--){
+        const j = Math.floor(Math.random()*(i+1));
+        [a[i],a[j]] = [a[j],a[i]];
+      }
+      return a;
+    };
+    const accuracy = () => attempts ? Math.round((score/attempts)*100) : 0;
+    const setToast = (msg, kind='') => {
+      toast.classList.remove('show');
+      toast.textContent = msg;
+      // Color hint via emoji text (keeps UI minimal)
+      if (kind === 'ok') toast.textContent = '✅ ' + msg;
+      if (kind === 'bad') toast.textContent = '❌ ' + msg;
+      requestAnimationFrame(() => toast.classList.add('show'));
+      clearTimeout(setToast._t);
+      setToast._t = setTimeout(() => toast.classList.remove('show'), 1400);
+    };
+    const updateScoreUI = () => {
+      scoreEl.textContent = String(score);
+      attemptsEl.textContent = String(attempts);
+      accuracyEl.textContent = `${accuracy()}%`;
+      streakEl.textContent = String(streak);
+    };
+
+    /*** Build 2x2 grid ***/
+    const buildGrid = () => {
+      grid.innerHTML = '';
+      for (let i=0;i<BOX_COUNT;i++){
+        const card = document.createElement('div');
+        card.className = 'card';
+        card.role = 'listitem';
+
+        const title = document.createElement('div');
+        title.className = 'title';
+        title.innerHTML = `<span>Crate ${i+1}</span><span aria-hidden="true">🌿</span>`;
+
+        const crate = document.createElement('div');
+        crate.className = 'crate';
+
+        const inner = document.createElement('div');
+        inner.className = 'inner';
+
+        const lid = document.createElement('div');
+        lid.className = 'lid';
+        lid.dataset.hasLid = 'true';
+
+        const body = document.createElement('div');
+        body.className = 'box-body';
+
+        const contents = document.createElement('div');
+        contents.className = 'contents';
+        contents.setAttribute('aria-hidden', 'true');
+
+        const badges = document.createElement('div');
+        badges.className = 'peek-badges';
+        const badgeLid = document.createElement('div');
+        badgeLid.className = 'badge';
+        badgeLid.textContent = 'LID: ?';
+        const badgeFood = document.createElement('div');
+        badgeFood.className = 'badge';
+        badgeFood.textContent = 'FOOD: ?';
+        badges.appendChild(badgeLid);
+        badges.appendChild(badgeFood);
+
+        const hint = document.createElement('div');
+        hint.className = 'tap-to-choose';
+        hint.textContent = 'Tap a crate to choose';
+
+        inner.appendChild(lid);
+        inner.appendChild(body);
+        inner.appendChild(contents);
+
+        crate.appendChild(inner);
+        crate.appendChild(badges);
+        crate.appendChild(hint);
+
+        // Make entire card clickable to choose
+        card.setAttribute('role','button');
+        card.setAttribute('tabindex','0');
+        card.addEventListener('click', () => choose(i));
+        card.addEventListener('keydown', (e) => {
+          if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); choose(i); }
+        });
+
+        card._inner = inner;
+        card._lid = lid;
+        card._contents = contents;
+        card._badgeLid = badgeLid;
+        card._badgeFood = badgeFood;
+
+        card.appendChild(title);
+        card.appendChild(crate);
+        grid.appendChild(card);
+      }
+    };
+
+    /*** Visual updates ***/
+    const updateCard = (i) => {
+      const card = grid.children[i];
+      const {hasFood, hasLid} = boxes[i];
+      const r = revealed[i];
+
+      card._lid.dataset.hasLid = hasLid ? 'true' : 'false';
+
+      // contents icon when content revealed
+      card._contents.classList.remove('food','empty','show');
+      if (r.content){
+        if (hasFood){
+          card._contents.classList.add('food','show');
+          card._contents.textContent = '🍎';
+        } else {
+          card._contents.classList.add('empty','show');
+          card._contents.textContent = '—';
+        }
+      }
+
+      // badges
+      card._badgeLid.classList.remove('show','good','bad','info');
+      card._badgeFood.classList.remove('show','good','bad','info');
+
+      if (r.lid){
+        card._badgeLid.classList.add('show', hasLid ? 'good' : 'info');
+        card._badgeLid.textContent = hasLid ? 'LID' : 'NO LID';
+      }
+      if (r.content){
+        card._badgeFood.classList.add('show', hasFood ? 'good' : 'bad');
+        card._badgeFood.textContent = hasFood ? 'FOOD' : 'EMPTY';
+      }
+    };
+    const updateAllCards = () => { for (let i=0;i<BOX_COUNT;i++) updateCard(i); };
+
+    /*** Actions ***/
+    const PEEK_MS = 1300;
+
+    const peekTopAll = () => {
+      if (!accepting) return;
+      accepting = false;
+      revealed.forEach(r => r.lid = true);
+      grid.classList.add('peeking-top');
+      updateAllCards();
+      //setToast('Peeking above all crates…');
+
+      setTimeout(() => {
+        revealed.forEach(r => r.lid = false);
+        grid.classList.remove('peeking-top');
+        updateAllCards();
+        accepting = true;
+      }, PEEK_MS);
+    };
+
+    const peekBottomAll = () => {
+      if (!accepting) return;
+      accepting = false;
+      revealed.forEach(r => r.content = true);
+      grid.classList.add('peeking-bottom');
+      updateAllCards();
+      //setToast('Peeking below all crates…');
+
+      setTimeout(() => {
+        revealed.forEach(r => r.content = false);
+        grid.classList.remove('peeking-bottom');
+        updateAllCards();
+        accepting = true;
+      }, PEEK_MS);
+    };
+
+    const choose = (i) => {
+      if (!accepting) return;
+      accepting = false;
+      attempts++;
+
+      const {hasFood, hasLid} = boxes[i];
+      const obtainable = hasFood && !hasLid;
+
+      // fully reveal chosen card briefly
+      revealed[i].lid = true;
+      revealed[i].content = true;
+      updateCard(i);
+
+      const card = grid.children[i];
+      card.classList.add(obtainable ? 'flash-ok' : 'flash-bad');
+
+      if (obtainable){
+        score++; streak++;
+        setToast(`Crate ${i+1}: Food with no lid — you got it!`, 'ok');
+      } else {
+        streak = 0;
+        setToast(hasFood && hasLid
+          ? `Crate ${i+1}: Food present but the lid blocks it.`
+          : `Crate ${i+1}: No food here.`, 'bad');
+      }
+      updateScoreUI();
+
+      setTimeout(() => {
+        card.classList.remove('flash-ok','flash-bad');
+        newRound();
+        accepting = true;
+      }, 2000);
+    };
+
+    /*** Round control ***/
+    const newRound = () => {
+      boxes = shuffle(COMBOS);
+      revealed = Array.from({length: BOX_COUNT}, () => ({ lid:false, content:false }));
+      updateAllCards();
+    };
+
+    /*** Events ***/
+    peekTopAllBtn.addEventListener('click', peekTopAll);
+    peekBottomAllBtn.addEventListener('click', peekBottomAll);
+
+    // Numeric keys to choose (kiosk with keyboard)
+    document.addEventListener('keydown', (e) => {
+      const k = e.key;
+      if (k === 'ArrowUp') { e.preventDefault(); peekTopAll(); }
+      else if (k === 'ArrowDown') { e.preventDefault(); peekBottomAll(); }
+      else if (['1','2','3','4'].includes(k)) {
+        e.preventDefault(); choose(parseInt(k,10)-1);
+      }
+    });
+    
+/* === How to Play Overlay Logic === */
+const howToBtn = document.getElementById('howToBtn');
+const overlay = document.getElementById('howToOverlay');
+const startBtn = document.getElementById('startBtn');
+const dismissOnceBtn = document.getElementById('dismissOnceBtn');
+
+const HOWTO_KEY = 'zooHowToSeen_v1';  // bump this key if you change instructions
+const ALWAYS_SHOW_HOWTO = true;      // set to true if you want it every time
+
+function openHowTo(){
+  overlay.hidden = false;
+  document.body.style.overflow = 'hidden'; // prevent scroll on touch kiosks
+  // Focus the “Start” button for accessibility
+  setTimeout(() => startBtn?.focus(), 0);
+}
+
+function closeHowTo({ remember=true } = {}){
+  overlay.hidden = true;
+  document.body.style.overflow = '';
+  if (remember) try { localStorage.setItem(HOWTO_KEY, '1'); } catch {}
+}
+
+// Buttons
+howToBtn?.addEventListener('click', () => openHowTo());
+startBtn?.addEventListener('click', () => closeHowTo({ remember:true }));
+dismissOnceBtn?.addEventListener('click', () => closeHowTo({ remember:false }));
+
+// Optional: allow Esc to close (handy for staff with keyboard)
+document.addEventListener('keydown', (e) => {
+  if (!overlay.hidden && e.key === 'Escape') closeHowTo({ remember:false });
+});
+
+// Show on first load unless remembered
+try {
+  const seen = localStorage.getItem(HOWTO_KEY) === '1';
+  if (!seen || ALWAYS_SHOW_HOWTO) {
+    // Allow the game to initialize underneath; overlay blocks input anyway.
+    openHowTo();
+  }
+} catch {
+  // In private / restricted kiosk modes without localStorage, just show it.
+  openHowTo();
+}
+
+/* === Idle / Inactivity logic === */
+const IDLE_WARN_MS = 30_000;    // 30s until “Continue playing?” modal
+const IDLE_REDIRECT_MS = 30_000; // additional 10s until redirect
+const REDIRECT_URL = 'https://diverseintelligences.st-andrews.ac.uk'; // TODO: set your page
+
+// Elements
+const idleOverlay = document.getElementById('idleOverlay');
+const idleContinueBtn = document.getElementById('idleContinueBtn');
+const idleEndBtn = document.getElementById('idleEndBtn');
+const idleCountdownEl = document.getElementById('idleCountdown');
+
+
+let warnTimeout = null;
+let redirectTimeout = null;
+let countdownInterval = null;
+let redirectDeadlineTs = null; // timestamp when we will redirect
+
+function showIdleOverlay(){
+  if (!idleOverlay) return;
+  idleOverlay.hidden = false;
+  document.body.style.overflow = 'hidden';
+  redirectDeadlineTs = Date.now() + IDLE_REDIRECT_MS;
+  updateIdleCountdown();
+  clearInterval(countdownInterval);
+  countdownInterval = setInterval(updateIdleCountdown, 250);
+}
+function hideIdleOverlay(){
+  if (!idleOverlay || idleOverlay.hidden) return;
+  idleOverlay.hidden = true;
+  document.body.style.overflow = '';
+  clearInterval(countdownInterval);
+  countdownInterval = null;
+}
+function updateIdleCountdown(){
+  if (!idleCountdownEl || redirectDeadlineTs == null) return;
+  const msLeft = Math.max(0, redirectDeadlineTs - Date.now());
+  const seconds = Math.ceil(msLeft / 1000);
+  idleCountdownEl.textContent = String(seconds);
+}
+
+function navigateAway(){
+  // Optional: do any cleanup or analytics here
+  window.location.href = REDIRECT_URL;
+}
+
+function clearIdleTimers(){
+  clearTimeout(warnTimeout); warnTimeout = null;
+  clearTimeout(redirectTimeout); redirectTimeout = null;
+  clearInterval(countdownInterval); countdownInterval = null;
+  redirectDeadlineTs = null;
+}
+
+function scheduleIdle(){
+  clearIdleTimers();
+  warnTimeout = setTimeout(() => {
+    closeHowTo();
+    showIdleOverlay();
+    // Schedule the redirect
+    redirectTimeout = setTimeout(navigateAway, IDLE_REDIRECT_MS);
+  }, IDLE_WARN_MS);
+}
+
+function resetIdle(){
+  hideIdleOverlay();
+  scheduleIdle();
+}
+
+// Treat any user activity as activity — resets or continues
+const activity = () => {
+  if (!idleOverlay.hidden) {
+    // If the warning modal is showing, any tap/keypress means “continue”
+    hideIdleOverlay();
+  }
+  resetIdle();
+};
+
+// Listen broadly for user activity (good for kiosks)
+['pointerdown','touchstart','keydown','click','wheel'].forEach(evt => {
+  document.addEventListener(evt, activity, { passive: true });
+});
+
+// If page/tab becomes hidden, pause timers; resume when visible
+document.addEventListener('visibilitychange', () => {
+  if (document.hidden) {
+    clearIdleTimers();
+  } else {
+    resetIdle();
+  }
+});
+
+// Buttons in the idle overlay
+
+idleContinueBtn?.addEventListener('click', () => {
+  hideIdleOverlay();
+  scheduleIdle(); // or resetIdle()
+});
+
+idleEndBtn?.addEventListener('pointerdown', (e) => {
+  e.stopPropagation();
+});
+
+idleEndBtn?.addEventListener('click', (e) => {
+  e.stopPropagation();
+  window.location.assign(REDIRECT_URL);
+});
+
+
+
+// Start idle timers once the game has initialized
+// (Call this after your buildGrid()/reset() if you prefer)
+
+
+
+
+    /*** Init ***/
+    buildGrid();
+    newRound();
+    updateScoreUI();
+    scheduleIdle();
+
+  })();
+  </script>
+</body>
+</html>
