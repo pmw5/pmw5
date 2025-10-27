@@ -1,0 +1,34 @@
+[
+    {
+        "name": "Kato",
+        "img": "Images/Kato.png",
+        "clue1": "Loves bananas",
+        "clue2": "Wears a red hat",
+        "clue3": "Has a loud laugh",
+        "clue4": "Lives in the jungle"
+    },
+    {
+        "name": "Junon",
+        "img": "Images/Junon.png",
+        "clue1": "Prefers mangoes",
+        "clue2": "Has blue sunglasses",
+        "clue3": "Is very shy",
+        "clue4": "Sleeps during the day"
+    },
+    {
+        "name": "Margarita",
+        "img": "Images/Margarita.png",
+        "clue1": "Loves dancing",
+        "clue2": "Wears a flower crown",
+        "clue3": "Has a pet parrot",
+        "clue4": "Lives near the waterfall"
+    },
+    {
+        "name": "Popeye",
+        "img": "Images/Popeye.png",
+        "clue1": "Eats spinach",
+        "clue2": "Has big muscles",
+        "clue3": "Wears a sailor hat",
+        "clue4": "Can climb trees fast"
+    }
+]

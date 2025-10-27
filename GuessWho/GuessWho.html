@@ -1,0 +1,199 @@
+<!DOCTYPE html>
+<html>
+    <head>
+<style>
+body {
+    margin: 0;
+    padding: 0;
+    height: 100vh;
+    width: 100vw;
+    overflow: hidden;
+    background-color: #d5d0c6;
+    background-image: url("Images/video_menu_background.svg");
+    background-position: bottom center;
+    background-repeat: no-repeat;
+    font-family: 'Courier New', Courier, monospace;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.back {
+    position: absolute;
+    top: 2%;
+    left: 2%;
+    height: 10vw;
+    width: 10vw;
+    border-radius: 50%;
+    background-color: green;
+    color: white;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    cursor: pointer;
+}
+
+.game-container {
+    width: 85%;
+    height: 85%;
+    background: white;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: space-between;
+    padding: 2%;
+}
+
+.clue-box {
+    text-align: center;
+}
+
+.stage {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 2%;
+    width: 100%;
+    height: 60%;
+}
+
+.monkey {
+    width: 22%;
+    height: 100%;
+    background-color: orange;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    position: relative;
+    cursor: pointer;
+}
+
+.monkey img {
+    max-width: 100%;
+    max-height: 100%;
+    object-fit: contain;
+}
+
+.eliminated::after {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    height: 100%;
+    width: 100%;
+    background-color: rgba(50, 50, 50, 0.7);
+    z-index: 1;
+}
+
+.result-box {
+    text-align: center;
+}
+
+
+</style>
+    </head>
+    
+<body>
+    <div class="back" id="back-button">Go Back</div>
+
+    <div class="game-container">
+        <div class="clue-box">
+            <h2 id="clue-text">Clue will appear here</h2>
+            <button id="next-clue">Next Clue</button>
+        </div>
+
+        <div class="stage" id="monkey-stage">
+            <!-- Monkey cards will be injected here -->
+        </div>
+
+        <div class="result-box" id="result-box" style="display:none;">
+            <h2 id="result-text"></h2>
+            <button id="play-again">Play Again</button>
+        </div>
+    </div>
+</body>
+
+    <script>
+            
+let monkeys = []; // Loaded from JSON
+let selectedMonkeys = [];
+let targetMonkey = null;
+let clueIndex = 0;
+
+const clueText = document.getElementById('clue-text');
+const nextClueBtn = document.getElementById('next-clue');
+const monkeyStage = document.getElementById('monkey-stage');
+const resultBox = document.getElementById('result-box');
+const resultText = document.getElementById('result-text');
+const playAgainBtn = document.getElementById('play-again');
+
+// Load JSON data
+fetch('monkeys.json')
+    .then(res => res.json())
+    .then(data => {
+        monkeys = data;
+        startGame();
+    });
+
+function startGame() {
+    clueIndex = 0;
+    resultBox.style.display = 'none';
+    monkeyStage.innerHTML = '';
+
+    selectedMonkeys = getRandomMonkeys(monkeys, 4);
+    targetMonkey = selectedMonkeys[Math.floor(Math.random() * 4)];
+
+    displayClue();
+    renderMonkeys();
+}
+
+function getRandomMonkeys(array, count) {
+    const shuffled = [...array].sort(() => 0.5 - Math.random());
+    return shuffled.slice(0, count);
+}
+
+function displayClue() {
+    clueText.textContent = targetMonkey[`clue${clueIndex + 1}`];
+}
+
+function renderMonkeys() {
+    selectedMonkeys.forEach(monkey => {
+        const div = document.createElement('div');
+        div.classList.add('monkey');
+        div.dataset.name = monkey.name;
+
+        const img = document.createElement('img');
+        img.src = monkey.img;
+        img.alt = monkey.name;
+
+        div.appendChild(img);
+        div.addEventListener('click', () => handleMonkeyClick(div, monkey));
+        monkeyStage.appendChild(div);
+    });
+}
+
+function handleMonkeyClick(div, monkey) {
+    div.classList.toggle('eliminated');
+
+    const remaining = [...monkeyStage.children].filter(m => !m.classList.contains('eliminated'));
+    if (remaining.length === 1) {
+        const finalChoice = remaining[0].dataset.name;
+        const correct = finalChoice === targetMonkey.name;
+        resultText.textContent = correct ? "🎉 Correct! You found the monkey!" : `❌ Incorrect! It was ${targetMonkey.name}.`;
+        resultBox.style.display = 'block';
+    }
+}
+
+nextClueBtn.addEventListener('click', () => {
+    if (clueIndex < 3) {
+        clueIndex++;
+        displayClue();
+    } else {
+        nextClueBtn.disabled = true;
+    }
+});
+
+playAgainBtn.addEventListener('click', startGame);
+    </script>
+</html>
