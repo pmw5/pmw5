@@ -98,10 +98,10 @@ body {
 
     <div class="game-container">
         <div class="clue-box">
-            <h2 id="clue-text">Clue will appear here</h2>
+            <h2>Clues:</h2>
+            <ul id="clue-list"></ul>
             <button id="next-clue">Next Clue</button>
         </div>
-
         <div class="stage" id="monkey-stage">
             <!-- Monkey cards will be injected here -->
         </div>
@@ -139,6 +139,7 @@ function startGame() {
     clueIndex = 0;
     resultBox.style.display = 'none';
     monkeyStage.innerHTML = '';
+    document.getElementById('clue-list').innerHTML = '';
 
     selectedMonkeys = getRandomMonkeys(monkeys, 4);
     targetMonkey = selectedMonkeys[Math.floor(Math.random() * 4)];
@@ -147,13 +148,19 @@ function startGame() {
     renderMonkeys();
 }
 
+
 function getRandomMonkeys(array, count) {
     const shuffled = [...array].sort(() => 0.5 - Math.random());
     return shuffled.slice(0, count);
 }
 
 function displayClue() {
-    clueText.textContent = targetMonkey[`clue${clueIndex + 1}`];
+    const clueList = document.getElementById('clue-list');
+    const clue = targetMonkey[`clue${clueIndex + 1}`];
+
+    const li = document.createElement('li');
+    li.textContent = clue;
+    clueList.appendChild(li);
 }
 
 function renderMonkeys() {
@@ -197,3 +204,4 @@ playAgainBtn.addEventListener('click', startGame);
     </script>
 
 </html>
+
