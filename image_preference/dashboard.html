@@ -1,0 +1,993 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Image Preference — Dashboard</title>
+  <style>
+    :root{--bg:#0b0d12;--card:#121625;--muted:#9aa4b2;--text:#e8eef6;--accent:#7aa2ff;--good:#34d399;--danger:#fb7185;}
+    *{box-sizing:border-box}
+    body{margin:0;font-family:ui-sans-serif,system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial; background:linear-gradient(180deg,#070812 0%, #0b0d12 40%, #090b10 100%); color:var(--text)}
+    header{padding:18px 18px 10px; border-bottom:1px solid rgba(255,255,255,.06); position:sticky; top:0; backdrop-filter: blur(8px); background:rgba(11,13,18,.72); z-index:10}
+    header .row{display:flex; gap:12px; align-items:center; justify-content:space-between; flex-wrap:wrap}
+    h1{font-size:16px; letter-spacing:.2px; margin:0; font-weight:650}
+    .sub{font-size:12px; color:var(--muted)}
+
+    .wrap{max-width:1150px; margin:0 auto; padding:18px}
+    .grid{display:grid; grid-template-columns: 1fr; gap:14px}
+    @media(min-width:980px){.grid{grid-template-columns: 0.62fr 0.38fr}}
+
+    .card{background:rgba(18,22,37,.82); border:1px solid rgba(255,255,255,.06); border-radius:16px; box-shadow:0 12px 40px rgba(0,0,0,.45)}
+    .card .hd{padding:14px 14px 0}
+    .card .bd{padding:14px}
+
+    .pill{display:inline-flex; align-items:center; gap:8px; padding:6px 10px; border-radius:999px; font-size:12px; border:1px solid rgba(255,255,255,.08); color:var(--muted)}
+    .pill b{color:var(--text)}
+
+    .controls{display:flex; gap:10px; flex-wrap:wrap}
+    button{appearance:none; border:none; cursor:pointer; padding:9px 11px; border-radius:12px; font-size:12px; font-weight:650; background:rgba(122,162,255,.18); color:var(--text); border:1px solid rgba(122,162,255,.25)}
+    button:hover{filter:brightness(1.06)}
+    button.ghost{background:transparent; border:1px solid rgba(255,255,255,.10); color:var(--muted)}
+    button.good{background:rgba(52,211,153,.16); border-color:rgba(52,211,153,.22)}
+    button.danger{background:rgba(251,113,133,.14); border-color:rgba(251,113,133,.22)}
+
+    label{display:block; font-size:12px; color:var(--muted); margin:10px 0 6px}
+    textarea, input, select{
+      width:100%; padding:10px 11px; border-radius:12px; border:1px solid rgba(255,255,255,.10);
+      background:rgba(0,0,0,.28); color:var(--text); font-size:12px
+    }
+    textarea{min-height:160px; resize:vertical}
+
+    .table{width:100%; border-collapse:separate; border-spacing:0 8px}
+    .table th{font-size:12px; color:var(--muted); font-weight:650; text-align:left; padding:0 8px}
+    .table td{padding:10px 8px; background:rgba(255,255,255,.03); border-top:1px solid rgba(255,255,255,.06); border-bottom:1px solid rgba(255,255,255,.06)}
+    .table tr td:first-child{border-left:1px solid rgba(255,255,255,.06); border-top-left-radius:12px; border-bottom-left-radius:12px}
+    .table tr td:last-child{border-right:1px solid rgba(255,255,255,.06); border-top-right-radius:12px; border-bottom-right-radius:12px}
+
+    .small{font-size:12px; color:var(--muted); line-height:1.45}
+    .sep{height:1px; background:rgba(255,255,255,.06); margin:12px 0}
+
+    .toast{position:fixed; left:50%; transform:translateX(-50%); bottom:18px; background:rgba(0,0,0,.65); border:1px solid rgba(255,255,255,.12); padding:10px 12px; border-radius:12px; color:rgba(255,255,255,.92); font-size:12px; opacity:0; pointer-events:none; transition:opacity .18s ease}
+    .toast.show{opacity:1}
+
+    .mono{font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;}
+  </style>
+</head>
+<body>
+<header>
+  <div class="row">
+    <div>
+      <h1>Image Preference — Dashboard</h1>
+      <div class="sub">Manage the image pool, configure pairing, export/import results, and view the Elo ranking.</div>
+    </div>
+    <div class="controls">
+      <button class="ghost" id="btnOpenVoter" title="Open the user-facing matchup page (expects matchup.html next to this file)">Open Voter Page</button>
+      <button class="good" id="btnExport" title="Export all stored data as JSON">Export JSON</button>
+      <button class="ghost" id="btnImport" title="Import JSON">Import JSON</button>
+      <button class="danger" id="btnReset" title="Reset ratings and history">Reset</button>
+    </div>
+  </div>
+</header>
+
+<div class="wrap">
+  <div class="grid">
+    <section class="card">
+      <div class="hd">
+        <span class="pill"><b id="statMatches">0</b> votes · <b id="statImages">0</b> images · K=<b id="statK">32</b> · ns=<b class="mono" id="statNS">default</b></span>
+      </div>
+      <div class="bd">
+        <details open>
+          <summary style="cursor:pointer; font-weight:650; color:var(--text)">Image pool</summary>
+          <div class="small" style="margin-top:8px">
+            One image per line as <b class="mono">id|name|url</b>. Name is optional. If you omit id, it auto-assigns.
+          </div>
+          <label for="poolInput">Images</label>
+          <textarea id="poolInput" spellcheck="false" class="mono"></textarea>
+          <div class="controls" style="margin-top:10px">
+            <button id="btnApplyPool">Apply Pool</button>
+            <button class="ghost" id="btnLoadDemo">Load Demo</button>
+          </div>
+          <div class="small" style="margin-top:10px">Note: image URLs must be publicly accessible. Thumbnails may fail if the host blocks hotlinking.</div>
+        </details>
+
+        <div class="sep"></div>
+
+        <details open>
+          <summary style="cursor:pointer; font-weight:650; color:var(--text)">Settings</summary>
+          <label for="nsInput">Namespace (lets you run multiple independent studies on the same machine)</label>
+          <input id="nsInput" class="mono" placeholder="default" />
+
+          <label for="kInput">Elo K-factor (bigger = faster changes)</label>
+          <input id="kInput" type="number" min="1" max="200" step="1" />
+
+          <label for="pairStrategy">Pair selection strategy</label>
+          <select id="pairStrategy">
+            <option value="uncertainty">Prefer uncertain matchups (similar Elo)</option>
+            <option value="random">Random pair</option>
+            <option value="roundrobin">Round-robin-ish (reduces repeats)</option>
+          </select>
+
+          <div class="controls" style="margin-top:10px">
+            <button id="btnSaveSettings" class="good">Save Settings</button>
+            <button id="btnRecalc" class="ghost" title="Rebuild ratings from history">Recompute From History</button>
+          </div>
+
+          <div class="small" style="margin-top:10px">
+            Tip: open the voter page with <span class="mono">?ns=yourNamespace</span> to keep datasets separate.
+          </div>
+        </details>
+
+        <div class="sep"></div>
+
+        <details>
+          <summary style="cursor:pointer; font-weight:650; color:var(--text)">Data & QA</summary>
+          <div class="small" style="margin-top:8px">
+            Export the full dataset as JSON for analysis, backup, or merging. This tool is browser-only; for multi-user aggregation you’ll want a backend.
+          </div>
+          <div class="controls" style="margin-top:10px">
+            <button id="btnDownloadHistory" class="ghost">Download History CSV</button>
+            <button id="btnRunTests" class="ghost">Run Self-tests</button>
+          </div>
+          <div class="small" style="margin-top:10px">History includes (timestamp, a, b, winner, Elo snapshots for undo).</div>
+        </details>
+      </div>
+    </section>
+
+    <aside class="card">
+      <div class="hd"><span class="pill">Ranking (Elo)</span></div>
+      <div class="bd">
+        <div class="small">Sorted by Elo. W-L counts are derived from stored results (not recomputed from scratch unless you click “Recompute”).</div>
+        <div class="sep"></div>
+        <table class="table" id="rankTable">
+          <thead>
+            <tr><th>#</th><th>Image</th><th>Elo</th><th>W-L</th></tr>
+          </thead>
+          <tbody></tbody>
+        </table>
+      </div>
+    </aside>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+  /*************************
+   * Dashboard page
+   * - Manages pool & settings
+   * - Views ranking
+   * - Exports/imports data
+   *************************/
+
+  // ---- Namespace-aware storage ----
+  const BASE_KEY = 'imgpref_elo_v2';
+  const qs = new URLSearchParams(location.search);
+  const nsFromUrl = (qs.get('ns') || '').trim();
+
+  const DEMO_POOL = [
+    { id:"img1", name:"Mountain", url:"https://images.unsplash.com/photo-1501785888041-af3ef285b470?w=1200&q=80" },
+    { id:"img2", name:"Forest",   url:"https://images.unsplash.com/photo-1441974231531-c6227db76b6e?w=1200&q=80" },
+    { id:"img3", name:"Desert",   url:"https://images.unsplash.com/photo-1500530855697-b586d89ba3ee?w=1200&q=80" },
+    { id:"img4", name:"Ocean",    url:"https://images.unsplash.com/photo-1507525428034-b723cf961d3e?w=1200&q=80" },
+    { id:"img5", name:"City",     url:"https://images.unsplash.com/photo-1467269204594-9661b134dd2b?w=1200&q=80" }
+  ];
+
+  // ---- Elements ----
+  const toastEl = document.getElementById('toast');
+  const statMatches = document.getElementById('statMatches');
+  const statImages = document.getElementById('statImages');
+  const statK = document.getElementById('statK');
+  const statNS = document.getElementById('statNS');
+
+  const poolInput = document.getElementById('poolInput');
+  const btnApplyPool = document.getElementById('btnApplyPool');
+  const btnLoadDemo = document.getElementById('btnLoadDemo');
+
+  const nsInput = document.getElementById('nsInput');
+  const kInput = document.getElementById('kInput');
+  const pairStrategy = document.getElementById('pairStrategy');
+  const btnSaveSettings = document.getElementById('btnSaveSettings');
+  const btnRecalc = document.getElementById('btnRecalc');
+
+  const btnExport = document.getElementById('btnExport');
+  const btnImport = document.getElementById('btnImport');
+  const btnReset = document.getElementById('btnReset');
+  const btnOpenVoter = document.getElementById('btnOpenVoter');
+
+  const btnDownloadHistory = document.getElementById('btnDownloadHistory');
+  const btnRunTests = document.getElementById('btnRunTests');
+
+  const rankTableBody = document.querySelector('#rankTable tbody');
+
+  // ---- State ----
+  let NS = nsFromUrl || 'default';
+  let LS_KEY = keyFor(NS);
+  let state = loadState(LS_KEY);
+
+  init();
+
+  function init(){
+    nsInput.value = NS;
+    kInput.value = state.settings.k;
+    pairStrategy.value = state.settings.strategy;
+
+    refreshPoolTextarea();
+    refreshAll();
+
+    btnApplyPool.addEventListener('click', applyPoolFromTextarea);
+    btnLoadDemo.addEventListener('click', () => {
+      state.pool = structuredClone(DEMO_POOL);
+      state.history = [];
+      state.matches = 0;
+      state.pairMeta = { rrIndex: 0 };
+      state.ratings = {};
+      ensureRatings();
+      persist();
+      refreshPoolTextarea();
+      refreshAll();
+      toast('Demo pool loaded');
+    });
+
+    btnSaveSettings.addEventListener('click', () => {
+      const newNS = (nsInput.value || '').trim() || 'default';
+      const k = clamp(parseInt(kInput.value, 10) || 32, 1, 200);
+      const strat = pairStrategy.value;
+
+      // If namespace changed, switch storage buckets
+      if (newNS !== NS){
+        NS = newNS;
+        LS_KEY = keyFor(NS);
+        state = loadState(LS_KEY);
+        toast(`Switched namespace to ${NS}`);
+        nsInput.value = NS;
+      }
+
+      state.settings.k = k;
+      state.settings.strategy = strat;
+      persist();
+      refreshAll();
+      toast('Settings saved');
+
+      // Update URL for shareability
+      const u = new URL(location.href);
+      u.searchParams.set('ns', NS);
+      history.replaceState(null, '', u.toString());
+    });
+
+    btnRecalc.addEventListener('click', () => {
+      recomputeFromHistory();
+      persist();
+      refreshAll();
+      toast('Recomputed ratings from history');
+    });
+
+    btnExport.addEventListener('click', exportJSON);
+    btnImport.addEventListener('click', importJSON);
+    btnReset.addEventListener('click', resetAll);
+
+    btnOpenVoter.addEventListener('click', () => {
+      // Expects matchup.html to be served next to this file
+      const u = new URL('matchup.html', location.href);
+      u.searchParams.set('ns', NS);
+      window.open(u.toString(), '_blank', 'noopener');
+    });
+
+    btnDownloadHistory.addEventListener('click', downloadHistoryCSV);
+    btnRunTests.addEventListener('click', runSelfTests);
+  }
+
+  function keyFor(ns){
+    return `${BASE_KEY}::${ns}`;
+  }
+
+  function refreshAll(){
+    statMatches.textContent = String(state.matches);
+    statImages.textContent = String(state.pool.length);
+    statK.textContent = String(state.settings.k);
+    statNS.textContent = NS;
+    renderRanking();
+  }
+
+  function renderRanking(){
+    const rows = state.pool
+      .map(p => ({
+        id: p.id,
+        name: p.name || p.id,
+        url: p.url,
+        r: state.ratings[p.id] ?? makeRating()
+      }))
+      .sort((a,b) => (b.r.elo - a.r.elo));
+
+    rankTableBody.innerHTML = '';
+    rows.forEach((row, idx) => {
+      const tr = document.createElement('tr');
+
+      const tdRank = document.createElement('td');
+      tdRank.textContent = String(idx+1);
+
+      const tdName = document.createElement('td');
+      const wrap = document.createElement('div');
+      wrap.style.display = 'flex';
+      wrap.style.alignItems = 'center';
+      wrap.style.gap = '10px';
+
+      const thumb = document.createElement('img');
+      thumb.src = row.url;
+      thumb.alt = row.name;
+      thumb.width = 42;
+      thumb.height = 42;
+      thumb.style.objectFit = 'cover';
+      thumb.style.borderRadius = '10px';
+      thumb.style.border = '1px solid rgba(255,255,255,.10)';
+      thumb.loading = 'lazy';
+
+      const text = document.createElement('div');
+      const title = document.createElement('div');
+      title.style.fontWeight = '650';
+      title.style.fontSize = '12px';
+      title.textContent = row.name;
+      const sub = document.createElement('div');
+      sub.style.color = 'var(--muted)';
+      sub.style.fontSize = '12px';
+      sub.textContent = row.id;
+      text.appendChild(title);
+      text.appendChild(sub);
+
+      wrap.appendChild(thumb);
+      wrap.appendChild(text);
+      tdName.appendChild(wrap);
+
+      const tdElo = document.createElement('td');
+      tdElo.textContent = String(Math.round(row.r.elo));
+
+      const tdWL = document.createElement('td');
+      tdWL.textContent = `${row.r.wins}-${row.r.losses}`;
+
+      tr.appendChild(tdRank);
+      tr.appendChild(tdName);
+      tr.appendChild(tdElo);
+      tr.appendChild(tdWL);
+      rankTableBody.appendChild(tr);
+    });
+  }
+
+  // ---- Pool management ----
+  function refreshPoolTextarea(){
+    const lines = state.pool.map(p => `${p.id}|${p.name ?? ''}|${p.url}`);
+    poolInput.value = lines.join('\n');
+  }
+
+  function applyPoolFromTextarea(){
+    const text = poolInput.value.trim();
+    if (!text){ toast('Pool is empty'); return; }
+
+    const lines = text.split(/\r?\n/).map(l => l.trim()).filter(Boolean);
+    const pool = [];
+    let auto = 1;
+
+    for (const line of lines){
+      const parts = line.split('|');
+      let id = (parts[0] || '').trim();
+      let name = (parts[1] || '').trim();
+      let url = (parts[2] || '').trim();
+
+      if (!url && isProbablyUrl(id)){
+        url = id; id = '';
+      }
+
+      if (!url || !isProbablyUrl(url)) continue;
+      if (!id) id = `img${auto++}`;
+      if (!name) name = id;
+      pool.push({ id, name, url });
+    }
+
+    if (pool.length < 2){
+      toast('Need at least 2 valid image entries');
+      return;
+    }
+
+    state.pool = pool;
+    ensureRatings();
+    pruneHistory();
+    persist();
+    refreshAll();
+    toast('Pool applied');
+  }
+
+  function pruneHistory(){
+    const idSet = new Set(state.pool.map(p => p.id));
+    state.history = state.history.filter(h => idSet.has(h.a) && idSet.has(h.b) && idSet.has(h.winner));
+    state.matches = state.history.length;
+  }
+
+  // ---- Export / Import ----
+  function exportJSON(){
+    const payload = {
+      namespace: NS,
+      exportedAt: new Date().toISOString(),
+      version: 2,
+      data: state
+    };
+    const data = JSON.stringify(payload, null, 2);
+    const blob = new Blob([data], { type: 'application/json' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `image-preference-${NS}-${new Date().toISOString().slice(0,10)}.json`;
+    document.body.appendChild(a);
+    a.click();
+    a.remove();
+    URL.revokeObjectURL(url);
+    toast('Exported JSON');
+  }
+
+  function importJSON(){
+    const input = document.createElement('input');
+    input.type = 'file';
+    input.accept = 'application/json';
+    input.addEventListener('change', async () => {
+      const file = input.files?.[0];
+      if (!file) return;
+      try{
+        const text = await file.text();
+        const obj = JSON.parse(text);
+        const imported = obj?.data ?? obj; // allow raw state or wrapped
+        if (!imported || !Array.isArray(imported.pool) || !imported.ratings){
+          toast('Invalid file');
+          return;
+        }
+
+        state.pool = imported.pool;
+        state.ratings = imported.ratings;
+        state.history = Array.isArray(imported.history) ? imported.history : [];
+        state.matches = Number(imported.matches || state.history.length || 0);
+        state.settings = imported.settings && typeof imported.settings === 'object' ? {
+          k: clamp(parseInt(imported.settings.k,10) || 32, 1, 200),
+          strategy: imported.settings.strategy || 'uncertainty'
+        } : state.settings;
+        state.pairMeta = imported.pairMeta && typeof imported.pairMeta === 'object' ? imported.pairMeta : { rrIndex: 0 };
+
+        ensureRatings();
+        pruneHistory();
+        persist();
+
+        kInput.value = state.settings.k;
+        pairStrategy.value = state.settings.strategy;
+        refreshPoolTextarea();
+        refreshAll();
+        toast('Imported');
+      }catch(err){
+        console.error(err);
+        toast('Failed to import');
+      }
+    });
+    input.click();
+  }
+
+  // ---- Reset ----
+  function resetAll(){
+    if (!confirm('Reset ratings & history? This cannot be undone.')) return;
+    const pool = state.pool.length ? state.pool : structuredClone(DEMO_POOL);
+    const settings = state.settings;
+    Object.assign(state, {
+      pool,
+      ratings: {},
+      history: [],
+      matches: 0,
+      settings,
+      pairMeta: { rrIndex: 0 }
+    });
+    ensureRatings();
+    persist();
+    refreshPoolTextarea();
+    refreshAll();
+    toast('Reset complete');
+  }
+
+  // ---- History utilities ----
+  function downloadHistoryCSV(){
+    const header = ['timestamp','a','b','winner'].join(',');
+    const rows = state.history.map(h => [new Date(h.t).toISOString(), h.a, h.b, h.winner]
+      .map(x => `"${String(x).replaceAll('"','""')}"`).join(','));
+    const csv = [header, ...rows].join('\n');
+    const blob = new Blob([csv], { type: 'text/csv' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `image-preference-history-${NS}.csv`;
+    document.body.appendChild(a);
+    a.click();
+    a.remove();
+    URL.revokeObjectURL(url);
+    toast('Downloaded history CSV');
+  }
+
+  function recomputeFromHistory(){
+    // Rebuild ratings from scratch using current pool + settings.k
+    const K = clamp(parseInt(state.settings.k, 10) || 32, 1, 200);
+    state.ratings = {};
+    ensureRatings();
+
+    // Reset W/L
+    for (const id of Object.keys(state.ratings)){
+      state.ratings[id].wins = 0;
+      state.ratings[id].losses = 0;
+      state.ratings[id].elo = 1000;
+    }
+
+    const idSet = new Set(state.pool.map(p => p.id));
+    for (const h of state.history){
+      if (!idSet.has(h.a) || !idSet.has(h.b) || !idSet.has(h.winner)) continue;
+      const loser = (h.winner === h.a) ? h.b : h.a;
+      applyEloResult(h.winner, loser, K);
+    }
+
+    state.matches = state.history.length;
+  }
+
+  // ---- Persistence + helpers ----
+  function loadState(lsKey){
+    try{
+      const raw = localStorage.getItem(lsKey);
+      if (raw){
+        const parsed = JSON.parse(raw);
+        const s = {
+          pool: Array.isArray(parsed.pool) ? parsed.pool : structuredClone(DEMO_POOL),
+          ratings: parsed.ratings && typeof parsed.ratings === 'object' ? parsed.ratings : {},
+          history: Array.isArray(parsed.history) ? parsed.history : [],
+          matches: Number(parsed.matches || 0),
+          settings: parsed.settings && typeof parsed.settings === 'object' ? {
+            k: clamp(parseInt(parsed.settings.k,10) || 32, 1, 200),
+            strategy: parsed.settings.strategy || 'uncertainty'
+          } : { k: 32, strategy: 'uncertainty' },
+          pairMeta: parsed.pairMeta && typeof parsed.pairMeta === 'object' ? parsed.pairMeta : { rrIndex: 0 }
+        };
+        if (!parsed.matches && s.history.length) s.matches = s.history.length;
+        ensureRatingsIn(s);
+        return s;
+      }
+    }catch(e){
+      console.warn('Failed to load state:', e);
+    }
+
+    const init = {
+      pool: structuredClone(DEMO_POOL),
+      ratings: {},
+      history: [],
+      matches: 0,
+      settings: { k: 32, strategy: 'uncertainty' },
+      pairMeta: { rrIndex: 0 }
+    };
+    ensureRatingsIn(init);
+    return init;
+  }
+
+  function persist(){
+    localStorage.setItem(LS_KEY, JSON.stringify(state));
+  }
+
+  function makeRating(){
+    return { elo: 1000, wins: 0, losses: 0 };
+  }
+
+  function ensureRatings(){ ensureRatingsIn(state); }
+  function ensureRatingsIn(s){
+    for (const img of s.pool){
+      if (!s.ratings[img.id]) s.ratings[img.id] = makeRating();
+      const r = s.ratings[img.id];
+      r.elo = Number(r.elo ?? 1000);
+      r.wins = Number(r.wins ?? 0);
+      r.losses = Number(r.losses ?? 0);
+    }
+  }
+
+  function applyEloResult(winnerId, loserId, K){
+    const w = state.ratings[winnerId] ?? (state.ratings[winnerId] = makeRating());
+    const l = state.ratings[loserId]  ?? (state.ratings[loserId]  = makeRating());
+
+    const expectedW = 1 / (1 + Math.pow(10, (l.elo - w.elo) / 400));
+    const expectedL = 1 - expectedW;
+
+    w.elo = w.elo + K * (1 - expectedW);
+    l.elo = l.elo + K * (0 - expectedL);
+
+    w.wins += 1;
+    l.losses += 1;
+  }
+
+  function isProbablyUrl(s){
+    return /^https?:\/\//i.test(s);
+  }
+
+  function clamp(x, lo, hi){
+    return Math.max(lo, Math.min(hi, x));
+  }
+
+  function toast(msg){
+    toastEl.textContent = msg;
+    toastEl.classList.add('show');
+    clearTimeout(toastEl._t);
+    toastEl._t = setTimeout(() => toastEl.classList.remove('show'), 1400);
+  }
+
+  // ---- Self-tests ----
+  function runSelfTests(){
+    const results = [];
+    const assert = (name, cond) => {
+      results.push({ name, ok: !!cond });
+      if (!cond) console.error('TEST FAIL:', name);
+    };
+
+    // 1) State has >=2 images
+    assert('pool has at least 2 images', Array.isArray(state.pool) && state.pool.length >= 2);
+
+    // 2) Ratings exist for all ids
+    const allHave = state.pool.every(p => !!state.ratings[p.id]);
+    assert('ratings exist for all pool ids', allHave);
+
+    // 3) Elo update direction
+    const a = state.pool[0].id;
+    const b = state.pool[1].id;
+    const preA = state.ratings[a].elo;
+    const preB = state.ratings[b].elo;
+    applyEloResult(a, b, 32);
+    assert('winner elo increases', state.ratings[a].elo > preA);
+    assert('loser elo decreases', state.ratings[b].elo < preB);
+    // restore
+    state.ratings[a].elo = preA;
+    state.ratings[b].elo = preB;
+
+    // 4) Export shape
+    const payload = { namespace: NS, data: state };
+    assert('export payload has namespace and data', !!payload.namespace && !!payload.data);
+
+    const passCount = results.filter(r => r.ok).length;
+    console.log(`Self-tests: ${passCount}/${results.length} passing`, results);
+    toast(`Self-tests: ${passCount}/${results.length} passing`);
+  }
+</script>
+</body>
+</html>
+
+
+<!--
+============================================================
+SECOND PAGE: Save the HTML below as `matchup.html` next to this file.
+It shares the same localStorage dataset (namespace + BASE_KEY), so votes
+cast on matchup.html appear in this dashboard automatically.
+============================================================
+
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Pick Your Favourite</title>
+  <style>
+    :root{--bg:#0b0d12;--text:#e8eef6;--muted:#9aa4b2;--border:rgba(255,255,255,.10)}
+    *{box-sizing:border-box}
+    body{margin:0; font-family:ui-sans-serif,system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial; background:var(--bg); color:var(--text)}
+
+    .wrap{max-width:980px; margin:0 auto; padding:18px}
+    .top{display:flex; justify-content:space-between; align-items:center; gap:12px; margin-bottom:14px}
+    .title{font-size:14px; font-weight:700; letter-spacing:.2px}
+    .hint{font-size:12px; color:var(--muted)}
+
+    .pair{display:grid; grid-template-columns:1fr; gap:12px}
+    @media(min-width:760px){.pair{grid-template-columns:1fr 1fr; gap:14px}}
+
+    button.imgBtn{appearance:none; border:none; cursor:pointer; padding:0; border-radius:14px; overflow:hidden; background:#000; border:1px solid var(--border)}
+    button.imgBtn:focus{outline:2px solid rgba(255,255,255,.18); outline-offset:2px}
+
+    .imgWrap{position:relative}
+    .imgWrap img{width:100%; height:420px; object-fit:cover; display:block; background:#000}
+    @media(max-width:759px){.imgWrap img{height:320px}}
+
+    .overlay{position:absolute; inset:0; background:linear-gradient(180deg, rgba(0,0,0,.25) 0%, rgba(0,0,0,0) 40%, rgba(0,0,0,.55) 100%)}
+    .label{position:absolute; left:12px; bottom:12px; right:12px; display:flex; justify-content:space-between; align-items:flex-end; gap:10px}
+    .name{min-width:0}
+    .name .t{font-size:13px; font-weight:700; white-space:nowrap; overflow:hidden; text-overflow:ellipsis}
+    .name .s{font-size:12px; color:rgba(255,255,255,.78)}
+    .kbd{font-size:11px; color:rgba(255,255,255,.85); border:1px solid rgba(255,255,255,.20); background:rgba(0,0,0,.35); padding:3px 7px; border-radius:10px}
+
+    .toast{position:fixed; left:50%; transform:translateX(-50%); bottom:18px; background:rgba(0,0,0,.70); border:1px solid rgba(255,255,255,.12); padding:10px 12px; border-radius:12px; color:rgba(255,255,255,.92); font-size:12px; opacity:0; pointer-events:none; transition:opacity .18s ease}
+    .toast.show{opacity:1}
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <div class="top">
+      <div>
+        <div class="title">Pick the image you prefer</div>
+        <div class="hint">Click left/right or press A / D.</div>
+      </div>
+      <div class="hint" id="nsBadge"></div>
+    </div>
+
+    <div class="pair" id="pairArea"></div>
+    <div class="hint" id="emptyHint" style="margin-top:12px"></div>
+  </div>
+
+  <div class="toast" id="toast"></div>
+
+  <script>
+    /*************************
+     * Minimal voter page
+     * - Reads pool/settings from localStorage
+     * - Shows one matchup at a time
+     * - Writes vote to history + updates Elo
+     *************************/
+
+    const BASE_KEY = 'imgpref_elo_v2';
+    const qs = new URLSearchParams(location.search);
+    const NS = (qs.get('ns') || 'default').trim() || 'default';
+    const LS_KEY = `${BASE_KEY}::${NS}`;
+
+    const pairArea = document.getElementById('pairArea');
+    const emptyHint = document.getElementById('emptyHint');
+    const toastEl = document.getElementById('toast');
+    const nsBadge = document.getElementById('nsBadge');
+    nsBadge.textContent = `ns=${NS}`;
+
+    let state = loadState();
+    let currentPair = null;
+
+    init();
+
+    function init(){
+      window.addEventListener('keydown', (e) => {
+        if (e.target && ['INPUT','TEXTAREA','SELECT'].includes(e.target.tagName)) return;
+        const k = e.key.toLowerCase();
+        if (k === 'a') vote('left');
+        if (k === 'd') vote('right');
+      });
+
+      nextPair(true);
+    }
+
+    function nextPair(forceNew=false){
+      state = loadState(); // re-read in case dashboard changed pool
+
+      if (!state.pool?.length){
+        pairArea.innerHTML = '';
+        emptyHint.textContent = 'No images found. Ask the admin to add images in the dashboard.';
+        currentPair = null;
+        return;
+      }
+      if (state.pool.length < 2){
+        pairArea.innerHTML = '';
+        emptyHint.textContent = 'Need at least two images to vote.';
+        currentPair = null;
+        return;
+      }
+
+      emptyHint.textContent = '';
+      currentPair = pickPair(state.settings?.strategy || 'uncertainty', forceNew);
+      renderPair(currentPair);
+    }
+
+    function vote(which){
+      if (!currentPair) return;
+      const {a,b} = currentPair;
+      const winner = (which === 'left') ? a : b;
+      const loser  = (which === 'left') ? b : a;
+
+      ensureRatings();
+      const pre = snapshotRatings([a,b]);
+      applyEloResult(winner, loser, clamp(parseInt(state.settings?.k,10) || 32, 1, 200));
+
+      state.matches = Number(state.matches || 0) + 1;
+      state.history = Array.isArray(state.history) ? state.history : [];
+      state.history.push({ t: Date.now(), a, b, winner, pre });
+
+      persist();
+      toast('Saved');
+      nextPair(true);
+    }
+
+    function renderPair(pair){
+      const left = getImage(pair.a);
+      const right = getImage(pair.b);
+
+      pairArea.innerHTML = '';
+      pairArea.appendChild(makeImgButton(left, 'A', () => vote('left')));
+      pairArea.appendChild(makeImgButton(right, 'D', () => vote('right')));
+    }
+
+    function makeImgButton(item, keyHint, onClick){
+      const btn = document.createElement('button');
+      btn.className = 'imgBtn';
+      btn.type = 'button';
+      btn.addEventListener('click', onClick);
+
+      const wrap = document.createElement('div');
+      wrap.className = 'imgWrap';
+
+      const img = document.createElement('img');
+      img.alt = item.name || item.id;
+      img.src = item.url;
+      img.loading = 'eager';
+
+      const ov = document.createElement('div');
+      ov.className = 'overlay';
+
+      const label = document.createElement('div');
+      label.className = 'label';
+
+      const name = document.createElement('div');
+      name.className = 'name';
+
+      const t = document.createElement('div');
+      t.className = 't';
+      t.textContent = item.name || item.id;
+
+      const s = document.createElement('div');
+      s.className = 's';
+      s.textContent = 'Tap to choose';
+
+      name.appendChild(t);
+      name.appendChild(s);
+
+      const kbd = document.createElement('span');
+      kbd.className = 'kbd';
+      kbd.textContent = keyHint;
+
+      label.appendChild(name);
+      label.appendChild(kbd);
+
+      wrap.appendChild(img);
+      wrap.appendChild(ov);
+      wrap.appendChild(label);
+
+      btn.appendChild(wrap);
+      return btn;
+    }
+
+    function pickPair(strategy, forceNew){
+      const ids = state.pool.map(p => p.id);
+      const last = (state.history || []).at?.(-1);
+      const lastKey = last ? pairKey(last.a,last.b) : null;
+
+      if (strategy === 'random'){
+        for (let tries=0; tries<40; tries++){
+          const a = ids[randInt(0, ids.length)];
+          const b = ids[randInt(0, ids.length)];
+          if (a === b) continue;
+          if (!forceNew && lastKey && pairKey(a,b) === lastKey) continue;
+          return { a,b };
+        }
+        return { a: ids[0], b: ids[1] };
+      }
+
+      if (strategy === 'roundrobin'){
+        state.pairMeta = state.pairMeta && typeof state.pairMeta === 'object' ? state.pairMeta : { rrIndex: 0 };
+        state.pairMeta.rrIndex = (state.pairMeta.rrIndex ?? 0) % ids.length;
+        const i = state.pairMeta.rrIndex;
+        const j = (i + 1 + ((state.matches || 0) % (ids.length-1))) % ids.length;
+        state.pairMeta.rrIndex = (i + 1) % ids.length;
+        persist();
+        const a = ids[i];
+        const b = ids[j === i ? (j+1)%ids.length : j];
+        return { a, b };
+      }
+
+      // uncertainty
+      ensureRatings();
+      const ratings = state.ratings;
+      let best = null;
+      let bestScore = -Infinity;
+
+      const recentPairs = new Map();
+      const hist = Array.isArray(state.history) ? state.history : [];
+      for (let t=0; t<Math.min(80, hist.length); t++){
+        const h = hist[hist.length - 1 - t];
+        recentPairs.set(pairKey(h.a,h.b), t+1);
+      }
+
+      const samples = Math.min(300, Math.max(60, Math.floor(ids.length * 8)));
+      for (let s=0; s<samples; s++){
+        const a = ids[randInt(0, ids.length)];
+        const b = ids[randInt(0, ids.length)];
+        if (a === b) continue;
+        const key = pairKey(a,b);
+        if (!forceNew && lastKey && key === lastKey) continue;
+
+        const ra = ratings[a]?.elo ?? 1000;
+        const rb = ratings[b]?.elo ?? 1000;
+        const diff = Math.abs(ra - rb);
+
+        const closeness = 1 / (1 + diff/120);
+        const recencyPenalty = recentPairs.has(key) ? (1 / (1 + recentPairs.get(key))) : 1;
+        const jitter = Math.random() * 0.06;
+        const score = closeness * recencyPenalty + jitter;
+
+        if (score > bestScore){
+          bestScore = score;
+          best = { a,b };
+        }
+      }
+
+      return best || { a: ids[0], b: ids[1] };
+    }
+
+    function pairKey(a,b){
+      return [a,b].sort().join('::');
+    }
+
+    function loadState(){
+      try{
+        const raw = localStorage.getItem(LS_KEY);
+        if (raw){
+          const parsed = JSON.parse(raw);
+          return {
+            pool: Array.isArray(parsed.pool) ? parsed.pool : [],
+            ratings: parsed.ratings && typeof parsed.ratings === 'object' ? parsed.ratings : {},
+            history: Array.isArray(parsed.history) ? parsed.history : [],
+            matches: Number(parsed.matches || 0),
+            settings: parsed.settings && typeof parsed.settings === 'object' ? parsed.settings : { k: 32, strategy: 'uncertainty' },
+            pairMeta: parsed.pairMeta && typeof parsed.pairMeta === 'object' ? parsed.pairMeta : { rrIndex: 0 }
+          };
+        }
+      }catch(e){
+        console.warn('Failed to load voter state', e);
+      }
+      return { pool: [], ratings: {}, history: [], matches: 0, settings: { k: 32, strategy: 'uncertainty' }, pairMeta: { rrIndex: 0 } };
+    }
+
+    function persist(){
+      localStorage.setItem(LS_KEY, JSON.stringify(state));
+    }
+
+    function ensureRatings(){
+      state.ratings = state.ratings && typeof state.ratings === 'object' ? state.ratings : {};
+      for (const img of state.pool){
+        if (!state.ratings[img.id]) state.ratings[img.id] = { elo: 1000, wins: 0, losses: 0 };
+      }
+    }
+
+    function snapshotRatings(ids){
+      const snap = {};
+      for (const id of ids){
+        const r = state.ratings[id] || { elo: 1000, wins: 0, losses: 0 };
+        snap[id] = { elo: r.elo, wins: r.wins, losses: r.losses };
+      }
+      return snap;
+    }
+
+    function applyEloResult(winnerId, loserId, K){
+      const w = state.ratings[winnerId] || (state.ratings[winnerId] = { elo: 1000, wins: 0, losses: 0 });
+      const l = state.ratings[loserId]  || (state.ratings[loserId]  = { elo: 1000, wins: 0, losses: 0 });
+
+      const expectedW = 1 / (1 + Math.pow(10, (l.elo - w.elo) / 400));
+      const expectedL = 1 - expectedW;
+
+      w.elo = w.elo + K * (1 - expectedW);
+      l.elo = l.elo + K * (0 - expectedL);
+
+      w.wins += 1;
+      l.losses += 1;
+    }
+
+    function getImage(id){
+      return state.pool.find(p => p.id === id) || { id, name: id, url: '' };
+    }
+
+    function randInt(min, maxExclusive){
+      return Math.floor(Math.random() * (maxExclusive - min)) + min;
+    }
+
+    function clamp(x, lo, hi){
+      return Math.max(lo, Math.min(hi, x));
+    }
+
+    function toast(msg){
+      toastEl.textContent = msg;
+      toastEl.classList.add('show');
+      clearTimeout(toastEl._t);
+      toastEl._t = setTimeout(() => toastEl.classList.remove('show'), 800);
+    }
+  </script>
+</body>
+</html>
+
+-->
