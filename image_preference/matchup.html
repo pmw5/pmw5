@@ -17,6 +17,7 @@
 
     button.imgBtn{appearance:none; border:none; cursor:pointer; padding:0; border-radius:14px; overflow:hidden; background:#000; border:1px solid var(--border)}
     button.imgBtn:focus{outline:2px solid rgba(255,255,255,.18); outline-offset:2px}
+    button.imgBtn[disabled]{cursor:not-allowed; opacity:.85}
 
     .imgWrap{position:relative}
     .imgWrap img{width:100%; height:420px; object-fit:cover; display:block; background:#000}
@@ -27,6 +28,10 @@
     .name .t{font-size:13px; font-weight:800; white-space:nowrap; overflow:hidden; text-overflow:ellipsis}
     .name .s{font-size:12px; color:rgba(255,255,255,.78)}
     .kbd{font-size:11px; color:rgba(255,255,255,.85); border:1px solid rgba(255,255,255,.20); background:rgba(0,0,0,.35); padding:3px 7px; border-radius:10px}
+    .badImg{position:absolute; inset:auto 12px 48px 12px; padding:8px 10px; border-radius:12px;
+      background:rgba(0,0,0,.65); border:1px solid rgba(255,255,255,.12); font-size:12px; color:rgba(255,255,255,.9);
+      display:none;
+    }
 
     .center{display:flex; align-items:center; justify-content:center; min-height:50vh}
     .panel{max-width:560px; width:100%; border:1px solid rgba(255,255,255,.10); background:rgba(255,255,255,.03); border-radius:14px; padding:14px}
@@ -67,14 +72,24 @@
   <div class="toast" id="toast"></div>
 
   <!-- Supabase (primary) -->
-  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2" onerror="window.__sb_cdn_failed=true"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"
+          onerror="window.__sb_cdn_failed=true"></script>
   <!-- Supabase (fallback) -->
   <script>
-    if (window.__sb_cdn_failed) {
-      const s = document.createElement('script');
-      s.src = "https://unpkg.com/@supabase/supabase-js@2";
-      document.head.appendChild(s);
-    }
+    (function(){
+      function addFallback(){
+        const s = document.createElement('script');
+        s.src = "https://unpkg.com/@supabase/supabase-js@2";
+        s.async = true;
+        document.head.appendChild(s);
+      }
+      // If the primary fails immediately
+      if (window.__sb_cdn_failed) addFallback();
+      // If it “loads” but is blocked by an extension/CSP, we still may need fallback
+      setTimeout(() => {
+        if (!window.supabase) addFallback();
+      }, 250);
+    })();
   </script>
 
   <script>
@@ -94,6 +109,7 @@
     let sb;
     let pool = [];
     let currentPair = null;
+    let voteInFlight = false;
 
     btnRetry.addEventListener('click', () => init(true));
 
@@ -115,27 +131,34 @@
       showPanel('Loading…', 'Connecting to backend…');
       status('Loading…');
 
-      // Wait a tick for fallback script to load if needed
-      await wait(0);
-
-      if (!window.supabase) {
-        showError('Supabase library failed to load',
-          'The @supabase/supabase-js script did not load. Check your network / adblocker.');
+      const okLib = await waitForSupabase(2500);
+      if (!okLib) {
+        showError(
+          'Supabase library failed to load',
+          'The @supabase/supabase-js script did not load in time.\n' +
+          'Check your network, adblocker, or GitHub Pages CSP. Try another browser or disable blockers.'
+        );
+        status('Error');
         return;
       }
 
       sb = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
-      if (forceReload) pool = [];
+      if (forceReload) {
+        pool = [];
+        currentPair = null;
+      }
 
-      const ok = await loadPool();
-      if (!ok) return;
+      const okPool = await loadPool();
+      if (!okPool) return;
 
       if (pool.length < 2) {
-        showPanel('No matchups available',
+        showPanel(
+          'No matchups available',
           pool.length === 0
             ? 'No active images are configured yet.'
-            : 'Only one active image is configured. Need at least two.');
+            : 'Only one active image is configured. Need at least two.'
+        );
         status('');
         return;
       }
@@ -145,26 +168,43 @@
       hidePanel();
     }
 
+    async function waitForSupabase(timeoutMs){
+      const start = Date.now();
+      while (Date.now() - start < timeoutMs) {
+        if (window.supabase?.createClient) return true;
+        await wait(50);
+      }
+      return !!window.supabase?.createClient;
+    }
+
     async function loadPool(){
       showPanel('Loading images…', 'Fetching the active image pool.');
 
-      const { data, error } = await sb
+      // If you don’t have created_at, remove the .order(...) line.
+      const q = sb
         .from('images')
-        .select('id,name,url')
+        .select('id,name,url,active')
         .eq('active', true);
 
-      console.log('[matchup] images response', { count: data?.length, error });
+      const { data, error } = await q;
+
+      console.log('[matchup] images response', { count: data?.length, error, data });
 
       if (error) {
-        // Most common: RLS policy missing for anon SELECT
-        showError('Could not load images from Supabase',
-          `${error.message}\n\nIf this says “permission denied”, add an RLS policy:\n` +
-          `CREATE POLICY "public read active images" ON public.images FOR SELECT TO anon, authenticated USING (active = true);`);
+        showError(
+          'Could not load images from Supabase',
+          formatSbError(error) + '\n\nCommon fix (RLS):\n' +
+          'CREATE POLICY "public read active images" ON public.images\n' +
+          'FOR SELECT TO anon, authenticated USING (active = true);'
+        );
         status('Error');
         return false;
       }
 
-      pool = (data || []).filter(x => x?.id && x?.url);
+      pool = (data || [])
+        .filter(x => x?.id && x?.url)
+        .map(x => ({ id: x.id, name: x.name || 'Untitled', url: x.url }));
+
       if (!pool.length) {
         showPanel('No matchups available', 'No active images returned from the database.');
         status('');
@@ -175,19 +215,26 @@
 
     function nextPair(forceNew){
       currentPair = pickPair(forceNew);
-      renderPair(currentPair);
+      const ok = renderPair(currentPair);
+      if (!ok) {
+        showPanel('Bad matchup data', 'Could not find one or both images by ID in the pool.', JSON.stringify(currentPair, null, 2));
+        return;
+      }
       pairArea.style.display = '';
     }
 
     function pickPair(forceNew){
       const ids = pool.map(p => p.id);
       const lastKey = getLastPairKey();
-      for (let tries=0; tries<80; tries++){
+
+      for (let tries = 0; tries < 120; tries++){
         const a = ids[randInt(0, ids.length)];
         const b = ids[randInt(0, ids.length)];
         if (a === b) continue;
+
         const key = pairKey(a,b);
         if (!forceNew && lastKey && key === lastKey) continue;
+
         return { a,b };
       }
       return { a: ids[0], b: ids[1] };
@@ -196,9 +243,12 @@
     function renderPair(pair){
       const left = pool.find(p => p.id === pair.a);
       const right = pool.find(p => p.id === pair.b);
+      if (!left || !right) return false;
+
       pairArea.innerHTML = '';
       pairArea.appendChild(makeImgButton(left, 'A', () => vote('left')));
       pairArea.appendChild(makeImgButton(right, 'D', () => vote('right')));
+      return true;
     }
 
     function makeImgButton(item, keyHint, onClick){
@@ -214,6 +264,15 @@
       img.alt = item?.name || 'Image';
       img.src = item?.url || '';
       img.loading = 'eager';
+
+      const bad = document.createElement('div');
+      bad.className = 'badImg';
+      bad.textContent = 'Image failed to load (check URL / permissions)';
+
+      img.addEventListener('error', () => {
+        bad.style.display = 'block';
+        console.warn('[matchup] image failed to load', item);
+      });
 
       const ov = document.createElement('div');
       ov.className = 'overlay';
@@ -243,6 +302,7 @@
       label.appendChild(kbd);
 
       wrap.appendChild(img);
+      wrap.appendChild(bad);
       wrap.appendChild(ov);
       wrap.appendChild(label);
 
@@ -252,27 +312,43 @@
 
     async function vote(which){
       if (!currentPair || !sb) return;
+      if (voteInFlight) return; // prevent double vote spam
 
       const winner_id = (which === 'left') ? currentPair.a : currentPair.b;
       const loser_id  = (which === 'left') ? currentPair.b : currentPair.a;
 
       rememberLastPair(currentPair);
-      nextPair(true); // optimistic UI
+
+      // optimistic UI
+      nextPair(true);
+
+      voteInFlight = true;
+      disableButtons(true);
 
       const payload = { winner_id, loser_id, session_id: getSessionId() };
 
       const { error } = await sb.from('votes').insert(payload);
+
+      voteInFlight = false;
+      disableButtons(false);
+
       if (error) {
-        console.error(error);
-        toast('Vote failed — check console');
-        // Most common: missing INSERT policy on votes
-        showError('Could not save vote to Supabase',
-          `${error.message}\n\nIf this says “permission denied”, add an RLS policy:\n` +
-          `CREATE POLICY "public insert votes" ON public.votes FOR INSERT TO anon, authenticated WITH CHECK (true);`);
+        console.error('[matchup] vote insert error', error);
+        toast('Vote failed — see panel/console');
+        showError(
+          'Could not save vote to Supabase',
+          formatSbError(error) + '\n\nCommon fix (RLS):\n' +
+          'CREATE POLICY "public insert votes" ON public.votes\n' +
+          'FOR INSERT TO anon, authenticated WITH CHECK (true);'
+        );
         return;
       }
 
       toast('Saved');
+    }
+
+    function disableButtons(disabled){
+      pairArea.querySelectorAll('button.imgBtn').forEach(b => b.disabled = disabled);
     }
 
     function getSessionId(){
@@ -335,6 +411,16 @@
     }
 
     function wait(ms){ return new Promise(r => setTimeout(r, ms)); }
+
+    function formatSbError(error){
+      if (!error) return 'Unknown error';
+      const parts = [];
+      if (error.message) parts.push(error.message);
+      if (error.details) parts.push('details: ' + error.details);
+      if (error.hint) parts.push('hint: ' + error.hint);
+      if (error.code) parts.push('code: ' + error.code);
+      return parts.join('\n');
+    }
   </script>
 </body>
 </html>
