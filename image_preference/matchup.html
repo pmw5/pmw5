@@ -1,60 +1,340 @@
 <!doctype html>
 <html lang="en">
 <head>
-<meta charset="utf-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1" />
-<title>Pick Your Favourite</title>
-<style>
-:root{--bg:#0b0d12;--text:#e8eef6;--muted:#9aa4b2;--border:rgba(255,255,255,.10)}
-*{box-sizing:border-box}
-body{margin:0; font-family:ui-sans-serif,system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial; background:var(--bg); color:var(--text)}
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Pick Your Favourite</title>
+  <style>
+    :root{--bg:#0b0d12;--text:#e8eef6;--muted:#9aa4b2;--border:rgba(255,255,255,.10)}
+    *{box-sizing:border-box}
+    body{margin:0; font-family:ui-sans-serif,system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial; background:var(--bg); color:var(--text)}
+    .wrap{max-width:980px; margin:0 auto; padding:18px}
+    .top{display:flex; justify-content:space-between; align-items:center; gap:12px; margin-bottom:14px}
+    .title{font-size:14px; font-weight:800; letter-spacing:.2px}
+    .hint{font-size:12px; color:var(--muted)}
+    .pair{display:grid; grid-template-columns:1fr; gap:12px}
+    @media(min-width:760px){.pair{grid-template-columns:1fr 1fr; gap:14px}}
 
+    button.imgBtn{appearance:none; border:none; cursor:pointer; padding:0; border-radius:14px; overflow:hidden; background:#000; border:1px solid var(--border)}
+    button.imgBtn:focus{outline:2px solid rgba(255,255,255,.18); outline-offset:2px}
 
-.wrap{max-width:980px; margin:0 auto; padding:18px}
-.top{display:flex; justify-content:space-between; align-items:center; gap:12px; margin-bottom:14px}
-.title{font-size:14px; font-weight:800; letter-spacing:.2px}
-.hint{font-size:12px; color:var(--muted)}
+    .imgWrap{position:relative}
+    .imgWrap img{width:100%; height:420px; object-fit:cover; display:block; background:#000}
+    @media(max-width:759px){.imgWrap img{height:320px}}
+    .overlay{position:absolute; inset:0; background:linear-gradient(180deg, rgba(0,0,0,.25) 0%, rgba(0,0,0,0) 40%, rgba(0,0,0,.55) 100%)}
+    .label{position:absolute; left:12px; bottom:12px; right:12px; display:flex; justify-content:space-between; align-items:flex-end; gap:10px}
+    .name{min-width:0}
+    .name .t{font-size:13px; font-weight:800; white-space:nowrap; overflow:hidden; text-overflow:ellipsis}
+    .name .s{font-size:12px; color:rgba(255,255,255,.78)}
+    .kbd{font-size:11px; color:rgba(255,255,255,.85); border:1px solid rgba(255,255,255,.20); background:rgba(0,0,0,.35); padding:3px 7px; border-radius:10px}
 
+    .center{display:flex; align-items:center; justify-content:center; min-height:50vh}
+    .panel{max-width:560px; width:100%; border:1px solid rgba(255,255,255,.10); background:rgba(255,255,255,.03); border-radius:14px; padding:14px}
+    .btnRow{display:flex; gap:10px; flex-wrap:wrap; margin-top:10px}
+    .btn{appearance:none; border:none; cursor:pointer; padding:9px 11px; border-radius:12px; font-size:12px; font-weight:800; background:rgba(255,255,255,.06); color:var(--text); border:1px solid rgba(255,255,255,.12)}
+    .btn:hover{filter:brightness(1.06)}
 
-.pair{display:grid; grid-template-columns:1fr; gap:12px}
-@media(min-width:760px){.pair{grid-template-columns:1fr 1fr; gap:14px}}
+    .toast{position:fixed; left:50%; transform:translateX(-50%); bottom:18px; background:rgba(0,0,0,.70); border:1px solid rgba(255,255,255,.12); padding:10px 12px; border-radius:12px; color:rgba(255,255,255,.92); font-size:12px; opacity:0; pointer-events:none; transition:opacity .18s ease}
+    .toast.show{opacity:1}
 
-
-button.imgBtn{appearance:none; border:none; cursor:pointer; padding:0; border-radius:14px; overflow:hidden; background:#000; border:1px solid var(--border)}
-button.imgBtn:focus{outline:2px solid rgba(255,255,255,.18); outline-offset:2px}
-
-
-.imgWrap{position:relative}
-.imgWrap img{width:100%; height:420px; object-fit:cover; display:block; background:#000}
-@media(max-width:759px){.imgWrap img{height:320px}}
-
-
-.overlay{position:absolute; inset:0; background:linear-gradient(180deg, rgba(0,0,0,.25) 0%, rgba(0,0,0,0) 40%, rgba(0,0,0,.55) 100%)}
-.label{position:absolute; left:12px; bottom:12px; right:12px; display:flex; justify-content:space-between; align-items:flex-end; gap:10px}
-.name{min-width:0}
-.name .t{font-size:13px; font-weight:800; white-space:nowrap; overflow:hidden; text-overflow:ellipsis}
-.name .s{font-size:12px; color:rgba(255,255,255,.78)}
-.kbd{font-size:11px; color:rgba(255,255,255,.85); border:1px solid rgba(255,255,255,.20); background:rgba(0,0,0,.35); padding:3px 7px; border-radius:10px}
-
-
-.toast{position:fixed; left:50%; transform:translateX(-50%); bottom:18px; background:rgba(0,0,0,.70); border:1px solid rgba(255,255,255,.12); padding:10px 12px; border-radius:12px; color:rgba(255,255,255,.92); font-size:12px; opacity:0; pointer-events:none; transition:opacity .18s ease}
-.toast.show{opacity:1}
-
-
-.center{display:flex; align-items:center; justify-content:center; min-height:50vh}
-.panel{max-width:520px; width:100%; border:1px solid rgba(255,255,255,.10); background:rgba(255,255,255,.03); border-radius:14px; padding:14px}
-.btnRow{display:flex; gap:10px; flex-wrap:wrap; margin-top:10px}
-.btn{appearance:none; border:none; cursor:pointer; padding:9px 11px; border-radius:12px; font-size:12px; font-weight:800; background:rgba(255,255,255,.06); color:var(--text); border:1px solid rgba(255,255,255,.12)}
-.btn:hover{filter:brightness(1.06)}
-</style>
+    pre{white-space:pre-wrap; word-break:break-word; margin:8px 0 0; color:rgba(255,255,255,.85); font-size:12px}
+  </style>
 </head>
 <body>
-<div class="wrap">
-<div class="top">
-<div>
-<div class="title">Pick the image you prefer</div>
-<div class="hint">Click left/right or press <b>A</b> / <b>D</b>.</div>
-</div>
-<div class="hint" id="status">Loading…</div>
-</div>
+  <div class="wrap">
+    <div class="top">
+      <div>
+        <div class="title">Pick the image you prefer</div>
+        <div class="hint">Click left/right or press <b>A</b> / <b>D</b>.</div>
+      </div>
+      <div class="hint" id="status">Loading…</div>
+    </div>
+
+    <div class="pair" id="pairArea" style="display:none"></div>
+
+    <div id="panel" class="center">
+      <div class="panel">
+        <div style="font-weight:800" id="panelTitle">Loading…</div>
+        <div class="hint" id="panelHint" style="margin-top:6px">Please wait.</div>
+        <pre id="panelDetails" style="display:none"></pre>
+        <div class="btnRow">
+          <button class="btn" id="btnRetry">Retry</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="toast" id="toast"></div>
+
+  <!-- Supabase (primary) -->
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2" onerror="window.__sb_cdn_failed=true"></script>
+  <!-- Supabase (fallback) -->
+  <script>
+    if (window.__sb_cdn_failed) {
+      const s = document.createElement('script');
+      s.src = "https://unpkg.com/@supabase/supabase-js@2";
+      document.head.appendChild(s);
+    }
+  </script>
+
+  <script>
+    const SUPABASE_URL = "https://rvhzustlabdqtbyrmucr.supabase.co";
+    const SUPABASE_ANON_KEY = "sb_publishable_79bmlNeUgShdjcC-G9qIdw__nkmKXAV";
+
+    const pairArea = document.getElementById('pairArea');
+    const statusEl = document.getElementById('status');
+    const toastEl = document.getElementById('toast');
+
+    const panel = document.getElementById('panel');
+    const panelTitle = document.getElementById('panelTitle');
+    const panelHint = document.getElementById('panelHint');
+    const panelDetails = document.getElementById('panelDetails');
+    const btnRetry = document.getElementById('btnRetry');
+
+    let sb;
+    let pool = [];
+    let currentPair = null;
+
+    btnRetry.addEventListener('click', () => init(true));
+
+    window.addEventListener('keydown', (e) => {
+      if (e.target && ['INPUT','TEXTAREA','SELECT'].includes(e.target.tagName)) return;
+      const k = e.key.toLowerCase();
+      if (k === 'a') vote('left');
+      if (k === 'd') vote('right');
+    });
+
+    window.addEventListener('error', (e) => {
+      showError('JavaScript error', e?.message || String(e));
+      console.error(e);
+    });
+
+    init(false);
+
+    async function init(forceReload){
+      showPanel('Loading…', 'Connecting to backend…');
+      status('Loading…');
+
+      // Wait a tick for fallback script to load if needed
+      await wait(0);
+
+      if (!window.supabase) {
+        showError('Supabase library failed to load',
+          'The @supabase/supabase-js script did not load. Check your network / adblocker.');
+        return;
+      }
+
+      sb = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
+      if (forceReload) pool = [];
+
+      const ok = await loadPool();
+      if (!ok) return;
+
+      if (pool.length < 2) {
+        showPanel('No matchups available',
+          pool.length === 0
+            ? 'No active images are configured yet.'
+            : 'Only one active image is configured. Need at least two.');
+        status('');
+        return;
+      }
+
+      nextPair(true);
+      status('');
+      hidePanel();
+    }
+
+    async function loadPool(){
+      showPanel('Loading images…', 'Fetching the active image pool.');
+
+      const { data, error } = await sb
+        .from('images')
+        .select('id,name,url')
+        .eq('active', true);
+
+      console.log('[matchup] images response', { count: data?.length, error });
+
+      if (error) {
+        // Most common: RLS policy missing for anon SELECT
+        showError('Could not load images from Supabase',
+          `${error.message}\n\nIf this says “permission denied”, add an RLS policy:\n` +
+          `CREATE POLICY "public read active images" ON public.images FOR SELECT TO anon, authenticated USING (active = true);`);
+        status('Error');
+        return false;
+      }
+
+      pool = (data || []).filter(x => x?.id && x?.url);
+      if (!pool.length) {
+        showPanel('No matchups available', 'No active images returned from the database.');
+        status('');
+        return false;
+      }
+      return true;
+    }
+
+    function nextPair(forceNew){
+      currentPair = pickPair(forceNew);
+      renderPair(currentPair);
+      pairArea.style.display = '';
+    }
+
+    function pickPair(forceNew){
+      const ids = pool.map(p => p.id);
+      const lastKey = getLastPairKey();
+      for (let tries=0; tries<80; tries++){
+        const a = ids[randInt(0, ids.length)];
+        const b = ids[randInt(0, ids.length)];
+        if (a === b) continue;
+        const key = pairKey(a,b);
+        if (!forceNew && lastKey && key === lastKey) continue;
+        return { a,b };
+      }
+      return { a: ids[0], b: ids[1] };
+    }
+
+    function renderPair(pair){
+      const left = pool.find(p => p.id === pair.a);
+      const right = pool.find(p => p.id === pair.b);
+      pairArea.innerHTML = '';
+      pairArea.appendChild(makeImgButton(left, 'A', () => vote('left')));
+      pairArea.appendChild(makeImgButton(right, 'D', () => vote('right')));
+    }
+
+    function makeImgButton(item, keyHint, onClick){
+      const btn = document.createElement('button');
+      btn.className = 'imgBtn';
+      btn.type = 'button';
+      btn.addEventListener('click', onClick);
+
+      const wrap = document.createElement('div');
+      wrap.className = 'imgWrap';
+
+      const img = document.createElement('img');
+      img.alt = item?.name || 'Image';
+      img.src = item?.url || '';
+      img.loading = 'eager';
+
+      const ov = document.createElement('div');
+      ov.className = 'overlay';
+
+      const label = document.createElement('div');
+      label.className = 'label';
+
+      const name = document.createElement('div');
+      name.className = 'name';
+
+      const t = document.createElement('div');
+      t.className = 't';
+      t.textContent = item?.name || 'Untitled';
+
+      const s = document.createElement('div');
+      s.className = 's';
+      s.textContent = 'Tap to choose';
+
+      name.appendChild(t);
+      name.appendChild(s);
+
+      const kbd = document.createElement('span');
+      kbd.className = 'kbd';
+      kbd.textContent = keyHint;
+
+      label.appendChild(name);
+      label.appendChild(kbd);
+
+      wrap.appendChild(img);
+      wrap.appendChild(ov);
+      wrap.appendChild(label);
+
+      btn.appendChild(wrap);
+      return btn;
+    }
+
+    async function vote(which){
+      if (!currentPair || !sb) return;
+
+      const winner_id = (which === 'left') ? currentPair.a : currentPair.b;
+      const loser_id  = (which === 'left') ? currentPair.b : currentPair.a;
+
+      rememberLastPair(currentPair);
+      nextPair(true); // optimistic UI
+
+      const payload = { winner_id, loser_id, session_id: getSessionId() };
+
+      const { error } = await sb.from('votes').insert(payload);
+      if (error) {
+        console.error(error);
+        toast('Vote failed — check console');
+        // Most common: missing INSERT policy on votes
+        showError('Could not save vote to Supabase',
+          `${error.message}\n\nIf this says “permission denied”, add an RLS policy:\n` +
+          `CREATE POLICY "public insert votes" ON public.votes FOR INSERT TO anon, authenticated WITH CHECK (true);`);
+        return;
+      }
+
+      toast('Saved');
+    }
+
+    function getSessionId(){
+      const k = 'imgpref_session_id';
+      let v = localStorage.getItem(k);
+      if (!v){
+        v = (crypto?.randomUUID) ? crypto.randomUUID() : String(Date.now()) + '_' + Math.random().toString(16).slice(2);
+        localStorage.setItem(k, v);
+      }
+      return v;
+    }
+
+    function pairKey(a,b){ return [a,b].sort().join('::'); }
+
+    function getLastPairKey(){
+      const raw = localStorage.getItem('imgpref_last_pair');
+      if (!raw) return null;
+      try{
+        const p = JSON.parse(raw);
+        if (p?.a && p?.b) return pairKey(p.a, p.b);
+      }catch{}
+      return null;
+    }
+
+    function rememberLastPair(pair){
+      localStorage.setItem('imgpref_last_pair', JSON.stringify(pair));
+    }
+
+    function showPanel(title, hint, details){
+      panel.style.display = '';
+      panelTitle.textContent = title;
+      panelHint.textContent = hint || '';
+      if (details){
+        panelDetails.style.display = '';
+        panelDetails.textContent = details;
+      } else {
+        panelDetails.style.display = 'none';
+        panelDetails.textContent = '';
+      }
+      pairArea.style.display = 'none';
+    }
+
+    function hidePanel(){ panel.style.display = 'none'; }
+
+    function showError(title, details){
+      showPanel(title, 'Open DevTools → Console for more detail.', details);
+    }
+
+    function status(msg){ statusEl.textContent = msg; }
+
+    function toast(msg){
+      toastEl.textContent = msg;
+      toastEl.classList.add('show');
+      clearTimeout(toastEl._t);
+      toastEl._t = setTimeout(() => toastEl.classList.remove('show'), 900);
+    }
+
+    function randInt(min, maxExclusive){
+      return Math.floor(Math.random() * (maxExclusive - min)) + min;
+    }
+
+    function wait(ms){ return new Promise(r => setTimeout(r, ms)); }
+  </script>
+</body>
 </html>
