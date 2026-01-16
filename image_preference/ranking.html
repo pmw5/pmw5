@@ -227,4 +227,635 @@
       display:flex; align-items:flex-end; justify-content:space-between; gap:12px; flex-wrap:wrap;
       margin-top:14px;
     }
-    .listHd h2
+    .listHd h2{margin:0; font-size:14px; font-weight:950; letter-spacing:.2px}
+    .small{font-size:12px; color:var(--muted); line-height:1.45}
+
+    .gridList{
+      margin-top:12px;
+      display:grid;
+      grid-template-columns:1fr;
+      gap:10px;
+    }
+    @media(min-width:760px){
+      .gridList{grid-template-columns:1fr 1fr;}
+    }
+    @media(min-width:1100px){
+      .gridList{grid-template-columns:1fr 1fr 1fr;}
+    }
+
+    .item{
+      border-radius:16px;
+      border:1px solid rgba(255,255,255,.10);
+      background:rgba(255,255,255,.03);
+      overflow:hidden;
+      display:flex;
+      flex-direction:column;
+      min-height:260px;
+    }
+    .thumb{
+      width:100%;
+      aspect-ratio: 1 / 1;
+      background:#000;
+      border-bottom:1px solid rgba(255,255,255,.08);
+    }
+    .thumb img{width:100%; height:100%; object-fit:cover; display:block}
+    .itemBd{padding:12px}
+    .row2{display:flex; justify-content:space-between; gap:10px; align-items:flex-start}
+    .rankNo{
+      font-size:12px; font-weight:950;
+      color:rgba(255,255,255,.90);
+      padding:4px 8px;
+      border-radius:999px;
+      border:1px solid rgba(255,255,255,.12);
+      background:rgba(0,0,0,.25);
+      white-space:nowrap;
+    }
+    .wl{margin-top:8px; display:flex; gap:8px; flex-wrap:wrap}
+    .chip{
+      font-size:11px;
+      color:var(--muted);
+      border:1px solid rgba(255,255,255,.10);
+      background:rgba(0,0,0,.20);
+      padding:4px 8px;
+      border-radius:999px;
+    }
+
+    /* Toast */
+    .toast{
+      position:fixed; left:50%; transform:translateX(-50%);
+      bottom:18px;
+      background:rgba(0,0,0,.70);
+      border:1px solid rgba(255,255,255,.12);
+      padding:10px 12px;
+      border-radius:12px;
+      color:rgba(255,255,255,.92);
+      font-size:12px;
+      opacity:0; pointer-events:none;
+      transition:opacity .18s ease;
+      z-index:99;
+    }
+    .toast.show{opacity:1}
+
+    /* Empty / error states */
+    .empty{
+      border:1px solid rgba(255,255,255,.10);
+      background:rgba(0,0,0,.22);
+      border-radius:16px;
+      padding:14px;
+      color:var(--muted);
+      font-size:12px;
+      line-height:1.5;
+      white-space:pre-wrap;
+    }
+    .sep{height:1px; background:rgba(255,255,255,.06); margin:12px 0}
+  </style>
+</head>
+
+<body>
+<header>
+  <div class="bar">
+    <div class="brand">
+      <div class="mark" aria-hidden="true"></div>
+      <div>
+        <h1>Top Ranked Images</h1>
+        <div class="sub" id="subtitle">Loading rankings…</div>
+      </div>
+    </div>
+
+    <div class="controls">
+      <span class="pill">ns=<b id="nsVal">default</b></span>
+      <span class="pill"><b id="statImages">0</b> images · <b id="statVotes">0</b> votes</span>
+      <button class="btn ghost" id="btnRefresh">Refresh</button>
+      <a class="btn" id="btnVote" href="#" style="text-decoration:none">Vote</a>
+    </div>
+  </div>
+</header>
+
+<div class="wrap">
+  <section class="hero">
+    <div class="card">
+      <div class="hd">
+        <div class="kicker" id="modeBadge"><span class="dot"></span><span id="modeText">Loading…</span></div>
+        <div class="bigTitle">A living leaderboard</div>
+        <div class="bigDesc">
+          Rankings are calculated from head-to-head votes. Share this page to show what’s winning right now.
+        </div>
+      </div>
+
+      <div class="bd">
+        <div class="tools">
+          <div class="field">
+            <label for="q">Search</label>
+            <input id="q" placeholder="Type a name…" />
+          </div>
+          <div class="field">
+            <label for="sort">Sort</label>
+            <select id="sort">
+              <option value="elo_desc">Elo (high → low)</option>
+              <option value="wins_desc">Wins (high → low)</option>
+              <option value="games_desc">Games (high → low)</option>
+              <option value="name_asc">Name (A → Z)</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="sep"></div>
+
+        <div class="podium" id="podium"></div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="hd">
+        <div class="kicker ok" id="freshBadge"><span class="dot"></span><span>Details</span></div>
+        <div class="bigDesc" id="detailsBox">
+          Loading…
+        </div>
+      </div>
+      <div class="bd">
+        <div class="listHd">
+          <div>
+            <h2>Full ranking</h2>
+            <div class="small" id="listSub">—</div>
+          </div>
+        </div>
+        <div class="gridList" id="list"></div>
+        <div id="empty" class="empty" style="display:none"></div>
+      </div>
+    </div>
+  </section>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<!-- Supabase (primary) -->
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"
+        onerror="window.__sb_cdn_failed=true"></script>
+<!-- Supabase (fallback) -->
+<script>
+  (function(){
+    function addFallback(){
+      const s = document.createElement('script');
+      s.src = "https://unpkg.com/@supabase/supabase-js@2";
+      s.async = true;
+      document.head.appendChild(s);
+    }
+    if (window.__sb_cdn_failed) addFallback();
+    setTimeout(() => { if (!window.supabase) addFallback(); }, 250);
+  })();
+</script>
+
+<script>
+  /************************************************************
+   * Public Ranking Page
+   * Strategy:
+   *  A) Try to compute Elo from public votes SELECT (best).
+   *  B) Else, try reading elo/wins/losses from images columns.
+   ************************************************************/
+
+  // === Your Supabase project ===
+  const SUPABASE_URL = "https://rvhzustlabdqtbyrmucr.supabase.co";
+  const SUPABASE_ANON_KEY = "sb_publishable_79bmlNeUgShdjcC-G9qIdw__nkmKXAV";
+
+  // Your public voting page
+  const MATCHUP_URL = "https://pmw5.github.io/pmw5/image_preference/matchup.html";
+
+  // Elo config
+  const DEFAULT_K = 32;
+
+  // Namespace (optional)
+  const qs = new URLSearchParams(location.search);
+  const NS = (qs.get('ns') || 'default').trim() || 'default';
+
+  // UI
+  const nsVal = document.getElementById('nsVal');
+  const statImages = document.getElementById('statImages');
+  const statVotes = document.getElementById('statVotes');
+
+  const subtitle = document.getElementById('subtitle');
+  const modeBadge = document.getElementById('modeBadge');
+  const modeText = document.getElementById('modeText');
+  const detailsBox = document.getElementById('detailsBox');
+
+  const podiumEl = document.getElementById('podium');
+  const listEl = document.getElementById('list');
+  const emptyEl = document.getElementById('empty');
+
+  const qEl = document.getElementById('q');
+  const sortEl = document.getElementById('sort');
+
+  const btnRefresh = document.getElementById('btnRefresh');
+  const btnVote = document.getElementById('btnVote');
+
+  const toastEl = document.getElementById('toast');
+
+  // State
+  let sb;
+  let images = [];   // {id,name,url,active, ...maybe elo,wins,losses}
+  let votes = [];    // {winner_id,loser_id,created_at}
+  let rows = [];     // computed rows: {img, elo, wins, losses, games}
+  let mode = "loading"; // "live" | "stored" | "unavailable"
+
+  nsVal.textContent = NS;
+  btnVote.href = `${MATCHUP_URL}?ns=${encodeURIComponent(NS)}`;
+
+  btnRefresh.addEventListener('click', () => loadAll(true));
+  qEl.addEventListener('input', render);
+  sortEl.addEventListener('change', render);
+
+  init();
+
+  async function init(){
+    subtitle.textContent = "Loading rankings…";
+    setMode("loading", "Loading…", "Loading…");
+
+    const okLib = await waitForSupabase(2500);
+    if (!okLib){
+      setMode("unavailable", "Supabase library failed to load", "Could not load @supabase/supabase-js. Check blockers/CSP.");
+      showEmpty(
+        "Supabase library failed to load.\n\n" +
+        "Try another browser, disable adblock, or ensure GitHub Pages can load the CDN scripts."
+      );
+      return;
+    }
+
+    sb = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+    await loadAll(false);
+  }
+
+  async function loadAll(force){
+    clearEmpty();
+    subtitle.textContent = "Loading rankings…";
+    setMode("loading", "Loading…", "Fetching images & ranking data…");
+
+    const okImages = await loadImages();
+    if (!okImages) return;
+
+    // Try live compute first (needs public SELECT on votes)
+    const okVotes = await tryLoadVotes();
+
+    if (okVotes){
+      mode = "live";
+      computeEloFromVotes();
+      setMode("live", "Live Elo (computed from votes)", `Computed from ${votes.length} votes · K=${DEFAULT_K}`);
+      subtitle.textContent = "Live Elo leaderboard";
+      detailsBox.textContent =
+        `This page computes Elo client-side from raw head-to-head votes. ` +
+        `If you expect lots of votes, consider storing Elo server-side to load faster.`;
+      render();
+      return;
+    }
+
+    // Fallback to stored columns on images (if you add them)
+    const okStored = tryReadStoredRanking();
+    if (okStored){
+      mode = "stored";
+      setMode("stored", "Stored rankings", "Showing Elo/W-L stored on the images table.");
+      subtitle.textContent = "Leaderboard";
+      detailsBox.textContent =
+        `Votes are not publicly readable, so this page is showing stored ranking fields. ` +
+        `If you want live Elo, add a public SELECT policy on votes (or create a public view).`;
+      render();
+      return;
+    }
+
+    // Nothing available
+    mode = "unavailable";
+    setMode("unavailable", "Ranking not available yet", "No public vote access, and no stored ranking fields found.");
+    subtitle.textContent = "Leaderboard unavailable";
+    showEmpty(
+      "Ranking can't be shown publicly yet.\n\n" +
+      "To fix, choose ONE approach:\n" +
+      "1) Allow public SELECT on votes (simple; good for small vote volumes), OR\n" +
+      "2) Store Elo/W-L on images and update it from the admin dashboard.\n\n" +
+      "I can help you implement either approach."
+    );
+  }
+
+  async function loadImages(){
+    // Public page should read ACTIVE images
+    let q = sb.from('images').select('*').eq('active', true);
+
+    // If you add namespace columns later:
+    // q = q.eq('namespace', NS);
+
+    const { data, error } = await q;
+    if (error){
+      setMode("unavailable", "Could not load images", error.message);
+      showEmpty(
+        "Could not load images from Supabase.\n\n" +
+        "Common fix (RLS):\n" +
+        'CREATE POLICY "public read active images" ON public.images\n' +
+        'FOR SELECT TO anon, authenticated USING (active = true);'
+      );
+      return false;
+    }
+
+    images = (data || []).filter(x => x?.id && x?.url).map(x => ({
+      ...x,
+      name: x.name || "Untitled"
+    }));
+
+    statImages.textContent = String(images.length);
+    return true;
+  }
+
+  async function tryLoadVotes(){
+    votes = [];
+
+    // If there are many votes, you can cap this.
+    // For dozens of voters this is fine.
+    let q = sb.from('votes').select('winner_id,loser_id,created_at').order('created_at', { ascending: true });
+
+    // If you add namespace columns later:
+    // q = q.eq('namespace', NS);
+
+    const { data, error } = await q;
+    if (error){
+      // Not publicly readable (expected for many setups)
+      statVotes.textContent = "0";
+      return false;
+    }
+
+    votes = (data || []).filter(v => v?.winner_id && v?.loser_id);
+    statVotes.textContent = String(votes.length);
+    return true;
+  }
+
+  function computeEloFromVotes(){
+    const r = Object.create(null);
+    for (const img of images){
+      r[img.id] = { elo: 1000, wins: 0, losses: 0 };
+    }
+
+    // Apply votes in chronological order (already ordered)
+    for (const v of votes){
+      if (!r[v.winner_id] || !r[v.loser_id]) continue;
+      applyElo(r, v.winner_id, v.loser_id, DEFAULT_K);
+    }
+
+    rows = images.map(img => {
+      const rr = r[img.id] || { elo: 1000, wins: 0, losses: 0 };
+      return {
+        img,
+        elo: rr.elo,
+        wins: rr.wins,
+        losses: rr.losses,
+        games: rr.wins + rr.losses
+      };
+    }).sort((a,b) => b.elo - a.elo);
+  }
+
+  function tryReadStoredRanking(){
+    // If you choose to store elo/wins/losses on images, this will work without reading votes.
+    // Expected fields: elo (number), wins (number), losses (number)
+    const hasAny = images.some(i => isFiniteNumber(i.elo));
+    if (!hasAny) return false;
+
+    rows = images.map(img => ({
+      img,
+      elo: toNumber(img.elo, 1000),
+      wins: toNumber(img.wins, 0),
+      losses: toNumber(img.losses, 0),
+      games: toNumber(img.wins, 0) + toNumber(img.losses, 0)
+    })).sort((a,b) => b.elo - a.elo);
+
+    statVotes.textContent = "—";
+    return true;
+  }
+
+  function render(){
+    clearEmpty();
+    if (!rows.length){
+      showEmpty("No active images found.");
+      return;
+    }
+
+    const q = (qEl.value || "").trim().toLowerCase();
+    const sort = sortEl.value;
+
+    let filtered = rows.filter(r => {
+      if (!q) return true;
+      return (r.img.name || "").toLowerCase().includes(q) || (r.img.id || "").toLowerCase().includes(q);
+    });
+
+    filtered = sortRows(filtered, sort);
+
+    // podium uses top 3 of current filtered list
+    renderPodium(filtered.slice(0,3));
+    renderList(filtered);
+    document.getElementById('listSub').textContent =
+      `${filtered.length} shown` + (q ? ` · filtered by “${qEl.value.trim()}”` : "");
+  }
+
+  function renderPodium(top3){
+    podiumEl.innerHTML = "";
+
+    // Always render 3 slots for visual stability
+    for (let i=0; i<3; i++){
+      const r = top3[i] || null;
+      podiumEl.appendChild(makePod(i+1, r));
+    }
+  }
+
+  function makePod(rank, row){
+    const pod = document.createElement('div');
+    pod.className = 'pod';
+
+    const inner = document.createElement('div');
+    inner.className = 'podInner';
+
+    const tag = document.createElement('div');
+    tag.className = 'rankTag';
+    tag.innerHTML = (rank === 1 ? `<span class="crown"></span>` : ``) + `#${rank}`;
+
+    const shot = document.createElement('div');
+    shot.className = 'shot';
+
+    const img = document.createElement('img');
+    img.loading = 'lazy';
+    img.alt = row?.img?.name || `Rank ${rank}`;
+    img.src = row?.img?.url || '';
+    if (!row) img.style.opacity = .25;
+    shot.appendChild(img);
+
+    const meta = document.createElement('div');
+    meta.className = 'meta';
+
+    const name = document.createElement('div');
+    name.className = 'name';
+    name.innerHTML =
+      `<div class="t">${escapeHtml(row?.img?.name || "—")}</div>` +
+      `<div class="s">${row ? escapeHtml(shortId(row.img.id)) : "Waiting for votes…"}</div>`;
+
+    const score = document.createElement('div');
+    score.className = 'score';
+    score.innerHTML =
+      row
+        ? `${Math.round(row.elo)}<span class="mut">${row.wins}-${row.losses}</span>`
+        : `—<span class="mut">—</span>`;
+
+    meta.appendChild(name);
+    meta.appendChild(score);
+
+    inner.appendChild(tag);
+    inner.appendChild(shot);
+    inner.appendChild(meta);
+
+    pod.appendChild(inner);
+    return pod;
+  }
+
+  function renderList(list){
+    listEl.innerHTML = "";
+    for (let i=0; i<list.length; i++){
+      const r = list[i];
+      listEl.appendChild(makeItem(i+1, r));
+    }
+  }
+
+  function makeItem(rank, row){
+    const el = document.createElement('div');
+    el.className = 'item';
+
+    const thumb = document.createElement('div');
+    thumb.className = 'thumb';
+    const img = document.createElement('img');
+    img.loading = 'lazy';
+    img.alt = row.img.name;
+    img.src = row.img.url;
+    thumb.appendChild(img);
+
+    const bd = document.createElement('div');
+    bd.className = 'itemBd';
+
+    const row2 = document.createElement('div');
+    row2.className = 'row2';
+
+    const left = document.createElement('div');
+    left.style.minWidth = "0";
+    left.innerHTML =
+      `<div style="font-weight:950; font-size:13px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">${escapeHtml(row.img.name)}</div>` +
+      `<div style="color:var(--muted); font-size:12px; margin-top:4px">${escapeHtml(shortId(row.img.id))}</div>`;
+
+    const right = document.createElement('div');
+    right.innerHTML =
+      `<div class="rankNo">#${rank}</div>` +
+      `<div style="text-align:right; margin-top:8px; font-weight:950; font-size:12px">${Math.round(row.elo)} Elo</div>` +
+      `<div style="text-align:right; color:var(--muted); font-size:12px; margin-top:4px">${row.games} games</div>`;
+
+    row2.appendChild(left);
+    row2.appendChild(right);
+
+    const wl = document.createElement('div');
+    wl.className = 'wl';
+    wl.innerHTML =
+      `<span class="chip">W-L: <b style="color:var(--text)">${row.wins}-${row.losses}</b></span>` +
+      `<span class="chip">Win rate: <b style="color:var(--text)">${formatPct(row.games ? row.wins/row.games : 0)}</b></span>`;
+
+    bd.appendChild(row2);
+    bd.appendChild(wl);
+
+    el.appendChild(thumb);
+    el.appendChild(bd);
+    return el;
+  }
+
+  function sortRows(arr, sort){
+    const a = arr.slice();
+    if (sort === "elo_desc") return a.sort((x,y) => y.elo - x.elo);
+    if (sort === "wins_desc") return a.sort((x,y) => y.wins - x.wins || y.elo - x.elo);
+    if (sort === "games_desc") return a.sort((x,y) => y.games - x.games || y.elo - x.elo);
+    if (sort === "name_asc") return a.sort((x,y) => (x.img.name||"").localeCompare(y.img.name||""));
+    return a;
+  }
+
+  function applyElo(ratings, winnerId, loserId, K){
+    const w = ratings[winnerId];
+    const l = ratings[loserId];
+    const expectedW = 1 / (1 + Math.pow(10, (l.elo - w.elo) / 400));
+    const expectedL = 1 - expectedW;
+
+    w.elo = w.elo + K * (1 - expectedW);
+    l.elo = l.elo + K * (0 - expectedL);
+    w.wins += 1;
+    l.losses += 1;
+  }
+
+  function setMode(kind, title, detail){
+    if (kind === "live"){
+      modeBadge.className = "kicker ok";
+      modeBadge.querySelector('.dot').style.background = "var(--good)";
+      modeText.textContent = title;
+      detailsBox.textContent = detail;
+      return;
+    }
+    if (kind === "stored"){
+      modeBadge.className = "kicker";
+      modeBadge.querySelector('.dot').style.background = "var(--accent)";
+      modeText.textContent = title;
+      detailsBox.textContent = detail;
+      return;
+    }
+    if (kind === "unavailable"){
+      modeBadge.className = "kicker bad";
+      modeBadge.querySelector('.dot').style.background = "var(--danger)";
+      modeText.textContent = title;
+      detailsBox.textContent = detail;
+      return;
+    }
+    // loading
+    modeBadge.className = "kicker";
+    modeBadge.querySelector('.dot').style.background = "var(--warn)";
+    modeText.textContent = title;
+    detailsBox.textContent = detail;
+  }
+
+  function showEmpty(msg){
+    podiumEl.innerHTML = "";
+    listEl.innerHTML = "";
+    emptyEl.style.display = "";
+    emptyEl.textContent = msg;
+  }
+  function clearEmpty(){
+    emptyEl.style.display = "none";
+    emptyEl.textContent = "";
+  }
+
+  async function waitForSupabase(timeoutMs){
+    const start = Date.now();
+    while (Date.now() - start < timeoutMs) {
+      if (window.supabase?.createClient) return true;
+      await new Promise(r => setTimeout(r, 50));
+    }
+    return !!window.supabase?.createClient;
+  }
+
+  function toast(msg){
+    toastEl.textContent = msg;
+    toastEl.classList.add('show');
+    clearTimeout(toastEl._t);
+    toastEl._t = setTimeout(() => toastEl.classList.remove('show'), 1000);
+  }
+
+  function escapeHtml(s){
+    return String(s)
+      .replaceAll('&', '&amp;')
+      .replaceAll('<', '&lt;')
+      .replaceAll('>', '&gt;')
+      .replaceAll('"', '&quot;')
+      .replaceAll("'", '&#039;');
+  }
+  function shortId(id){ return (id || "").slice(0, 8); }
+  function isFiniteNumber(x){ return typeof x === "number" && isFinite(x); }
+  function toNumber(x, fallback){
+    const n = Number(x);
+    return Number.isFinite(n) ? n : fallback;
+  }
+  function formatPct(x){
+    const p = Math.round((x || 0) * 1000) / 10; // 0.1%
+    return `${p.toFixed(1)}%`;
+  }
+</script>
+</body>
+</html>
