@@ -3,390 +3,350 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Top Ranked Images</title>
+  <title>Leaderboard Display</title>
   <meta name="color-scheme" content="dark" />
   <style>
     :root{
-      --bg0:#070812;
+      --bg0:#060611;
       --bg1:#0b0d12;
-      --card:rgba(18,22,37,.82);
+      --card:rgba(18,22,37,.70);
       --text:#e8eef6;
       --muted:#9aa4b2;
       --border:rgba(255,255,255,.10);
-      --accent:#7aa2ff;
-      --good:#34d399;
-      --warn:#fbbf24;
-      --danger:#fb7185;
-      --shadow:0 14px 60px rgba(0,0,0,.55);
-      --r:18px;
+      --shadow:0 18px 70px rgba(0,0,0,.55);
+      --r:22px;
     }
     *{box-sizing:border-box}
+    html,body{height:100%}
     body{
       margin:0;
       font-family:ui-sans-serif,system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial;
-      background:
-        radial-gradient(900px 500px at 15% 12%, rgba(122,162,255,.18), transparent 60%),
-        radial-gradient(900px 500px at 85% 18%, rgba(52,211,153,.10), transparent 60%),
-        linear-gradient(180deg,var(--bg0) 0%, var(--bg1) 45%, #090b10 100%);
       color:var(--text);
-      overflow-x:hidden;
+      background:
+        radial-gradient(1100px 700px at 18% 8%, rgba(122,162,255,.16), transparent 60%),
+        radial-gradient(1100px 700px at 82% 10%, rgba(52,211,153,.10), transparent 60%),
+        linear-gradient(180deg,var(--bg0) 0%, var(--bg1) 55%, #090b10 100%);
+      overflow:hidden; /* kiosk style */
+      user-select:none;
+      -webkit-user-select:none;
+      -ms-user-select:none;
     }
-    a{color:inherit}
 
-    /* Header */
+    /* Top banner (no controls) */
     header{
-      position:sticky; top:0; z-index:50;
-      backdrop-filter: blur(10px);
-      background:rgba(11,13,18,.78);
+      height:92px;
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      padding:0 26px;
       border-bottom:1px solid rgba(255,255,255,.06);
-    }
-    .bar{
-      max-width:1200px; margin:0 auto;
-      padding:14px 16px;
-      display:flex; align-items:center; justify-content:space-between; gap:12px; flex-wrap:wrap;
+      background:rgba(11,13,18,.62);
+      backdrop-filter: blur(10px);
     }
     .brand{
-      display:flex; align-items:center; gap:10px; min-width:220px;
+      display:flex; align-items:center; gap:14px;
+      min-width:320px;
     }
     .mark{
-      width:34px; height:34px; border-radius:12px;
+      width:44px; height:44px; border-radius:16px;
       background:
-        radial-gradient(18px 18px at 30% 30%, rgba(255,255,255,.22), transparent 60%),
+        radial-gradient(24px 24px at 30% 30%, rgba(255,255,255,.22), transparent 60%),
         linear-gradient(135deg, rgba(122,162,255,.40), rgba(52,211,153,.18));
       border:1px solid rgba(255,255,255,.12);
-      box-shadow:0 10px 24px rgba(0,0,0,.35);
+      box-shadow:0 12px 30px rgba(0,0,0,.35);
     }
-    h1{
-      font-size:14px; margin:0; font-weight:850; letter-spacing:.2px;
-    }
-    .sub{font-size:12px; color:var(--muted); margin-top:2px}
-
-    .controls{
-      display:flex; align-items:center; gap:10px; flex-wrap:wrap;
-    }
-    .pill{
-      display:inline-flex; align-items:center; gap:8px;
-      padding:6px 10px; border-radius:999px;
-      font-size:12px; color:var(--muted);
-      border:1px solid rgba(255,255,255,.10);
-      background:rgba(0,0,0,.22);
-    }
-    .pill b{color:var(--text)}
-    .btn{
-      appearance:none; border:none; cursor:pointer;
-      padding:9px 11px; border-radius:12px;
-      font-size:12px; font-weight:850;
-      color:var(--text);
-      background:rgba(122,162,255,.18);
-      border:1px solid rgba(122,162,255,.25);
-    }
-    .btn:hover{filter:brightness(1.06)}
-    .btn.ghost{
-      background:transparent;
-      border:1px solid rgba(255,255,255,.12);
-      color:var(--muted);
-    }
-
-    /* Layout */
-    .wrap{max-width:1200px; margin:0 auto; padding:18px 16px 40px}
-    .hero{
-      display:grid;
-      grid-template-columns: 1fr;
-      gap:14px;
-      margin-top:10px;
-    }
-    @media(min-width:980px){
-      .hero{grid-template-columns: 1.1fr .9fr;}
-    }
-
-    .card{
-      background:var(--card);
-      border:1px solid rgba(255,255,255,.06);
-      border-radius:var(--r);
-      box-shadow:var(--shadow);
-      overflow:hidden;
-    }
-    .hd{padding:16px 16px 0}
-    .bd{padding:16px}
-    .kicker{
-      font-size:12px; color:rgba(255,255,255,.86);
-      font-weight:900; letter-spacing:.2px;
-      display:flex; align-items:center; gap:10px; flex-wrap:wrap;
-    }
-    .kicker .dot{
-      width:9px; height:9px; border-radius:99px;
-      background:var(--warn);
-      box-shadow:0 0 0 4px rgba(251,191,36,.10);
-    }
-    .kicker.ok .dot{background:var(--good); box-shadow:0 0 0 4px rgba(52,211,153,.10)}
-    .kicker.bad .dot{background:var(--danger); box-shadow:0 0 0 4px rgba(251,113,133,.10)}
-
-    .bigTitle{
-      margin:10px 0 0;
-      font-size:22px;
+    .title{
+      font-size:20px;
       font-weight:950;
       letter-spacing:-.2px;
-      line-height:1.15;
+      margin:0;
+      line-height:1.05;
     }
-    .bigDesc{margin:10px 0 0; color:var(--muted); font-size:13px; line-height:1.55}
-
-    /* Tools */
-    .tools{
-      display:grid; grid-template-columns:1fr; gap:12px;
-      margin-top:14px;
+    .sub{
+      margin-top:6px;
+      font-size:13px;
+      color:var(--muted);
     }
-    @media(min-width:760px){
-      .tools{grid-template-columns:1.2fr .8fr;}
-    }
-
-    input, select{
-      width:100%;
-      padding:10px 11px;
-      border-radius:12px;
-      border:1px solid rgba(255,255,255,.10);
-      background:rgba(0,0,0,.28);
-      color:var(--text);
-      font-size:12px;
-      outline:none;
-    }
-    input:focus, select:focus{
-      border-color:rgba(122,162,255,.35);
-      box-shadow:0 0 0 4px rgba(122,162,255,.12);
-    }
-    label{display:block; font-size:12px; color:var(--muted); margin:0 0 6px}
-    .field{display:flex; flex-direction:column; gap:6px}
-
-    /* Podium */
-    .podium{
-      display:grid;
-      grid-template-columns:1fr;
-      gap:12px;
-    }
-    @media(min-width:760px){
-      .podium{grid-template-columns:1fr 1fr 1fr;}
-    }
-    .pod{
-      position:relative;
-      border-radius:16px;
-      border:1px solid rgba(255,255,255,.10);
-      background:rgba(255,255,255,.03);
-      overflow:hidden;
-      min-height:290px;
-    }
-    .pod::before{
-      content:"";
-      position:absolute; inset:-1px;
-      background: radial-gradient(500px 240px at 30% 10%, rgba(122,162,255,.18), transparent 65%),
-                  radial-gradient(400px 240px at 80% 30%, rgba(52,211,153,.10), transparent 65%);
-      opacity:.85;
-      pointer-events:none;
-    }
-    .podInner{position:relative; padding:12px}
-    .rankTag{
-      display:inline-flex; align-items:center; gap:8px;
-      padding:6px 10px;
-      border-radius:999px;
-      font-size:12px; font-weight:950;
-      border:1px solid rgba(255,255,255,.12);
-      background:rgba(0,0,0,.30);
-    }
-    .rankTag .crown{
-      width:16px; height:16px; display:inline-block;
-      background:linear-gradient(135deg, rgba(255,255,255,.9), rgba(255,255,255,.2));
-      -webkit-mask: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path fill="black" d="M5 16l-2-9l6 5l3-8l3 8l6-5l-2 9H5zm0 4v-2h14v2H5z"/></svg>') center / contain no-repeat;
-      mask: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path fill="black" d="M5 16l-2-9l6 5l3-8l3 8l6-5l-2 9H5zm0 4v-2h14v2H5z"/></svg>') center / contain no-repeat;
-      opacity:.9;
-    }
-
-    .shot{
-      margin-top:10px;
-      border-radius:14px;
-      overflow:hidden;
-      border:1px solid rgba(255,255,255,.10);
-      background:#000;
-      aspect-ratio: 1 / 1;
-      box-shadow:0 14px 38px rgba(0,0,0,.55);
-      transform: translateZ(0);
-    }
-    .shot img{width:100%; height:100%; object-fit:cover; object-position:center; display:block}
-    .meta{margin-top:10px; display:flex; align-items:flex-start; justify-content:space-between; gap:10px}
-    .name{min-width:0}
-    .name .t{font-weight:950; font-size:13px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis}
-    .name .s{font-size:12px; color:var(--muted); margin-top:4px}
-    .score{
+    .stats{
+      display:flex; align-items:center; gap:14px; flex-wrap:wrap;
+      font-size:13px;
+      color:var(--muted);
       text-align:right;
-      font-size:12px;
-      color:rgba(255,255,255,.90);
-      font-weight:900;
+    }
+    .stats b{color:var(--text)}
+    .pill{
+      display:inline-flex; align-items:center; gap:8px;
+      padding:8px 12px;
+      border-radius:999px;
+      border:1px solid rgba(255,255,255,.10);
+      background:rgba(0,0,0,.22);
       white-space:nowrap;
     }
-    .score .mut{display:block; margin-top:3px; font-weight:800; color:var(--muted)}
 
-    /* List */
-    .listHd{
-      display:flex; align-items:flex-end; justify-content:space-between; gap:12px; flex-wrap:wrap;
-      margin-top:14px;
-    }
-    .listHd h2{margin:0; font-size:14px; font-weight:950; letter-spacing:.2px}
-    .small{font-size:12px; color:var(--muted); line-height:1.45}
-
-    .gridList{
-      margin-top:12px;
+    /* Main layout: podium + ranked wall */
+    .wrap{
+      height:calc(100% - 92px);
+      padding:22px 22px 24px;
       display:grid;
-      grid-template-columns:1fr;
-      gap:10px;
-    }
-    @media(min-width:760px){
-      .gridList{grid-template-columns:1fr 1fr;}
-    }
-    @media(min-width:1100px){
-      .gridList{grid-template-columns:1fr 1fr 1fr;}
+      grid-template-columns: 1.1fr 1.4fr;
+      gap:18px;
     }
 
-    .item{
-      border-radius:16px;
-      border:1px solid rgba(255,255,255,.10);
-      background:rgba(255,255,255,.03);
+    /* Left: huge podium (top 3) */
+    .podium{
+      height:100%;
+      border-radius:var(--r);
+      border:1px solid rgba(255,255,255,.08);
+      background:var(--card);
+      box-shadow:var(--shadow);
       overflow:hidden;
       display:flex;
       flex-direction:column;
-      min-height:260px;
+      min-width:0;
     }
-    .thumb{
-      width:100%;
-      aspect-ratio: 1 / 1;
-      background:#000;
-      border-bottom:1px solid rgba(255,255,255,.08);
+    .podiumHead{
+      padding:16px 18px 10px;
+      display:flex; justify-content:space-between; align-items:flex-end; gap:12px;
     }
-    .thumb img{width:100%; height:100%; object-fit:cover; display:block}
-    .itemBd{padding:12px}
-    .row2{display:flex; justify-content:space-between; gap:10px; align-items:flex-start}
-    .rankNo{
-      font-size:12px; font-weight:950;
-      color:rgba(255,255,255,.90);
-      padding:4px 8px;
-      border-radius:999px;
-      border:1px solid rgba(255,255,255,.12);
-      background:rgba(0,0,0,.25);
+    .podiumHead h2{
+      margin:0;
+      font-size:14px;
+      letter-spacing:.2px;
+      font-weight:950;
+      color:rgba(255,255,255,.92);
+    }
+    .podiumHead .hint{
+      font-size:12px;
+      color:var(--muted);
       white-space:nowrap;
     }
-    .wl{margin-top:8px; display:flex; gap:8px; flex-wrap:wrap}
-    .chip{
-      font-size:11px;
-      color:var(--muted);
+    .podiumGrid{
+      flex:1;
+      display:grid;
+      grid-template-columns:1fr;
+      grid-template-rows: 1.05fr .95fr .95fr;
+      gap:14px;
+      padding:12px 14px 16px;
+      min-height:0;
+    }
+    .pod{
+      border-radius:20px;
       border:1px solid rgba(255,255,255,.10);
-      background:rgba(0,0,0,.20);
-      padding:4px 8px;
+      background:rgba(0,0,0,.18);
+      overflow:hidden;
+      display:grid;
+      grid-template-columns: 1.2fr .8fr;
+      min-height:0;
+    }
+    .shot{
+      position:relative;
+      background:#000;
+      min-height:0;
+    }
+    .shot img{
+      width:100%;
+      height:100%;
+      object-fit:cover;
+      object-position:center;
+      display:block;
+    }
+    .meta{
+      padding:14px 14px;
+      display:flex;
+      flex-direction:column;
+      justify-content:space-between;
+      gap:10px;
+      min-width:0;
+    }
+    .rankTag{
+      display:inline-flex;
+      align-items:center;
+      gap:10px;
+      padding:8px 12px;
       border-radius:999px;
-    }
-
-    /* Toast */
-    .toast{
-      position:fixed; left:50%; transform:translateX(-50%);
-      bottom:18px;
-      background:rgba(0,0,0,.70);
+      font-size:14px;
+      font-weight:950;
       border:1px solid rgba(255,255,255,.12);
-      padding:10px 12px;
-      border-radius:12px;
-      color:rgba(255,255,255,.92);
-      font-size:12px;
-      opacity:0; pointer-events:none;
-      transition:opacity .18s ease;
-      z-index:99;
+      background:rgba(255,255,255,.06);
+      width:max-content;
     }
-    .toast.show{opacity:1}
+    .name{
+      font-weight:950;
+      font-size:18px;
+      letter-spacing:-.2px;
+      line-height:1.15;
+      white-space:nowrap;
+      overflow:hidden;
+      text-overflow:ellipsis;
+    }
+    .small{
+      font-size:13px;
+      color:var(--muted);
+      margin-top:6px;
+    }
+    .score{
+      display:flex; flex-direction:column; gap:6px;
+      align-items:flex-start;
+      font-size:14px;
+      color:rgba(255,255,255,.92);
+      font-weight:900;
+    }
+    .score .mut{color:var(--muted); font-weight:800}
 
-    /* Empty / error states */
-    .empty{
+    /* Right: ranked wall (big tiles) */
+    .wall{
+      height:100%;
+      border-radius:var(--r);
+      border:1px solid rgba(255,255,255,.08);
+      background:var(--card);
+      box-shadow:var(--shadow);
+      overflow:hidden;
+      display:flex;
+      flex-direction:column;
+      min-width:0;
+    }
+    .wallHead{
+      padding:16px 18px 10px;
+      display:flex; justify-content:space-between; align-items:flex-end; gap:12px;
+    }
+    .wallHead h2{
+      margin:0;
+      font-size:14px;
+      letter-spacing:.2px;
+      font-weight:950;
+      color:rgba(255,255,255,.92);
+    }
+    .wallHead .hint{
+      font-size:12px;
+      color:var(--muted);
+      white-space:nowrap;
+    }
+    .grid{
+      flex:1;
+      padding:12px 14px 16px;
+      display:grid;
+      gap:14px;
+      min-height:0;
+      /* big tiles, adapts to resolution */
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      grid-auto-rows: 1fr;
+    }
+
+    .tile{
+      border-radius:20px;
       border:1px solid rgba(255,255,255,.10);
-      background:rgba(0,0,0,.22);
-      border-radius:16px;
-      padding:14px;
+      background:rgba(0,0,0,.18);
+      overflow:hidden;
+      display:flex;
+      flex-direction:column;
+      min-height:0;
+    }
+    .thumb{
+      position:relative;
+      flex:1;
+      background:#000;
+      min-height:0;
+    }
+    .thumb img{
+      width:100%;
+      height:100%;
+      object-fit:cover;
+      object-position:center;
+      display:block;
+    }
+    .cap{
+      padding:12px 12px 12px;
+      display:flex;
+      justify-content:space-between;
+      gap:10px;
+      align-items:flex-start;
+    }
+    .cap .left{
+      min-width:0;
+    }
+    .cap .t{
+      font-weight:950;
+      font-size:14px;
+      white-space:nowrap;
+      overflow:hidden;
+      text-overflow:ellipsis;
+      letter-spacing:-.15px;
+    }
+    .cap .s{
+      margin-top:6px;
+      font-size:12px;
+      color:var(--muted);
+      white-space:nowrap;
+      overflow:hidden;
+      text-overflow:ellipsis;
+    }
+    .cap .right{
+      text-align:right;
+      white-space:nowrap;
+      font-size:13px;
+      font-weight:950;
+      color:rgba(255,255,255,.92);
+    }
+    .cap .right .mut{
+      display:block;
+      margin-top:6px;
+      font-weight:800;
       color:var(--muted);
       font-size:12px;
-      line-height:1.5;
-      white-space:pre-wrap;
     }
-    .sep{height:1px; background:rgba(255,255,255,.06); margin:12px 0}
+
+    /* Responsive: if display is narrow, stack */
+    @media(max-width:1100px){
+      .wrap{grid-template-columns:1fr; overflow:auto}
+      body{overflow:auto}
+      .grid{grid-template-columns: repeat(2, minmax(0, 1fr));}
+    }
+    @media(max-width:720px){
+      .grid{grid-template-columns:1fr;}
+      header{height:auto; padding:16px}
+      .wrap{height:auto}
+    }
+
+    /* “No interaction” polish: remove focus outlines */
+    :focus{outline:none}
   </style>
 </head>
 
 <body>
 <header>
-  <div class="bar">
-    <div class="brand">
-      <div class="mark" aria-hidden="true"></div>
-      <div>
-        <h1>Top Ranked Images</h1>
-        <div class="sub" id="subtitle">Loading rankings…</div>
-      </div>
+  <div class="brand">
+    <div class="mark" aria-hidden="true"></div>
+    <div>
+      <div class="title">Leaderboard</div>
+      <div class="sub" id="subtitle">Loading…</div>
     </div>
+  </div>
 
-    <div class="controls">
-      <span class="pill">ns=<b id="nsVal">default</b></span>
-      <span class="pill"><b id="statImages">0</b> images · <b id="statVotes">0</b> votes</span>
-      <button class="btn ghost" id="btnRefresh">Refresh</button>
-      <a class="btn" id="btnVote" href="#" style="text-decoration:none">Vote</a>
-    </div>
+  <div class="stats">
+    <span class="pill">ns=<b id="nsVal">default</b></span>
+    <span class="pill"><b id="imgCount">0</b> images</span>
+    <span class="pill"><b id="voteCount">0</b> votes</span>
+    <span class="pill">Updated <b id="updatedAt">—</b></span>
   </div>
 </header>
 
 <div class="wrap">
-  <section class="hero">
-    <div class="card">
-      <div class="hd">
-        <div class="kicker" id="modeBadge"><span class="dot"></span><span id="modeText">Loading…</span></div>
-        <div class="bigTitle">A living leaderboard</div>
-        <div class="bigDesc">
-          Rankings are calculated from head-to-head votes. Share this page to show what’s winning right now.
-        </div>
-      </div>
-
-      <div class="bd">
-        <div class="tools">
-          <div class="field">
-            <label for="q">Search</label>
-            <input id="q" placeholder="Type a name…" />
-          </div>
-          <div class="field">
-            <label for="sort">Sort</label>
-            <select id="sort">
-              <option value="elo_desc">Elo (high → low)</option>
-              <option value="wins_desc">Wins (high → low)</option>
-              <option value="games_desc">Games (high → low)</option>
-              <option value="name_asc">Name (A → Z)</option>
-            </select>
-          </div>
-        </div>
-
-        <div class="sep"></div>
-
-        <div class="podium" id="podium"></div>
-      </div>
+  <section class="podium">
+    <div class="podiumHead">
+      <h2>Top 3</h2>
+      <div class="hint">Elo computed from votes</div>
     </div>
+    <div class="podiumGrid" id="podium"></div>
+  </section>
 
-    <div class="card">
-      <div class="hd">
-        <div class="kicker ok" id="freshBadge"><span class="dot"></span><span>Details</span></div>
-        <div class="bigDesc" id="detailsBox">
-          Loading…
-        </div>
-      </div>
-      <div class="bd">
-        <div class="listHd">
-          <div>
-            <h2>Full ranking</h2>
-            <div class="small" id="listSub">—</div>
-          </div>
-        </div>
-        <div class="gridList" id="list"></div>
-        <div id="empty" class="empty" style="display:none"></div>
-      </div>
+  <section class="wall">
+    <div class="wallHead">
+      <h2>Ranked</h2>
+      <div class="hint" id="wallHint">Top 9</div>
     </div>
+    <div class="grid" id="grid"></div>
   </section>
 </div>
-
-<div class="toast" id="toast"></div>
 
 <!-- Supabase (primary) -->
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"
@@ -407,316 +367,203 @@
 
 <script>
   /************************************************************
-   * Public Ranking Page
-   * Strategy:
-   *  A) Try to compute Elo from public votes SELECT (best).
-   *  B) Else, try reading elo/wins/losses from images columns.
+   * BIG-SCREEN LEADERBOARD (Option A)
+   * - No user interaction (no inputs/buttons).
+   * - Reads public images + public votes, computes Elo client-side.
    ************************************************************/
 
   // === Your Supabase project ===
   const SUPABASE_URL = "https://rvhzustlabdqtbyrmucr.supabase.co";
   const SUPABASE_ANON_KEY = "sb_publishable_79bmlNeUgShdjcC-G9qIdw__nkmKXAV";
 
-  // Your public voting page
-  const MATCHUP_URL = "https://pmw5.github.io/pmw5/image_preference/matchup.html";
-
-  // Elo config
-  const DEFAULT_K = 32;
-
-  // Namespace (optional)
+  // Namespace (keep, even if you don't filter yet)
   const qs = new URLSearchParams(location.search);
   const NS = (qs.get('ns') || 'default').trim() || 'default';
 
-  // UI
-  const nsVal = document.getElementById('nsVal');
-  const statImages = document.getElementById('statImages');
-  const statVotes = document.getElementById('statVotes');
+  // Elo config
+  const START_ELO = 1000;
+  const K = 32;
 
+  // Display config
+  const WALL_COUNT = 9;        // how many tiles on the right
+  const REFRESH_MS = 15000;    // passive auto-refresh for live events
+
+  // UI
   const subtitle = document.getElementById('subtitle');
-  const modeBadge = document.getElementById('modeBadge');
-  const modeText = document.getElementById('modeText');
-  const detailsBox = document.getElementById('detailsBox');
+  const nsVal = document.getElementById('nsVal');
+  const imgCount = document.getElementById('imgCount');
+  const voteCount = document.getElementById('voteCount');
+  const updatedAt = document.getElementById('updatedAt');
+  const wallHint = document.getElementById('wallHint');
 
   const podiumEl = document.getElementById('podium');
-  const listEl = document.getElementById('list');
-  const emptyEl = document.getElementById('empty');
-
-  const qEl = document.getElementById('q');
-  const sortEl = document.getElementById('sort');
-
-  const btnRefresh = document.getElementById('btnRefresh');
-  const btnVote = document.getElementById('btnVote');
-
-  const toastEl = document.getElementById('toast');
-
-  // State
-  let sb;
-  let images = [];   // {id,name,url,active, ...maybe elo,wins,losses}
-  let votes = [];    // {winner_id,loser_id,created_at}
-  let rows = [];     // computed rows: {img, elo, wins, losses, games}
-  let mode = "loading"; // "live" | "stored" | "unavailable"
+  const gridEl = document.getElementById('grid');
 
   nsVal.textContent = NS;
-  btnVote.href = `${MATCHUP_URL}?ns=${encodeURIComponent(NS)}`;
+  wallHint.textContent = `Top ${WALL_COUNT}`;
 
-  btnRefresh.addEventListener('click', () => loadAll(true));
-  qEl.addEventListener('input', render);
-  sortEl.addEventListener('change', render);
+  let sb;
 
   init();
 
   async function init(){
-    subtitle.textContent = "Loading rankings…";
-    setMode("loading", "Loading…", "Loading…");
-
     const okLib = await waitForSupabase(2500);
     if (!okLib){
-      setMode("unavailable", "Supabase library failed to load", "Could not load @supabase/supabase-js. Check blockers/CSP.");
-      showEmpty(
-        "Supabase library failed to load.\n\n" +
-        "Try another browser, disable adblock, or ensure GitHub Pages can load the CDN scripts."
-      );
+      subtitle.textContent = "Supabase library failed to load (check blockers/CDN).";
       return;
     }
 
     sb = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
-    await loadAll(false);
+
+    // First load, then passive loop
+    await loadAndRender();
+    setInterval(loadAndRender, REFRESH_MS);
   }
 
-  async function loadAll(force){
-    clearEmpty();
-    subtitle.textContent = "Loading rankings…";
-    setMode("loading", "Loading…", "Fetching images & ranking data…");
+  async function loadAndRender(){
+    subtitle.textContent = "Loading…";
 
-    const okImages = await loadImages();
-    if (!okImages) return;
+    const images = await loadImages();
+    if (!images) return;
 
-    // Try live compute first (needs public SELECT on votes)
-    const okVotes = await tryLoadVotes();
+    const votes = await loadVotes();
+    if (!votes) return;
 
-    if (okVotes){
-      mode = "live";
-      computeEloFromVotes();
-      setMode("live", "Live Elo (computed from votes)", `Computed from ${votes.length} votes · K=${DEFAULT_K}`);
-      subtitle.textContent = "Live Elo leaderboard";
-      detailsBox.textContent =
-        `This page computes Elo client-side from raw head-to-head votes. ` +
-        `If you expect lots of votes, consider storing Elo server-side to load faster.`;
-      render();
-      return;
-    }
+    imgCount.textContent = String(images.length);
+    voteCount.textContent = String(votes.length);
 
-    // Fallback to stored columns on images (if you add them)
-    const okStored = tryReadStoredRanking();
-    if (okStored){
-      mode = "stored";
-      setMode("stored", "Stored rankings", "Showing Elo/W-L stored on the images table.");
-      subtitle.textContent = "Leaderboard";
-      detailsBox.textContent =
-        `Votes are not publicly readable, so this page is showing stored ranking fields. ` +
-        `If you want live Elo, add a public SELECT policy on votes (or create a public view).`;
-      render();
-      return;
-    }
+    const rows = computeElo(images, votes);
+    render(rows);
 
-    // Nothing available
-    mode = "unavailable";
-    setMode("unavailable", "Ranking not available yet", "No public vote access, and no stored ranking fields found.");
-    subtitle.textContent = "Leaderboard unavailable";
-    showEmpty(
-      "Ranking can't be shown publicly yet.\n\n" +
-      "To fix, choose ONE approach:\n" +
-      "1) Allow public SELECT on votes (simple; good for small vote volumes), OR\n" +
-      "2) Store Elo/W-L on images and update it from the admin dashboard.\n\n" +
-      "I can help you implement either approach."
-    );
+    updatedAt.textContent = new Date().toLocaleTimeString([], {hour:'2-digit', minute:'2-digit'});
+    subtitle.textContent = "Live rankings";
   }
 
   async function loadImages(){
-    // Public page should read ACTIVE images
     let q = sb.from('images').select('*').eq('active', true);
-
-    // If you add namespace columns later:
+    // If you later add a namespace column, uncomment:
     // q = q.eq('namespace', NS);
 
     const { data, error } = await q;
     if (error){
-      setMode("unavailable", "Could not load images", error.message);
-      showEmpty(
-        "Could not load images from Supabase.\n\n" +
-        "Common fix (RLS):\n" +
-        'CREATE POLICY "public read active images" ON public.images\n' +
-        'FOR SELECT TO anon, authenticated USING (active = true);'
-      );
-      return false;
+      subtitle.textContent = "Could not load images (check RLS policy).";
+      return null;
     }
-
-    images = (data || []).filter(x => x?.id && x?.url).map(x => ({
+    return (data || []).filter(x => x?.id && x?.url).map(x => ({
       ...x,
       name: x.name || "Untitled"
     }));
-
-    statImages.textContent = String(images.length);
-    return true;
   }
 
-  async function tryLoadVotes(){
-    votes = [];
-
-    // If there are many votes, you can cap this.
-    // For dozens of voters this is fine.
+  async function loadVotes(){
     let q = sb.from('votes').select('winner_id,loser_id,created_at').order('created_at', { ascending: true });
-
-    // If you add namespace columns later:
+    // If you later add a namespace column, uncomment:
     // q = q.eq('namespace', NS);
 
     const { data, error } = await q;
     if (error){
-      // Not publicly readable (expected for many setups)
-      statVotes.textContent = "0";
-      return false;
+      subtitle.textContent = "Votes are not publicly readable (Option A policy missing).";
+      return null;
     }
-
-    votes = (data || []).filter(v => v?.winner_id && v?.loser_id);
-    statVotes.textContent = String(votes.length);
-    return true;
+    return (data || []).filter(v => v?.winner_id && v?.loser_id);
   }
 
-  function computeEloFromVotes(){
+  function computeElo(images, votes){
     const r = Object.create(null);
     for (const img of images){
-      r[img.id] = { elo: 1000, wins: 0, losses: 0 };
+      r[img.id] = { elo: START_ELO, wins: 0, losses: 0 };
     }
 
-    // Apply votes in chronological order (already ordered)
     for (const v of votes){
       if (!r[v.winner_id] || !r[v.loser_id]) continue;
-      applyElo(r, v.winner_id, v.loser_id, DEFAULT_K);
+      applyElo(r, v.winner_id, v.loser_id, K);
     }
 
-    rows = images.map(img => {
-      const rr = r[img.id] || { elo: 1000, wins: 0, losses: 0 };
-      return {
-        img,
-        elo: rr.elo,
-        wins: rr.wins,
-        losses: rr.losses,
-        games: rr.wins + rr.losses
-      };
+    return images.map(img => {
+      const rr = r[img.id] || { elo: START_ELO, wins: 0, losses: 0 };
+      const games = rr.wins + rr.losses;
+      return { img, elo: rr.elo, wins: rr.wins, losses: rr.losses, games };
     }).sort((a,b) => b.elo - a.elo);
   }
 
-  function tryReadStoredRanking(){
-    // If you choose to store elo/wins/losses on images, this will work without reading votes.
-    // Expected fields: elo (number), wins (number), losses (number)
-    const hasAny = images.some(i => isFiniteNumber(i.elo));
-    if (!hasAny) return false;
+  function applyElo(ratings, winnerId, loserId, K){
+    const w = ratings[winnerId];
+    const l = ratings[loserId];
 
-    rows = images.map(img => ({
-      img,
-      elo: toNumber(img.elo, 1000),
-      wins: toNumber(img.wins, 0),
-      losses: toNumber(img.losses, 0),
-      games: toNumber(img.wins, 0) + toNumber(img.losses, 0)
-    })).sort((a,b) => b.elo - a.elo);
+    const expectedW = 1 / (1 + Math.pow(10, (l.elo - w.elo) / 400));
+    const expectedL = 1 - expectedW;
 
-    statVotes.textContent = "—";
-    return true;
+    w.elo = w.elo + K * (1 - expectedW);
+    l.elo = l.elo + K * (0 - expectedL);
+
+    w.wins += 1;
+    l.losses += 1;
   }
 
-  function render(){
-    clearEmpty();
-    if (!rows.length){
-      showEmpty("No active images found.");
-      return;
+  function render(rows){
+    // Podium (Top 3)
+    const top3 = rows.slice(0,3);
+
+    podiumEl.innerHTML = "";
+    for (let i=0; i<3; i++){
+      const row = top3[i] || null;
+      podiumEl.appendChild(makePod(i+1, row));
     }
 
-    const q = (qEl.value || "").trim().toLowerCase();
-    const sort = sortEl.value;
-
-    let filtered = rows.filter(r => {
-      if (!q) return true;
-      return (r.img.name || "").toLowerCase().includes(q) || (r.img.id || "").toLowerCase().includes(q);
-    });
-
-    filtered = sortRows(filtered, sort);
-
-    // podium uses top 3 of current filtered list
-    renderPodium(filtered.slice(0,3));
-    renderList(filtered);
-    document.getElementById('listSub').textContent =
-      `${filtered.length} shown` + (q ? ` · filtered by “${qEl.value.trim()}”` : "");
-  }
-
-  function renderPodium(top3){
-    podiumEl.innerHTML = "";
-
-    // Always render 3 slots for visual stability
-    for (let i=0; i<3; i++){
-      const r = top3[i] || null;
-      podiumEl.appendChild(makePod(i+1, r));
+    // Wall (next N)
+    const wall = rows.slice(3, 3 + WALL_COUNT);
+    gridEl.innerHTML = "";
+    for (let i=0; i<wall.length; i++){
+      gridEl.appendChild(makeTile(i+4, wall[i]));
     }
   }
 
   function makePod(rank, row){
-    const pod = document.createElement('div');
-    pod.className = 'pod';
-
-    const inner = document.createElement('div');
-    inner.className = 'podInner';
-
-    const tag = document.createElement('div');
-    tag.className = 'rankTag';
-    tag.innerHTML = (rank === 1 ? `<span class="crown"></span>` : ``) + `#${rank}`;
+    const el = document.createElement('div');
+    el.className = 'pod';
 
     const shot = document.createElement('div');
     shot.className = 'shot';
-
     const img = document.createElement('img');
-    img.loading = 'lazy';
+    img.loading = 'eager';
     img.alt = row?.img?.name || `Rank ${rank}`;
     img.src = row?.img?.url || '';
-    if (!row) img.style.opacity = .25;
     shot.appendChild(img);
 
     const meta = document.createElement('div');
     meta.className = 'meta';
 
+    const tag = document.createElement('div');
+    tag.className = 'rankTag';
+    tag.textContent = `#${rank}`;
+
     const name = document.createElement('div');
     name.className = 'name';
-    name.innerHTML =
-      `<div class="t">${escapeHtml(row?.img?.name || "—")}</div>` +
-      `<div class="s">${row ? escapeHtml(shortId(row.img.id)) : "Waiting for votes…"}</div>`;
+    name.textContent = row?.img?.name || "—";
+
+    const small = document.createElement('div');
+    small.className = 'small';
+    small.textContent = row ? shortId(row.img.id) : "Waiting for votes…";
 
     const score = document.createElement('div');
     score.className = 'score';
-    score.innerHTML =
-      row
-        ? `${Math.round(row.elo)}<span class="mut">${row.wins}-${row.losses}</span>`
-        : `—<span class="mut">—</span>`;
+    score.innerHTML = row
+      ? `${Math.round(row.elo)} Elo <span class="mut">· ${row.wins}-${row.losses} · ${row.games} games</span>`
+      : `<span class="mut">—</span>`;
 
+    meta.appendChild(tag);
     meta.appendChild(name);
+    meta.appendChild(small);
     meta.appendChild(score);
 
-    inner.appendChild(tag);
-    inner.appendChild(shot);
-    inner.appendChild(meta);
-
-    pod.appendChild(inner);
-    return pod;
+    el.appendChild(shot);
+    el.appendChild(meta);
+    return el;
   }
 
-  function renderList(list){
-    listEl.innerHTML = "";
-    for (let i=0; i<list.length; i++){
-      const r = list[i];
-      listEl.appendChild(makeItem(i+1, r));
-    }
-  }
-
-  function makeItem(rank, row){
+  function makeTile(rank, row){
     const el = document.createElement('div');
-    el.className = 'item';
+    el.className = 'tile';
 
     const thumb = document.createElement('div');
     thumb.className = 'thumb';
@@ -726,100 +573,27 @@
     img.src = row.img.url;
     thumb.appendChild(img);
 
-    const bd = document.createElement('div');
-    bd.className = 'itemBd';
-
-    const row2 = document.createElement('div');
-    row2.className = 'row2';
+    const cap = document.createElement('div');
+    cap.className = 'cap';
 
     const left = document.createElement('div');
-    left.style.minWidth = "0";
+    left.className = 'left';
     left.innerHTML =
-      `<div style="font-weight:950; font-size:13px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">${escapeHtml(row.img.name)}</div>` +
-      `<div style="color:var(--muted); font-size:12px; margin-top:4px">${escapeHtml(shortId(row.img.id))}</div>`;
+      `<div class="t">#${rank} · ${escapeHtml(row.img.name)}</div>` +
+      `<div class="s">${escapeHtml(shortId(row.img.id))}</div>`;
 
     const right = document.createElement('div');
+    right.className = 'right';
     right.innerHTML =
-      `<div class="rankNo">#${rank}</div>` +
-      `<div style="text-align:right; margin-top:8px; font-weight:950; font-size:12px">${Math.round(row.elo)} Elo</div>` +
-      `<div style="text-align:right; color:var(--muted); font-size:12px; margin-top:4px">${row.games} games</div>`;
+      `${Math.round(row.elo)} Elo` +
+      `<span class="mut">${row.wins}-${row.losses}</span>`;
 
-    row2.appendChild(left);
-    row2.appendChild(right);
-
-    const wl = document.createElement('div');
-    wl.className = 'wl';
-    wl.innerHTML =
-      `<span class="chip">W-L: <b style="color:var(--text)">${row.wins}-${row.losses}</b></span>` +
-      `<span class="chip">Win rate: <b style="color:var(--text)">${formatPct(row.games ? row.wins/row.games : 0)}</b></span>`;
-
-    bd.appendChild(row2);
-    bd.appendChild(wl);
+    cap.appendChild(left);
+    cap.appendChild(right);
 
     el.appendChild(thumb);
-    el.appendChild(bd);
+    el.appendChild(cap);
     return el;
-  }
-
-  function sortRows(arr, sort){
-    const a = arr.slice();
-    if (sort === "elo_desc") return a.sort((x,y) => y.elo - x.elo);
-    if (sort === "wins_desc") return a.sort((x,y) => y.wins - x.wins || y.elo - x.elo);
-    if (sort === "games_desc") return a.sort((x,y) => y.games - x.games || y.elo - x.elo);
-    if (sort === "name_asc") return a.sort((x,y) => (x.img.name||"").localeCompare(y.img.name||""));
-    return a;
-  }
-
-  function applyElo(ratings, winnerId, loserId, K){
-    const w = ratings[winnerId];
-    const l = ratings[loserId];
-    const expectedW = 1 / (1 + Math.pow(10, (l.elo - w.elo) / 400));
-    const expectedL = 1 - expectedW;
-
-    w.elo = w.elo + K * (1 - expectedW);
-    l.elo = l.elo + K * (0 - expectedL);
-    w.wins += 1;
-    l.losses += 1;
-  }
-
-  function setMode(kind, title, detail){
-    if (kind === "live"){
-      modeBadge.className = "kicker ok";
-      modeBadge.querySelector('.dot').style.background = "var(--good)";
-      modeText.textContent = title;
-      detailsBox.textContent = detail;
-      return;
-    }
-    if (kind === "stored"){
-      modeBadge.className = "kicker";
-      modeBadge.querySelector('.dot').style.background = "var(--accent)";
-      modeText.textContent = title;
-      detailsBox.textContent = detail;
-      return;
-    }
-    if (kind === "unavailable"){
-      modeBadge.className = "kicker bad";
-      modeBadge.querySelector('.dot').style.background = "var(--danger)";
-      modeText.textContent = title;
-      detailsBox.textContent = detail;
-      return;
-    }
-    // loading
-    modeBadge.className = "kicker";
-    modeBadge.querySelector('.dot').style.background = "var(--warn)";
-    modeText.textContent = title;
-    detailsBox.textContent = detail;
-  }
-
-  function showEmpty(msg){
-    podiumEl.innerHTML = "";
-    listEl.innerHTML = "";
-    emptyEl.style.display = "";
-    emptyEl.textContent = msg;
-  }
-  function clearEmpty(){
-    emptyEl.style.display = "none";
-    emptyEl.textContent = "";
   }
 
   async function waitForSupabase(timeoutMs){
@@ -831,13 +605,7 @@
     return !!window.supabase?.createClient;
   }
 
-  function toast(msg){
-    toastEl.textContent = msg;
-    toastEl.classList.add('show');
-    clearTimeout(toastEl._t);
-    toastEl._t = setTimeout(() => toastEl.classList.remove('show'), 1000);
-  }
-
+  function shortId(id){ return (id || "").slice(0, 8); }
   function escapeHtml(s){
     return String(s)
       .replaceAll('&', '&amp;')
@@ -845,16 +613,6 @@
       .replaceAll('>', '&gt;')
       .replaceAll('"', '&quot;')
       .replaceAll("'", '&#039;');
-  }
-  function shortId(id){ return (id || "").slice(0, 8); }
-  function isFiniteNumber(x){ return typeof x === "number" && isFinite(x); }
-  function toNumber(x, fallback){
-    const n = Number(x);
-    return Number.isFinite(n) ? n : fallback;
-  }
-  function formatPct(x){
-    const p = Math.round((x || 0) * 1000) / 10; // 0.1%
-    return `${p.toFixed(1)}%`;
   }
 </script>
 </body>
