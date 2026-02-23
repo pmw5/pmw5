@@ -1,0 +1,57 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, height=device-height, initial-scale=1, user-scalable=no" />
+  <title>Virtual Navigation 3D</title>
+  <link rel="stylesheet" href="virtual-navigation-3d.css">
+</head>
+<body>
+  <div class="hud" aria-label="Game HUD">
+    <div class="chip">
+      <span class="label">Level</span>
+      <span class="value" id="levelValue">1</span>
+    </div>
+    <div class="chip">
+      <span class="label">Score</span>
+      <span class="value" id="scoreValue">0</span>
+    </div>
+    <div class="chip">
+      <span class="label">Time</span>
+      <span class="value" id="timerValue">15</span>
+    </div>
+    <div class="chip">
+      <span class="label">Lives</span>
+      <div class="lives" id="livesValue" aria-label="3 lives remaining">
+        <span class="life" aria-hidden="true">❤️</span>
+        <span class="life" aria-hidden="true">❤️</span>
+        <span class="life" aria-hidden="true">❤️</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="banner" id="banner" role="status" aria-live="polite"></div>
+  <div class="feedbackFlash" id="feedbackFlash" aria-hidden="true"></div>
+
+  <div class="overlay is-open" id="overlay" role="dialog" aria-modal="true" aria-label="How to play">
+    <div class="panel">
+      <h1 id="overlayTitle">How to Play</h1>
+      <p id="overlayText">
+        Look for the hedge square with grapes inside, then tap where you want to walk.
+      </p>
+      <p class="scoreLabel hidden" id="overlayScoreLabel"></p>
+      <p class="modalScore hidden" id="overlayScore"></p>
+      <p class="overlaySub hidden" id="highScoreTitle">Today's Top Scores</p>
+      <ol class="highScoreList hidden" id="highScoreList"></ol>
+      <div class="initialsEntry hidden" id="initialsEntry">
+        <p class="overlaySub">Enter your initials</p>
+        <div class="initialsValue" id="initialsValue">_ _ _</div>
+        <div class="initialsKeyboard" id="initialsKeyboard" aria-label="Initials keyboard"></div>
+      </div>
+      <button class="panelSaveBtn hidden" id="saveInitialsBtn" type="button">Save Score</button>
+      <button id="overlayButton" type="button">Let's Play!</button>
+    </div>
+  </div>
+  <script type="module" src="virtual-navigation-3d.js"></script>
+</body>
+</html>

@@ -1,0 +1,306 @@
+:root {
+  --hud-h: clamp(4.2rem, 11vh, 6.5rem);
+  --r-md: clamp(0.7rem, 2vmin, 1.1rem);
+  --r-lg: clamp(0.9rem, 2.6vmin, 1.4rem);
+  --b-thin: clamp(0.08rem, 0.25vmin, 0.14rem);
+  --b-mid: clamp(0.12rem, 0.35vmin, 0.18rem);
+  --LLNavy: #063853;
+  --LLYellow: #f2b000;
+  --LLBlue: #00acc1;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html,
+body {
+  margin: 0;
+  height: 100%;
+  overflow: hidden;
+  background: var(--LLBlue);
+  font-family: "Comic Sans MS", "custom_body_font", dk-new-beginnings, system-ui, -apple-system, Segoe UI, Roboto, Arial;
+  touch-action: none;
+}
+
+canvas {
+  display: block;
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+}
+
+.hud {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 10;
+  min-height: var(--hud-h);
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: clamp(0.4rem, 1.2vmin, 0.8rem);
+  align-items: center;
+  padding: clamp(0.5rem, 1.4vmin, 0.9rem);
+  background: rgba(6, 56, 83, 0.92);
+  border-bottom: var(--b-mid) solid rgba(255, 255, 255, 0.14);
+}
+
+.chip {
+  min-width: 0;
+  padding: clamp(0.45rem, 1.2vmin, 0.8rem) clamp(0.55rem, 1.4vmin, 0.9rem);
+  border-radius: var(--r-md);
+  background: rgba(0, 0, 0, 0.2);
+  border: var(--b-thin) solid rgba(0, 0, 0, 0.1);
+  color: #fff;
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  gap: clamp(0.12rem, 0.4vmin, 0.25rem);
+}
+
+.label {
+  font-size: clamp(0.75rem, 1.8vmin, 0.9rem);
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  opacity: 0.85;
+  font-weight: 800;
+  line-height: 1.05;
+}
+
+.value {
+  font-size: clamp(1.1rem, 3.2vmin, 1.9rem);
+  font-weight: 1000;
+  line-height: 1;
+}
+
+.banner {
+  position: fixed;
+  top: calc(var(--hud-h) + clamp(0.5rem, 1.5vmin, 0.9rem));
+  left: 50%;
+  transform: translate(-50%, -10px);
+  z-index: 12;
+  background: rgba(6, 56, 83, 0.9);
+  color: #fff;
+  border: var(--b-thin) solid rgba(255, 255, 255, 0.24);
+  border-radius: 999px;
+  padding: clamp(0.5rem, 1.4vmin, 0.8rem) clamp(0.8rem, 2.4vmin, 1.2rem);
+  max-width: min(92vw, 44rem);
+  text-align: center;
+  font-size: clamp(0.8rem, 1.9vmin, 0.95rem);
+  opacity: 0;
+  transition: opacity 150ms ease, transform 150ms ease;
+  pointer-events: none;
+}
+
+.banner.is-visible {
+  opacity: 1;
+  transform: translate(-50%, 0);
+}
+
+.feedbackFlash {
+  position: fixed;
+  inset: 0;
+  z-index: 11;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 130ms ease;
+}
+
+.feedbackFlash.is-visible {
+  opacity: 1;
+}
+
+.feedbackFlash.correct {
+  background: rgba(52, 188, 106, 0.28);
+}
+
+.feedbackFlash.wrong {
+  background: rgba(219, 72, 72, 0.3);
+}
+
+.overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 20;
+  display: none;
+  place-items: center;
+  background: rgba(10, 14, 30, 0.55);
+  backdrop-filter: blur(clamp(0.12rem, 0.8vmin, 0.35rem));
+}
+
+.overlay.is-open {
+  display: grid;
+}
+
+.panel {
+  width: min(44rem, 92vw);
+  min-height: min(22rem, 92vw);
+  background: rgba(255, 255, 255, 0.92);
+  color: var(--LLNavy);
+  border-radius: var(--r-lg);
+  padding: clamp(0.8rem, 2.4vmin, 1.25rem);
+  box-shadow: 0 2.2vmin 5vmin rgba(0, 0, 0, 0.25);
+  border: var(--b-thin) solid rgba(255, 255, 255, 0.32);
+  display: grid;
+  grid-template-rows: auto 1fr auto auto auto auto auto auto;
+  gap: clamp(0.35rem, 1.2vmin, 0.75rem);
+}
+
+.overlay.gameOverLayout .panel {
+  width: min(96vw, 86rem);
+  height: min(94svh, 68rem);
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  gap: clamp(0.35rem, 1.2vmin, 0.75rem);
+  overflow: auto;
+  background: #d6dde1;
+}
+
+.panel h1 {
+  margin: 0 0 clamp(0.35rem, 1.2vmin, 0.75rem) 0;
+  text-align: center;
+  font-size: clamp(2.2rem, 6.2vmin, 3.5rem);
+  font-weight: 1000;
+}
+
+.panel p {
+  margin: 0;
+  line-height: 1.35;
+  font-weight: 650;
+  font-size: clamp(0.95rem, 2.2vmin, 1.1rem);
+}
+
+.overlaySub {
+  margin: 0;
+  text-align: center;
+  color: var(--LLNavy);
+  line-height: 1.3;
+  font-weight: 800;
+  font-size: clamp(0.95rem, 2.2vmin, 1.1rem);
+}
+
+.scoreLabel,
+.modalScore {
+  justify-self: center;
+  text-align: center;
+  margin: 0;
+  color: var(--LLNavy);
+}
+
+.scoreLabel {
+  font-size: clamp(1.25rem, 3.4vmin, 2rem);
+  font-weight: 750;
+}
+
+.modalScore {
+  font-size: clamp(2.1rem, 6.2vmin, 3.8rem);
+  font-weight: 1000;
+}
+
+.highScoreList {
+  margin: 0;
+  padding: 0 clamp(0.3rem, 1vmin, 0.6rem);
+  list-style-position: inside;
+  color: var(--LLNavy);
+  font-weight: 700;
+  font-size: clamp(0.95rem, 2.2vmin, 1.1rem);
+  text-align: center;
+}
+
+.overlay.gameOverLayout .highScoreList {
+  font-size: clamp(1.25rem, 3.1vmin, 1.9rem);
+  line-height: 1.35;
+}
+
+.initialsEntry {
+  display: grid;
+  gap: clamp(0.35rem, 1vmin, 0.6rem);
+}
+
+.initialsValue {
+  text-align: center;
+  font-size: clamp(1.35rem, 4vmin, 2rem);
+  color: var(--LLNavy);
+  font-weight: 900;
+  letter-spacing: 0.3em;
+}
+
+.initialsKeyboard{
+  display: grid;
+  grid-template-columns: repeat(7, minmax(0, 1fr));
+  gap: clamp(0.25rem, 0.9vmin, 0.45rem);
+}
+
+.keyBtn{
+  border: 0;
+  border-radius: var(--r-sm);
+  background: rgba(6,56,83,0.12);
+  color: var(--LLNavy);
+  font-size: clamp(0.9rem, 2.1vmin, 1rem);
+  font-weight: 900;
+  padding: clamp(0.4rem, 1.2vmin, 0.6rem);
+}
+
+.keyBtn.wide{
+  grid-column: span 2;
+}
+
+.panelSaveBtn {
+  width: 100%;
+  border: 0;
+  border-radius: var(--r-md);
+  background: var(--LLYellow);
+  color: #000;
+  font-size: clamp(1rem, 2.4vmin, 1.1rem);
+  font-weight: 900;
+  padding: clamp(0.55rem, 1.7vmin, 0.85rem);
+  cursor: pointer;
+}
+
+.panel button {
+  margin-top: clamp(0.75rem, 2vmin, 1rem);
+  width: 100%;
+  border: 0;
+  border-radius: var(--r-md);
+  background: var(--LLYellow);
+  color: #000;
+  font-size: clamp(1rem, 2.6vmin, 1.2rem);
+  font-weight: 1000;
+  padding: clamp(0.65rem, 2vmin, 1rem);
+  cursor: pointer;
+}
+
+.panel button:active {
+  transform: scale(0.99);
+}
+
+.hidden {
+  display: none !important;
+}
+
+@media (max-width: 700px) {
+  .hud {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+.lives {
+  display: flex;
+  gap: clamp(0.35rem, 2.4vmin, 0.7rem);
+  align-items: center;
+  justify-content: center;
+  min-height: clamp(1.8rem, 5.2vmin, 2.4rem);
+}
+
+.life {
+  font-size: clamp(1rem, 3.2vmin, 1.35rem);
+  line-height: 1;
+  filter: drop-shadow(0 0.15rem 0.22rem rgba(0, 0, 0, 0.2));
+}
+
+.life.lost {
+  opacity: 0.25;
+  filter: grayscale(1);
+}
