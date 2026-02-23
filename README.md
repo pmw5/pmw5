@@ -6,7 +6,7 @@
 
 [Image Preference Tool](https://pmw5.github.io/pmw5/image_preference/matchup.html)
 
-[Virtual Navigation Game](https://pmw5.github.io/pmw5/virtual-navigation/virtual-navigation.html)
+[Virtual Navigation Game](https://pmw5.github.io/pmw5/virtual-navigation/virtual-navigation-3d.html)
 
 [Working Memory Grid Game](https://pmw5.github.io/pmw5/working-memory/working-memory-rows.html)
 
