@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Interrupted Memory Task</title>
+  <link rel="stylesheet" href="interrupted-memory-task.css">
+</head>
+<body>
+  <div class="hud" aria-label="HUD">
+    <div class="hudGroup">
+      <div class="chip">
+        <div class="label">Level</div>
+        <div class="value" id="levelValue">1</div>
+      </div>
+      <div class="chip">
+        <div class="label">Score</div>
+        <div class="value" id="scoreValue">0</div>
+      </div>
+    </div>
+    <div class="lives" aria-label="Lives">
+      <div class="life" data-life="0">❤️</div>
+      <div class="life" data-life="1">❤️</div>
+      <div class="life" data-life="2">❤️</div>
+    </div>
+  </div>
+
+  <div class="stage">
+    <div class="modal show" id="levelModal" aria-label="Level start modal">
+      <div class="modalCard">
+        <h3 class="modalTitle" id="modalTitle">How To Play</h3>
+        <p class="modalText" id="modalText"></p>
+        <p class="scoreLabel" id="scoreLabel"></p>
+        <p class="modalScore" id="modalScore"></p>
+        <p class="scoreLabel hidden" id="highScoreTitle">Today's Top Scores</p>
+        <ol class="highScoreList hidden" id="highScoreList"></ol>
+        <div class="initialsEntry hidden" id="initialsEntry">
+          <p class="modalText">Enter your initials</p>
+          <div class="initialsValue" id="initialsValue">_ _ _</div>
+          <div class="initialsKeyboard" id="initialsKeyboard" aria-label="Initials keyboard"></div>
+        </div>
+        <button class="modalBtn hidden" id="saveInitialsBtn" type="button">Save Score</button>
+        <button class="modalBtn" id="startLevelBtn" type="button">START</button>
+      </div>
+    </div>
+
+    <div class="board" id="board">
+      <div class="sampleWrap" id="sampleWrap">
+        <p class="sectionTitle">Remember this object</p>
+        <button class="objectCard" id="sampleCard" type="button" disabled aria-label="Sample object"></button>
+      </div>
+
+      <div class="cupsWrap hidden" id="cupsWrap">
+        <p class="sectionTitle" id="cupsTitle">Watch the hidden reward</p>
+        <div class="cupsArena" id="cupsArena" aria-label="Cup shuffle area">
+          <div class="token" id="token" aria-hidden="true">🪙</div>
+          <button class="cup" type="button" data-cup="0" aria-label="Cup 1"></button>
+          <button class="cup" type="button" data-cup="1" aria-label="Cup 2"></button>
+          <button class="cup" type="button" data-cup="2" aria-label="Cup 3"></button>
+        </div>
+      </div>
+
+      <div class="choicesWrap hidden" id="choicesWrap">
+        <p class="sectionTitle">Choose the matching object</p>
+        <div class="choicesRow">
+          <button class="objectCard choiceCard" id="choiceA" data-choice="0" type="button" aria-label="Choice A"></button>
+          <button class="objectCard choiceCard" id="choiceB" data-choice="1" type="button" aria-label="Choice B"></button>
+          <button class="objectCard choiceCard hidden" id="choiceC" data-choice="2" type="button" aria-label="Choice C"></button>
+          <button class="objectCard choiceCard hidden" id="choiceD" data-choice="3" type="button" aria-label="Choice D"></button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+
+  <script src="interrupted-memory-task.js"></script>
+</body>
+</html>
