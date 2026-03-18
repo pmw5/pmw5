@@ -7,9 +7,7 @@
     const livesEls = [...document.querySelectorAll(".life")];
 
     const timerChip = document.getElementById("timerChip");
-    const timerMode = document.getElementById("timerMode");
     const timerNumber = document.getElementById("timerNumber");
-    const timerTag = document.getElementById("timerTag");
 
     const countFill = document.getElementById("countFill");
     const waitOverlay = document.getElementById("waitOverlay");
@@ -20,20 +18,8 @@
     const scoreLabel = document.getElementById("scoreLabel");
     const modalScore = document.getElementById("modalScore");
     const startLevelBtn = document.getElementById("startLevelBtn");
-    const highScoreTitle = document.getElementById("highScoreTitle");
-    const highScoreList = document.getElementById("highScoreList");
-    const initialsEntry = document.getElementById("initialsEntry");
-    const initialsValue = document.getElementById("initialsValue");
-    const initialsKeyboard = document.getElementById("initialsKeyboard");
-    const saveInitialsBtn = document.getElementById("saveInitialsBtn");
-
-    const HIGHSCORE_STORAGE_KEY = "llk.highscores.memory-rows-game";
-    const HIGHSCORE_LIMIT = 3;
-    const INITIALS_MAX_LEN = 3;
 
     let gameOver = false;
-    let awaitingHighScoreEntry = false;
-    let initialsDraft = "";
 
 
     let score = 0;
@@ -143,185 +129,24 @@
       levelModal.classList.toggle("show", !!show);
     }
 
-    function todayStamp(){
-      const now = new Date();
-      const y = now.getFullYear();
-      const m = String(now.getMonth() + 1).padStart(2, "0");
-      const d = String(now.getDate()).padStart(2, "0");
-      return `${y}-${m}-${d}`;
-    }
-
-    function loadTodayHighScores(){
-      const today = todayStamp();
-      try{
-        const raw = localStorage.getItem(HIGHSCORE_STORAGE_KEY);
-        if (!raw) return [];
-        const parsed = JSON.parse(raw);
-        if (!parsed || parsed.date !== today || !Array.isArray(parsed.entries)) return [];
-        return parsed.entries
-          .filter((entry) => Number.isFinite(entry.score) && typeof entry.initials === "string")
-          .sort((a, b) => b.score - a.score || a.ts - b.ts)
-          .slice(0, HIGHSCORE_LIMIT);
-      } catch {
-        return [];
-      }
-    }
-
-    function saveTodayHighScores(entries){
-      const payload = { date: todayStamp(), entries: entries.slice(0, HIGHSCORE_LIMIT) };
-      localStorage.setItem(HIGHSCORE_STORAGE_KEY, JSON.stringify(payload));
-    }
-
-    function isHighScore(scoreValue){
-      if (scoreValue <= 0) return false;
-      const entries = loadTodayHighScores();
-      if (entries.length < HIGHSCORE_LIMIT) return true;
-      return scoreValue > entries[entries.length - 1].score;
-    }
-
-    function renderHighScoreList(){
-      const entries = loadTodayHighScores();
-      highScoreList.innerHTML = "";
-      entries.forEach((entry) => {
-        const li = document.createElement("li");
-        li.textContent = `${entry.initials} - ${entry.score}`;
-        highScoreList.appendChild(li);
-      });
-      while (highScoreList.children.length < HIGHSCORE_LIMIT){
-        const li = document.createElement("li");
-        li.textContent = "---";
-        highScoreList.appendChild(li);
-      }
-    }
-
-    function updateInitialsValue(){
-      initialsValue.textContent = initialsDraft.padEnd(INITIALS_MAX_LEN, "_").split("").join(" ");
-    }
-
-    function setHighScoreUiVisible(visible){
-      highScoreTitle.classList.toggle("hidden", !visible);
-      highScoreList.classList.toggle("hidden", !visible);
-    }
-
-    function setInitialsUiVisible(visible){
-      initialsEntry.classList.toggle("hidden", !visible);
-      saveInitialsBtn.classList.toggle("hidden", !visible);
-    }
-
-    function resetModalExtras(){
-      awaitingHighScoreEntry = false;
-      initialsDraft = "";
-      updateInitialsValue();
-      setHighScoreUiVisible(false);
-      setInitialsUiVisible(false);
-    }
-
-    function setupKeyboard(){
-      const keys = "ABCDEFGHIJKLMNOPQRSTUVWXYZ".split("");
-      initialsKeyboard.innerHTML = "";
-      keys.forEach((key) => {
-        const btn = document.createElement("button");
-        btn.type = "button";
-        btn.className = "keyBtn";
-        btn.textContent = key;
-        btn.dataset.key = key;
-        initialsKeyboard.appendChild(btn);
-      });
-
-      const backBtn = document.createElement("button");
-      backBtn.type = "button";
-      backBtn.className = "keyBtn wide";
-      backBtn.textContent = "Back";
-      backBtn.dataset.key = "BACK";
-      initialsKeyboard.appendChild(backBtn);
-
-      const clearBtn = document.createElement("button");
-      clearBtn.type = "button";
-      clearBtn.className = "keyBtn wide";
-      clearBtn.textContent = "Clear";
-      clearBtn.dataset.key = "CLEAR";
-      initialsKeyboard.appendChild(clearBtn);
-    }
-
-    function handleInitialKey(key){
-      if (!awaitingHighScoreEntry) return;
-      if (key === "BACK"){
-        initialsDraft = initialsDraft.slice(0, -1);
-      } else if (key === "CLEAR"){
-        initialsDraft = "";
-      } else if (/^[A-Z]$/.test(key) && initialsDraft.length < INITIALS_MAX_LEN){
-        initialsDraft += key;
-      }
-      updateInitialsValue();
-    }
-
-    function saveCurrentScoreWithInitials(){
-      if (!awaitingHighScoreEntry || initialsDraft.length === 0) return;
-      const entries = loadTodayHighScores();
-      entries.push({ initials: initialsDraft, score, ts: Date.now() });
-      entries.sort((a, b) => b.score - a.score || a.ts - b.ts);
-      saveTodayHighScores(entries.slice(0, HIGHSCORE_LIMIT));
-
-      awaitingHighScoreEntry = false;
-      setInitialsUiVisible(false);
-      setHighScoreUiVisible(true);
-      renderHighScoreList();
-      modalTitle.textContent = "Game Over";
-      modalText.textContent = "";
-      startLevelBtn.textContent = "Go Back";
-    }
-
     function showGameOverModal(){
       gameOver = true;
-      levelModal.classList.add("gameOverLayout");
+      startLevelBtn.classList.remove("largeStart");
       modalTitle.textContent = "Game Over";
       modalText.textContent = "";
-      scoreLabel.textContent = "Out of lives! Final Score:";
+      scoreLabel.textContent = "Final Score";
       modalScore.textContent = `${score}`;
-      setHighScoreUiVisible(true);
-      renderHighScoreList();
-      if (isHighScore(score)){
-        awaitingHighScoreEntry = true;
-        initialsDraft = "";
-        updateInitialsValue();
-        modalTitle.textContent = "New High Score!";
-        modalText.textContent = "You made today's top 3. Enter your initials.";
-        setInitialsUiVisible(true);
-        startLevelBtn.textContent = "Skip";
-      } else {
-        setInitialsUiVisible(false);
-        modalText.textContent = "";
-        startLevelBtn.textContent = "Go Back";
-      }
+      startLevelBtn.textContent = "Go Back";
       showLevelModal(true);
     }
 
     function updateLevelModalText(){
-      levelModal.classList.remove("gameOverLayout");
-      resetModalExtras();
-      const baitCount = baitRowCountForLevel(level);
-      const base = basePointsForLevel(level);
-
-      let levelTitle;
-      if (level == 1){
-        levelTitle = "How To Play";
-      }else{
-        levelTitle = `Level ${level}`;
-      }
-
-      modalTitle.textContent = levelTitle;
-
-      let levelInfo;
-      if (level > 1){
-        levelInfo = `You will now see rewards in ${baitCount} rows. As before, remember their locations until the end of the countdown`;
-      } else {
-        levelInfo =  `You will briefly see a reward placed randomly on 2 different rows of the board. \n \n Remember their locations until the end of the countdown and choose the box with a reward inside.`;
-        setHighScoreUiVisible(true);
-        renderHighScoreList();
-
-      }
-
-      modalText.textContent =levelInfo;
+      modalTitle.textContent = level === 1 ? "" : `Level ${level}`;
+      modalText.textContent = "";
+      scoreLabel.textContent = "";
+      modalScore.textContent = "";
+      startLevelBtn.textContent = level === 1 ? "Start Game" : "Start Level";
+      startLevelBtn.classList.toggle("largeStart", level === 1);
     }
 
     function showTimerChip(show){
@@ -397,7 +222,7 @@
       }
 
       phase = "countdown";
-      startCountdown(10);
+      startCountdown(5);
     }
 
     function startCountdown(seconds){
@@ -473,9 +298,8 @@
         if (roundsInLevel >= ROUNDS_PER_LEVEL){
           roundsInLevel = 0;
           setLevel(level + 1);
-          updateLevelModalText();
-          showLevelModal(true);
           phase = "idle";
+          startRound();
           return;
         }
       } else {
@@ -538,18 +362,6 @@
   startRound();
 });
 
-    initialsKeyboard.addEventListener("click", (event) => {
-      const target = event.target;
-      if (!(target instanceof HTMLElement)) return;
-      const key = target.dataset.key;
-      if (!key) return;
-      handleInitialKey(key);
-    });
-
-    saveInitialsBtn.addEventListener("click", () => {
-      saveCurrentScoreWithInitials();
-    });
-
     window.addEventListener("keydown", (event) => {
       if (event.shiftKey && event.key.toLowerCase() === "g"){
         event.preventDefault();
@@ -566,11 +378,10 @@
 
     function init(){
   gameOver = false;
-  levelModal.classList.remove("gameOverLayout");
-  startLevelBtn.textContent = "START";
+  startLevelBtn.textContent = "Start Game";
+  startLevelBtn.classList.add("largeStart");
   scoreLabel.textContent = "";
   modalScore.textContent = "";
-  resetModalExtras();
 
   setScore(0);
   setLives(3);
@@ -586,5 +397,4 @@
 }
 
 
-    setupKeyboard();
     init();

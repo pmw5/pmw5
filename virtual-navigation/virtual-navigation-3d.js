@@ -24,9 +24,11 @@ renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 2));
 renderer.setSize(window.innerWidth, window.innerHeight);
 document.body.appendChild(renderer.domElement);
 
+const SKY_COLOR = 0x9fd4f1;
+
 const scene = new THREE.Scene();
-scene.background = new THREE.Color(0xa7d1ef);
-scene.fog = new THREE.Fog(0xa7d1ef, 130, 360);
+scene.background = new THREE.Color(SKY_COLOR);
+scene.fog = new THREE.Fog(SKY_COLOR, 130, 360);
 
 const camera = new THREE.PerspectiveCamera(66, window.innerWidth / window.innerHeight, 0.05, 600);
 
@@ -47,16 +49,6 @@ const overlayText = document.getElementById("overlayText");
 const overlayButton = document.getElementById("overlayButton");
 const overlayScoreLabel = document.getElementById("overlayScoreLabel");
 const overlayScore = document.getElementById("overlayScore");
-const highScoreTitle = document.getElementById("highScoreTitle");
-const highScoreList = document.getElementById("highScoreList");
-const initialsEntry = document.getElementById("initialsEntry");
-const initialsValue = document.getElementById("initialsValue");
-const initialsKeyboard = document.getElementById("initialsKeyboard");
-const saveInitialsBtn = document.getElementById("saveInitialsBtn");
-
-const HIGHSCORE_STORAGE_KEY = "llk.highscores.virtual-navigation-3d";
-const HIGHSCORE_LIMIT = 3;
-const INITIALS_MAX_LEN = 3;
 
 const raycaster = new THREE.Raycaster();
 const ndc = new THREE.Vector2();
@@ -78,8 +70,7 @@ let lastRoundSuccess = false;
 let bannerTimer = null;
 let feedbackFlashTimer = null;
 let roundDeadline = 0;
-let awaitingHighScoreEntry = false;
-let initialsDraft = "";
+let gameOver = false;
 
 const player = {
   pos: new THREE.Vector3(START_POS.x, 0, START_POS.z),
@@ -196,143 +187,18 @@ function showBanner(text, ms = 1800) {
 }
 
 function showOverlay(title, text, buttonLabel) {
-  resetOverlayExtras();
   overlayTitle.textContent = title;
   overlayText.textContent = text;
   overlayButton.textContent = buttonLabel;
   overlay.classList.add("is-open");
 }
 
-function todayStamp() {
-  const now = new Date();
-  const y = now.getFullYear();
-  const m = String(now.getMonth() + 1).padStart(2, "0");
-  const d = String(now.getDate()).padStart(2, "0");
-  return `${y}-${m}-${d}`;
-}
-
-function loadTodayHighScores() {
-  const today = todayStamp();
-  try {
-    const raw = localStorage.getItem(HIGHSCORE_STORAGE_KEY);
-    if (!raw) return [];
-    const parsed = JSON.parse(raw);
-    if (!parsed || parsed.date !== today || !Array.isArray(parsed.entries)) return [];
-    return parsed.entries
-      .filter((entry) => Number.isFinite(entry.score) && typeof entry.initials === "string")
-      .sort((a, b) => b.score - a.score || a.ts - b.ts)
-      .slice(0, HIGHSCORE_LIMIT);
-  } catch {
-    return [];
-  }
-}
-
-function saveTodayHighScores(entries) {
-  const payload = { date: todayStamp(), entries: entries.slice(0, HIGHSCORE_LIMIT) };
-  localStorage.setItem(HIGHSCORE_STORAGE_KEY, JSON.stringify(payload));
-}
-
-function isHighScore(scoreValue) {
-  if (scoreValue <= 0) return false;
-  const entries = loadTodayHighScores();
-  if (entries.length < HIGHSCORE_LIMIT) return true;
-  return scoreValue > entries[entries.length - 1].score;
-}
-
-function renderHighScoreList() {
-  const entries = loadTodayHighScores();
-  highScoreList.innerHTML = "";
-  entries.forEach((entry) => {
-    const li = document.createElement("li");
-    li.textContent = `${entry.initials} - ${entry.score}`;
-    highScoreList.appendChild(li);
-  });
-  while (highScoreList.children.length < HIGHSCORE_LIMIT) {
-    const li = document.createElement("li");
-    li.textContent = "---";
-    highScoreList.appendChild(li);
-  }
-}
-
-function updateInitialsValue() {
-  initialsValue.textContent = initialsDraft.padEnd(INITIALS_MAX_LEN, "_").split("").join(" ");
-}
-
-function setHighScoreUiVisible(visible) {
-  highScoreTitle.classList.toggle("hidden", !visible);
-  highScoreList.classList.toggle("hidden", !visible);
-}
-
-function setInitialsUiVisible(visible) {
-  initialsEntry.classList.toggle("hidden", !visible);
-  saveInitialsBtn.classList.toggle("hidden", !visible);
-}
-
-function resetOverlayExtras() {
-  awaitingHighScoreEntry = false;
-  initialsDraft = "";
-  updateInitialsValue();
+function resetOverlayState() {
+  gameOver = false;
   overlayScoreLabel.textContent = "";
   overlayScore.textContent = "";
   overlayScoreLabel.classList.add("hidden");
   overlayScore.classList.add("hidden");
-  setHighScoreUiVisible(false);
-  setInitialsUiVisible(false);
-}
-
-function setupKeyboard() {
-  const keys = "ABCDEFGHIJKLMNOPQRSTUVWXYZ".split("");
-  initialsKeyboard.innerHTML = "";
-  keys.forEach((key) => {
-    const btn = document.createElement("button");
-    btn.type = "button";
-    btn.className = "keyBtn";
-    btn.textContent = key;
-    btn.dataset.key = key;
-    initialsKeyboard.appendChild(btn);
-  });
-
-  const backBtn = document.createElement("button");
-  backBtn.type = "button";
-  backBtn.className = "keyBtn wide";
-  backBtn.textContent = "Back";
-  backBtn.dataset.key = "BACK";
-  initialsKeyboard.appendChild(backBtn);
-
-  const clearBtn = document.createElement("button");
-  clearBtn.type = "button";
-  clearBtn.className = "keyBtn wide";
-  clearBtn.textContent = "Clear";
-  clearBtn.dataset.key = "CLEAR";
-  initialsKeyboard.appendChild(clearBtn);
-}
-
-function handleInitialKey(key) {
-  if (!awaitingHighScoreEntry) return;
-  if (key === "BACK") {
-    initialsDraft = initialsDraft.slice(0, -1);
-  } else if (key === "CLEAR") {
-    initialsDraft = "";
-  } else if (/^[A-Z]$/.test(key) && initialsDraft.length < INITIALS_MAX_LEN) {
-    initialsDraft += key;
-  }
-  updateInitialsValue();
-}
-
-function saveCurrentScoreWithInitials() {
-  if (!awaitingHighScoreEntry || initialsDraft.length === 0) return;
-  const entries = loadTodayHighScores();
-  entries.push({ initials: initialsDraft, score, ts: Date.now() });
-  entries.sort((a, b) => b.score - a.score || a.ts - b.ts);
-  saveTodayHighScores(entries.slice(0, HIGHSCORE_LIMIT));
-
-  awaitingHighScoreEntry = false;
-  setInitialsUiVisible(false);
-  setHighScoreUiVisible(true);
-  renderHighScoreList();
-  overlayTitle.textContent = "Game Over";
-  overlayText.textContent = "";
-  overlayButton.textContent = "Go Back";
 }
 
 function flashFeedback(type, ms = 180) {
@@ -697,29 +563,17 @@ function onRoundResolved(success) {
 }
 
 function showGameOverOverlay() {
-  overlay.classList.add("gameOverLayout");
+  gameOver = true;
+  overlayButton.classList.remove("largeStart");
   showOverlay(
     "Game Over",
     "",
     "Go Back"
   );
-  overlayScoreLabel.textContent = "Out of lives! Final score:";
+  overlayScoreLabel.textContent = "Final Score";
   overlayScore.textContent = String(score);
   overlayScoreLabel.classList.remove("hidden");
   overlayScore.classList.remove("hidden");
-  setHighScoreUiVisible(true);
-  renderHighScoreList();
-  if (isHighScore(score)) {
-    awaitingHighScoreEntry = true;
-    initialsDraft = "";
-    updateInitialsValue();
-    overlayTitle.textContent = "New High Score!";
-    overlayText.textContent = "You made today's top 3. Enter your initials.";
-    setInitialsUiVisible(true);
-    overlayButton.textContent = "Skip";
-  } else {
-    overlayText.textContent = "";
-  }
 }
 
 function triggerInstantGameOver() {
@@ -929,33 +783,24 @@ function resetGame() {
   roundActive = false;
   roundDeadline = 0;
   previousGrapeZoneIndex = -1;
-  resetOverlayExtras();
-  overlay.classList.remove("gameOverLayout");
+  resetOverlayState();
   clearRoundObjects();
   updateHud();
   updateTimerHud();
   hideOverlay();
+  overlayTitle.textContent = "";
+  overlayText.textContent = "";
+  overlayButton.textContent = "Start Game";
+  overlayButton.classList.add("largeStart");
   startRound();
 }
 
 overlayButton.addEventListener("click", () => {
-  if (overlay.classList.contains("gameOverLayout") && overlayButton.textContent === "Go Back") {
+  if (gameOver) {
     window.parent.postMessage({ type: "CLOSE_IFRAME_MODAL" }, "*");
     return;
   }
   resetGame();
-});
-
-initialsKeyboard.addEventListener("click", (event) => {
-  const target = event.target;
-  if (!(target instanceof HTMLElement)) return;
-  const key = target.dataset.key;
-  if (!key) return;
-  handleInitialKey(key);
-});
-
-saveInitialsBtn.addEventListener("click", () => {
-  saveCurrentScoreWithInitials();
 });
 
 renderer.domElement.addEventListener("pointerdown", onPointerDown, { passive: false });
@@ -976,12 +821,13 @@ window.addEventListener("keydown", (event) => {
 
 createGround();
 addBackgroundTrees();
-setupKeyboard();
-resetOverlayExtras();
-setHighScoreUiVisible(true);
-renderHighScoreList();
+resetOverlayState();
 updateHud();
 updateTimerHud();
 setPlayerAtStart(0, 0);
+overlayTitle.textContent = "";
+overlayText.textContent = "";
+overlayButton.textContent = "Start Game";
+overlayButton.classList.add("largeStart");
 render();
 

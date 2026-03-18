@@ -39,16 +39,6 @@ const modalText = document.getElementById("modalText");
 const scoreLabel = document.getElementById("scoreLabel");
 const modalScore = document.getElementById("modalScore");
 const startLevelBtn = document.getElementById("startLevelBtn");
-const highScoreTitle = document.getElementById("highScoreTitle");
-const highScoreList = document.getElementById("highScoreList");
-const initialsEntry = document.getElementById("initialsEntry");
-const initialsValue = document.getElementById("initialsValue");
-const initialsKeyboard = document.getElementById("initialsKeyboard");
-const saveInitialsBtn = document.getElementById("saveInitialsBtn");
-
-const HIGHSCORE_STORAGE_KEY = "llk.highscores.interrupted-memory-task";
-const HIGHSCORE_LIMIT = 3;
-const INITIALS_MAX_LEN = 3;
 
 let level = 1;
 let score = 0;
@@ -69,8 +59,6 @@ let shownSection = null;
 let phaseSwapTimeoutId = null;
 let lastCorrectChoiceIdx = -1;
 let rightmostCorrectStreak = 0;
-let awaitingHighScoreEntry = false;
-let initialsDraft = "";
 
 function sleep(ms){
   return new Promise((resolve) => setTimeout(resolve, ms));
@@ -175,207 +163,34 @@ function showLevelModal(show){
   levelModal.classList.toggle("show", !!show);
 }
 
-function todayStamp(){
-  const now = new Date();
-  const y = now.getFullYear();
-  const m = String(now.getMonth() + 1).padStart(2, "0");
-  const d = String(now.getDate()).padStart(2, "0");
-  return `${y}-${m}-${d}`;
-}
-
-function loadTodayHighScores(){
-  const today = todayStamp();
-  try{
-    const raw = localStorage.getItem(HIGHSCORE_STORAGE_KEY);
-    if (!raw) return [];
-    const parsed = JSON.parse(raw);
-    if (!parsed || parsed.date !== today || !Array.isArray(parsed.entries)) return [];
-    return parsed.entries
-      .filter((entry) => Number.isFinite(entry.score) && typeof entry.initials === "string")
-      .sort((a, b) => b.score - a.score || a.ts - b.ts)
-      .slice(0, HIGHSCORE_LIMIT);
-  } catch {
-    return [];
-  }
-}
-
-function saveTodayHighScores(entries){
-  const payload = { date: todayStamp(), entries: entries.slice(0, HIGHSCORE_LIMIT) };
-  localStorage.setItem(HIGHSCORE_STORAGE_KEY, JSON.stringify(payload));
-}
-
-function isHighScore(scoreValue){
-  if (scoreValue <= 0) return false;
-  const entries = loadTodayHighScores();
-  if (entries.length < HIGHSCORE_LIMIT) return true;
-  return scoreValue > entries[entries.length - 1].score;
-}
-
-function renderHighScoreList(){
-  const entries = loadTodayHighScores();
-  highScoreList.innerHTML = "";
-  entries.forEach((entry) => {
-    const li = document.createElement("li");
-    li.textContent = `${entry.initials} - ${entry.score}`;
-    highScoreList.appendChild(li);
-  });
-  while (highScoreList.children.length < HIGHSCORE_LIMIT){
-    const li = document.createElement("li");
-    li.textContent = "---";
-    highScoreList.appendChild(li);
-  }
-}
-
-function updateInitialsValue(){
-  initialsValue.textContent = initialsDraft.padEnd(INITIALS_MAX_LEN, "_").split("").join(" ");
-}
-
-function setHighScoreUiVisible(visible){
-  highScoreTitle.classList.toggle("hidden", !visible);
-  highScoreList.classList.toggle("hidden", !visible);
-}
-
-function setInitialsUiVisible(visible){
-  initialsEntry.classList.toggle("hidden", !visible);
-  saveInitialsBtn.classList.toggle("hidden", !visible);
-}
-
-function resetModalExtras(){
-  awaitingHighScoreEntry = false;
-  initialsDraft = "";
-  updateInitialsValue();
-  setHighScoreUiVisible(false);
-  setInitialsUiVisible(false);
-}
-
-function setupKeyboard(){
-  const keys = "ABCDEFGHIJKLMNOPQRSTUVWXYZ".split("");
-  initialsKeyboard.innerHTML = "";
-  keys.forEach((key) => {
-    const btn = document.createElement("button");
-    btn.type = "button";
-    btn.className = "keyBtn";
-    btn.textContent = key;
-    btn.dataset.key = key;
-    initialsKeyboard.appendChild(btn);
-  });
-
-  const backBtn = document.createElement("button");
-  backBtn.type = "button";
-  backBtn.className = "keyBtn wide";
-  backBtn.textContent = "Back";
-  backBtn.dataset.key = "BACK";
-  initialsKeyboard.appendChild(backBtn);
-
-  const clearBtn = document.createElement("button");
-  clearBtn.type = "button";
-  clearBtn.className = "keyBtn wide";
-  clearBtn.textContent = "Clear";
-  clearBtn.dataset.key = "CLEAR";
-  initialsKeyboard.appendChild(clearBtn);
-}
-
-function handleInitialKey(key){
-  if (!awaitingHighScoreEntry) return;
-  if (key === "BACK"){
-    initialsDraft = initialsDraft.slice(0, -1);
-  } else if (key === "CLEAR"){
-    initialsDraft = "";
-  } else if (/^[A-Z]$/.test(key) && initialsDraft.length < INITIALS_MAX_LEN){
-    initialsDraft += key;
-  }
-  updateInitialsValue();
-}
-
-function saveCurrentScoreWithInitials(){
-  if (!awaitingHighScoreEntry || initialsDraft.length === 0) return;
-  const entries = loadTodayHighScores();
-  entries.push({ initials: initialsDraft, score, ts: Date.now() });
-  entries.sort((a, b) => b.score - a.score || a.ts - b.ts);
-  saveTodayHighScores(entries.slice(0, HIGHSCORE_LIMIT));
-
-  awaitingHighScoreEntry = false;
-  levelModal.classList.add("gameOverLayout");
-  setInitialsUiVisible(false);
-  setHighScoreUiVisible(true);
-  renderHighScoreList();
-  modalTitle.textContent = "Game Over";
-  modalText.textContent = "";
-  startLevelBtn.textContent = "Go Back";
-}
-
 function showGameOverModal(){
   gameOver = true;
-  levelModal.classList.add("gameOverLayout");
+  setPhase("Finished");
+  startLevelBtn.classList.remove("largeStart");
   levelModal.classList.remove("briefNotice");
   modalTitle.textContent = "Game Over";
   modalText.textContent = "";
-  scoreLabel.textContent = "Out of lives! Final score:";
+  scoreLabel.textContent = "Final Score";
   modalScore.textContent = String(score);
-  setHighScoreUiVisible(true);
-  renderHighScoreList();
-
-  if (isHighScore(score)){
-    awaitingHighScoreEntry = true;
-    initialsDraft = "";
-    updateInitialsValue();
-    modalTitle.textContent = "New High Score!";
-    modalText.textContent = "You made today's top 3. Enter your initials.";
-    setInitialsUiVisible(true);
-    startLevelBtn.textContent = "Skip";
-  } else {
-    setInitialsUiVisible(false);
-    modalText.textContent = "";
-    startLevelBtn.textContent = "Go Back";
-  }
+  startLevelBtn.textContent = "Go Back";
   startLevelBtn.classList.remove("hidden");
   showLevelModal(true);
 }
 
 function configureLevelModalForRules(levelNumber){
-  const cfg = getLevelConfig(levelNumber);
-  levelModal.classList.remove("gameOverLayout");
-  resetModalExtras();
   levelModal.classList.remove("briefNotice");
-  modalTitle.textContent = levelNumber === 1 ? "How To Play" : `Level ${levelNumber}`;
-
-  if (levelNumber === 1){
-    modalText.textContent = "Remember the object shown to you, then touch the same object from the options displayed.";
-    setHighScoreUiVisible(true);
-    renderHighScoreList();
-  } else if (levelNumber === 2){
-    modalText.textContent = "Now, after the first object, a coin hides under 3 cups. Watch where it goes and pick the right cup for big bonus points!";
-  } else {
-    modalText.textContent = `Watch the coin under moving cups (${cfg.swaps} swaps), then pick the matching object.`;
-  }
+  modalTitle.textContent = levelNumber === 1 ? "" : `Level ${levelNumber}`;
+  modalText.textContent = "";
 
   scoreLabel.textContent = "";
   modalScore.textContent = "";
-  startLevelBtn.textContent = "START";
+  startLevelBtn.textContent = levelNumber === 1 ? "Start Game" : "Start Level";
+  startLevelBtn.classList.toggle("largeStart", levelNumber === 1);
   startLevelBtn.classList.remove("hidden");
 }
 
 function updateModalForLevel(){
-  levelModal.classList.remove("gameOverLayout");
-  resetModalExtras();
-  if (level <= 2){
-    configureLevelModalForRules(level);
-    return;
-  }
-
-  levelModal.classList.add("briefNotice");
-  modalTitle.textContent = `Level ${level}`;
-  modalText.textContent = "Get ready";
-  scoreLabel.textContent = "";
-  modalScore.textContent = "";
-  startLevelBtn.classList.add("hidden");
-}
-
-async function showBriefLevelNotice(){
-  updateModalForLevel();
-  showLevelModal(true);
-  await sleep(850);
-  showLevelModal(false);
+  configureLevelModalForRules(level);
 }
 
 function placeCup(cupEl, slot){
@@ -434,7 +249,7 @@ async function waitForCupGuess(cfg){
 }
 
 async function runCupInterruption(cfg){
-  setPhase("Interrupt");
+  setPhase("Shuffle");
   cupsTitle.textContent = "Watch the hidden reward";
   resetCupLayout();
 
@@ -536,7 +351,7 @@ async function startRound(){
   roundSampleObject = OBJECTS[randomInt(OBJECTS.length)];
   const distractors = pickDistinctObjects(choiceCount - 1, [roundSampleObject]);
 
-  setPhase("Sample");
+  setPhase("Remember");
   showOnly("sample");
   sampleCard.classList.remove("sampleGone");
   sampleCard.textContent = roundSampleObject;
@@ -592,12 +407,6 @@ async function resolveChoice(choiceIdx){
     roundsInLevel = 0;
     setLevel(level + 1);
     phase = "idle";
-    if (level <= 2){
-      updateModalForLevel();
-      showLevelModal(true);
-      return;
-    }
-    await showBriefLevelNotice();
     await startRound();
     return;
   }
@@ -626,18 +435,6 @@ startLevelBtn.addEventListener("click", async () => {
   await startRound();
 });
 
-initialsKeyboard.addEventListener("click", (event) => {
-  const target = event.target;
-  if (!(target instanceof HTMLElement)) return;
-  const key = target.dataset.key;
-  if (!key) return;
-  handleInitialKey(key);
-});
-
-saveInitialsBtn.addEventListener("click", () => {
-  saveCurrentScoreWithInitials();
-});
-
 window.addEventListener("keydown", (event) => {
   if (event.shiftKey && event.key.toLowerCase() === "g"){
     event.preventDefault();
@@ -649,7 +446,6 @@ window.addEventListener("keydown", (event) => {
 
 function init(){
   gameOver = false;
-  levelModal.classList.remove("gameOverLayout");
   roundsInLevel = 0;
   phase = "idle";
   cupGuessActive = false;
@@ -657,7 +453,7 @@ function init(){
   setLevel(1);
   setScore(0);
   setLives(3);
-  setPhase("Sample");
+  setPhase("Ready");
   showOnly("sample");
   sampleCard.classList.remove("sampleGone");
   applyCardTheme(sampleCard, OBJECTS[0]);
@@ -672,11 +468,10 @@ function init(){
   sampleCard.textContent = "🍎";
   resetCupLayout();
   token.classList.add("tokenHidden");
-  resetModalExtras();
+  startLevelBtn.classList.add("largeStart");
   updateModalForLevel();
   showLevelModal(true);
 }
 
-setupKeyboard();
 init();
 
