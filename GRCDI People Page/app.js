@@ -59,6 +59,163 @@ const locationGeography = {
   "Indiana University, Bloomington, USA": { countries: ["United States"], continents: ["North America"] }
 };
 
+const expertiseAreas = {
+  "Comparative cognition": [
+    "chimpanzee cognition",
+    "cognitive ethology",
+    "comparative behaviour",
+    "comparative cognitive development",
+    "comparative cognition",
+    "comparative communication",
+    "comparative psychology",
+    "dog social cognition",
+    "primate cognition",
+    "primate behaviour"
+  ],
+  "Animal behaviour and welfare": [
+    "animal cognition",
+    "animal behaviour",
+    "animal emotion",
+    "animal ethics",
+    "animal protection activism",
+    "avian cognition",
+    "ethology",
+    "honey bees",
+    "insect cognition",
+    "nest building",
+    "neuroethology",
+    "sexual behaviour",
+    "tool use",
+    "zoo animal welfare"
+  ],
+  "Development, learning and psychology": [
+    "active learning",
+    "cognitive development",
+    "cognitive control",
+    "cognitive diversity",
+    "cognitive science",
+    "cultural psychology",
+    "developmental psychology",
+    "developmental science",
+    "human cognitive",
+    "infant",
+    "imitation",
+    "joint attention",
+    "metacognition",
+    "moral development",
+    "self-concept",
+    "social cognition",
+    "specific learning difficulties",
+    "theory of mind",
+    "working memory"
+  ],
+  "AI, robotics and computation": [
+    "algebra and combinatorics",
+    "artificial intelligence",
+    "complex systems",
+    "computer vision",
+    "computational cognitive science",
+    "constraint programming",
+    "continual learning",
+    "cryptography",
+    "cognitive vision",
+    "domain adaptation",
+    "formal models",
+    "human activity recognition",
+    "human-robot",
+    "humanoid robots",
+    "information security",
+    "machine learning",
+    "mathematical modelling",
+    "multiagent",
+    "optimisation",
+    "robot",
+    "sensor data",
+    "theoretical computer science",
+    "video synthesis",
+    "vision"
+  ],
+  "Collective intelligence and culture": [
+    "animal culture",
+    "collaboration",
+    "collective",
+    "cooperation",
+    "cultural evolution",
+    "culture",
+    "imitation",
+    "social complexity",
+    "social learning",
+    "technological evolution"
+  ],
+  "Ecology, conservation and evolution": [
+    "bioacoustics",
+    "biodiversity",
+    "conservation",
+    "ecological",
+    "ecology",
+    "ex-situ",
+    "human-nonhuman coexistence",
+    "human–nonhuman coexistence",
+    "marine mammals",
+    "sampling bias"
+  ],
+  "Philosophy, ethics and consciousness": [
+    "agency",
+    "argumentation",
+    "consciousness",
+    "ethics",
+    "epistemology",
+    "history and conceptual",
+    "lived experience",
+    "normativity",
+    "phenomenology",
+    "philosophy",
+    "rational",
+    "social theory"
+  ],
+  "Decision making and organisations": [
+    "behavioural economics",
+    "decision",
+    "deliberation",
+    "economics",
+    "game theory",
+    "intuition",
+    "judgement",
+    "leadership",
+    "organisational",
+    "social choice",
+    "toxic behaviour"
+  ],
+  "Communication and language": [
+    "bilingualism",
+    "communication",
+    "interspecies communication",
+    "language",
+    "literature",
+    "multilingualism",
+    "psycholinguistics",
+    "slavic",
+    "translation",
+    "vocal communication"
+  ],
+  "Engagement, education and policy": [
+    "activism",
+    "art",
+    "citizen science",
+    "conservation education",
+    "engagement",
+    "environmental practice",
+    "impact",
+    "inclusive pedagogy",
+    "interdisciplinary",
+    "nature connectedness",
+    "outreach",
+    "policy",
+    "public",
+    "science communication"
+  ]
+};
+
 fetch("people.json")
   .then(res => res.json())
   .then(data => {
@@ -70,19 +227,17 @@ fetch("people.json")
 function populateFilters() {
   const locations = new Set();
   const continents = new Set();
-  const expertise = new Set();
 
   people.forEach(person => {
     const geography = getLocationGeography(person.location);
 
     locations.add(person.location);
     geography.continents.forEach(continent => continents.add(continent));
-    person.expertise.forEach(item => expertise.add(item));
   });
 
   fillSelect("locationFilter", locations);
   fillSelect("continentFilter", continents);
-  fillSelect("expertiseFilter", expertise);
+  fillSelect("expertiseFilter", Object.keys(expertiseAreas));
 }
 
 function fillSelect(id, values) {
@@ -155,12 +310,13 @@ function getFilteredPeople() {
     return (
       (!location || person.location === location) &&
       (!continent || geography.continents.includes(continent)) &&
-      (!expertise || person.expertise.includes(expertise)) &&
+      (!expertise || getPersonExpertiseAreas(person).includes(expertise)) &&
       (
         !isSearchActive ||
         person.name.toLowerCase().includes(search) ||
         person.bio.toLowerCase().includes(search) ||
         (person.affiliation || "").toLowerCase().includes(search) ||
+        person.expertise.some(item => item.toLowerCase().includes(search)) ||
         geography.countries.some(item => item.toLowerCase().includes(search)) ||
         geography.continents.some(item => item.toLowerCase().includes(search))
       )
@@ -171,6 +327,15 @@ function getFilteredPeople() {
     results,
     isFilteredView: isSearchActive || location || continent || expertise
   };
+}
+
+function getPersonExpertiseAreas(person) {
+  const sourceText = person.expertise.join(" ").toLowerCase();
+  const areas = Object.entries(expertiseAreas)
+    .filter(([, keywords]) => keywords.some(keyword => sourceText.includes(keyword)))
+    .map(([area]) => area);
+
+  return areas.length ? areas : ["Interdisciplinary and other"];
 }
 
 function render(animateCards = false) {
@@ -324,7 +489,8 @@ function renderLeafletMap(groups) {
     spiderfyOnMaxZoom: true,
     disableClusteringAtZoom: 7,
     iconCreateFunction: cluster => {
-      const childCount = cluster.getChildCount();
+      const childCount = cluster.getAllChildMarkers()
+        .reduce((total, marker) => total + marker.options.memberCount, 0);
 
       return L.divIcon({
         html: `<span>${childCount}</span>`,
@@ -337,6 +503,7 @@ function renderLeafletMap(groups) {
   groups.forEach(group => {
     const size = Math.min(54, 26 + group.people.length * 1.2);
     const marker = L.marker([group.coordinates.lat, group.coordinates.lng], {
+      memberCount: group.people.length,
       icon: L.divIcon({
         html: `<span>${group.people.length}</span>`,
         className: "member-location-icon",
