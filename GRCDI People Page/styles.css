@@ -128,9 +128,9 @@ button:focus-visible {
 .card {
   min-width: 0;
   height: 100%;
-  background: #f2f2f2;
-  border: 1px solid #e2e2e2;
-  padding: 24px 20px 22px;
+  background: transparent;
+  border: 0;
+  padding: 14px 12px 24px;
   text-align: center;
   opacity: 1;
   transform: translateY(0);
@@ -143,8 +143,7 @@ button:focus-visible {
 
 .card:hover,
 .card:focus-within {
-  border-color: #d4d4d4;
-  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.06);
+  box-shadow: none;
 }
 
 #results.is-filtering .card,
@@ -276,9 +275,9 @@ button:focus-visible {
 
 .profile-image {
   display: block;
-  width: 172px;
-  height: 172px;
-  margin: 0 auto 18px;
+  width: 220px;
+  height: 220px;
+  margin: 0 auto 22px;
   border: 6px solid #fff;
   border-radius: 50%;
   background: #ddd;
@@ -388,8 +387,8 @@ summary:focus-visible {
   }
 
   .profile-image {
-    width: 162px;
-    height: 162px;
+    width: 206px;
+    height: 206px;
   }
 
   .view-toggle {
