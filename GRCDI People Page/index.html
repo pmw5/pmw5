@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>GRCDI People Directory</title>
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
+  <link rel="stylesheet" href="https://unpkg.com/leaflet.markercluster@1.5.3/dist/MarkerCluster.css">
+  <link rel="stylesheet" href="https://unpkg.com/leaflet.markercluster@1.5.3/dist/MarkerCluster.Default.css">
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+<div class="container">
+  <h1>People</h1>
+
+  <input type="text" id="search" placeholder="Search people...">
+
+  <div class="filters">
+    <select id="roleFilter">
+      <option value="">All Roles</option>
+    </select>
+
+    <select id="locationFilter">
+      <option value="">All Locations</option>
+    </select>
+
+    <select id="continentFilter">
+      <option value="">All Continents</option>
+    </select>
+
+    <select id="expertiseFilter">
+      <option value="">All Expertise</option>
+    </select>
+
+    <button onclick="resetFilters()">Reset</button>
+  </div>
+
+  <div class="view-toggle" aria-label="People view">
+    <button type="button" class="view-button is-active" data-view="directory">Directory</button>
+    <button type="button" class="view-button" data-view="map">Map</button>
+  </div>
+
+  <div id="mapView" class="map-view" hidden></div>
+  <div id="results"></div>
+</div>
+
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+<script src="https://unpkg.com/leaflet.markercluster@1.5.3/dist/leaflet.markercluster.js"></script>
+<script src="app.js"></script>
+</body>
+</html>
