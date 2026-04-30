@@ -59,6 +59,11 @@ const locationGeography = {
   "Indiana University, Bloomington, USA": { countries: ["United States"], continents: ["North America"] }
 };
 
+const roleSectionLabels = {
+  "Local partner": "Local partners",
+  "Global partner": "Global partners"
+};
+
 const expertiseAreas = {
   "Comparative cognition": [
     "chimpanzee cognition",
@@ -383,7 +388,7 @@ function renderDirectory(results, isFilteredView, animateCards = false) {
     section.className = "role-section";
 
     const heading = document.createElement("h2");
-    heading.textContent = groupRole;
+    heading.textContent = roleSectionLabels[groupRole] || groupRole;
     section.appendChild(heading);
 
     const grid = document.createElement("div");
