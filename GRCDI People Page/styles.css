@@ -14,17 +14,7 @@ body {
 .container {
   max-width: 1180px;
   margin: 0 auto;
-  padding: 34px 24px 48px;
-}
-
-h1 {
-  margin: 0 0 22px;
-  border-bottom: 1px solid #d8d8d8;
-  padding-bottom: 18px;
-  font-family: Georgia, "Times New Roman", serif;
-  font-size: 42px;
-  font-weight: 400;
-  line-height: 1.15;
+  padding: 0 24px 48px;
 }
 
 input,
@@ -51,7 +41,7 @@ select {
 
 .filters {
   display: grid;
-  grid-template-columns: repeat(5, minmax(0, 1fr));
+  grid-template-columns: repeat(4, minmax(0, 1fr));
   gap: 10px;
   margin-bottom: 14px;
 }
@@ -329,6 +319,12 @@ summary:focus-visible {
   text-decoration: underline;
 }
 
+.bio-wrapper {
+  height: 0;
+  overflow: hidden;
+  transition: height 220ms ease;
+}
+
 .bio {
   margin-top: 14px;
   color: #333;
@@ -354,7 +350,7 @@ summary:focus-visible {
   }
 
   .filters {
-    grid-template-columns: repeat(3, minmax(0, 1fr));
+    grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 
   .map-layout {

@@ -68,7 +68,6 @@ fetch("people.json")
   });
 
 function populateFilters() {
-  const roles = new Set();
   const locations = new Set();
   const continents = new Set();
   const expertise = new Set();
@@ -76,13 +75,11 @@ function populateFilters() {
   people.forEach(person => {
     const geography = getLocationGeography(person.location);
 
-    roles.add(person.role);
     locations.add(person.location);
     geography.continents.forEach(continent => continents.add(continent));
     person.expertise.forEach(item => expertise.add(item));
   });
 
-  fillSelect("roleFilter", roles);
   fillSelect("locationFilter", locations);
   fillSelect("continentFilter", continents);
   fillSelect("expertiseFilter", expertise);
@@ -100,7 +97,6 @@ function fillSelect(id, values) {
 }
 
 document.getElementById("search").addEventListener("input", renderSearchResults);
-document.getElementById("roleFilter").addEventListener("change", renderFilteredResults);
 document.getElementById("locationFilter").addEventListener("change", renderFilteredResults);
 document.getElementById("continentFilter").addEventListener("change", renderFilteredResults);
 document.getElementById("expertiseFilter").addEventListener("change", renderFilteredResults);
@@ -122,7 +118,6 @@ document.querySelectorAll(".view-button").forEach(button => {
 
 function resetFilters() {
   document.getElementById("search").value = "";
-  document.getElementById("roleFilter").value = "";
   document.getElementById("locationFilter").value = "";
   document.getElementById("continentFilter").value = "";
   document.getElementById("expertiseFilter").value = "";
@@ -149,7 +144,6 @@ function renderFilteredResults() {
 
 function getFilteredPeople() {
   const search = document.getElementById("search").value.trim().toLowerCase();
-  const role = document.getElementById("roleFilter").value;
   const location = document.getElementById("locationFilter").value;
   const continent = document.getElementById("continentFilter").value;
   const expertise = document.getElementById("expertiseFilter").value;
@@ -159,7 +153,6 @@ function getFilteredPeople() {
     const geography = getLocationGeography(person.location);
 
     return (
-      (!role || person.role === role) &&
       (!location || person.location === location) &&
       (!continent || geography.continents.includes(continent)) &&
       (!expertise || person.expertise.includes(expertise)) &&
@@ -176,7 +169,7 @@ function getFilteredPeople() {
 
   return {
     results,
-    isFilteredView: isSearchActive || role || location || continent || expertise
+    isFilteredView: isSearchActive || location || continent || expertise
   };
 }
 
@@ -390,7 +383,7 @@ function createPersonCard(person, animateCard = false) {
   card.className = animateCard ? "card card-enter" : "card";
 
   const affiliation = person.affiliation || person.location || "";
-  const roleLine = [person.centreRole, person.role].filter(Boolean).join(" | ");
+  const roleLine = person.centreRole || "";
   const bioParagraphs = person.bio
     .split(/\n+/)
     .filter(Boolean)
@@ -403,17 +396,80 @@ function createPersonCard(person, animateCard = false) {
       <h3>${escapeHtml(person.name)}</h3>
       ${roleLine ? `<div class="centre-role">${escapeHtml(roleLine)}</div>` : ""}
       <div class="affiliation">${escapeHtml(affiliation)}</div>
-      <details>
+      <details class="bio-details">
         <summary>See biography</summary>
-        <div class="bio">
-          ${person.expertise.length ? `<p class="research-areas"><strong>Research areas:</strong> ${person.expertise.map(escapeHtml).join(", ")}</p>` : ""}
-          ${bioParagraphs}
+        <div class="bio-wrapper">
+          <div class="bio">
+            ${person.expertise.length ? `<p class="research-areas"><strong>Research areas:</strong> ${person.expertise.map(escapeHtml).join(", ")}</p>` : ""}
+            ${bioParagraphs}
+          </div>
         </div>
       </details>
     </div>
   `;
 
+  setupBioDetails(card);
+
   return card;
+}
+
+function setupBioDetails(card) {
+  const details = card.querySelector(".bio-details");
+  const summary = details.querySelector("summary");
+  const wrapper = details.querySelector(".bio-wrapper");
+
+  summary.addEventListener("click", event => {
+    event.preventDefault();
+
+    if (details.open) {
+      collapseBio(details, wrapper);
+    } else {
+      expandBio(details, wrapper);
+    }
+  });
+}
+
+function expandBio(details, wrapper) {
+  details.open = true;
+  wrapper.style.height = "0px";
+
+  requestAnimationFrame(() => {
+    wrapper.style.height = `${wrapper.scrollHeight}px`;
+  });
+
+  afterBioTransition(wrapper, () => {
+    wrapper.style.height = "auto";
+  });
+}
+
+function collapseBio(details, wrapper) {
+  wrapper.style.height = `${wrapper.scrollHeight}px`;
+
+  requestAnimationFrame(() => {
+    wrapper.style.height = "0px";
+  });
+
+  afterBioTransition(wrapper, () => {
+    details.open = false;
+    wrapper.style.height = "";
+  });
+}
+
+function afterBioTransition(wrapper, callback) {
+  let finished = false;
+
+  const finish = () => {
+    if (finished) {
+      return;
+    }
+
+    finished = true;
+    wrapper.removeEventListener("transitionend", finish);
+    callback();
+  };
+
+  wrapper.addEventListener("transitionend", finish);
+  setTimeout(finish, 260);
 }
 
 function escapeHtml(value) {
