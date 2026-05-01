@@ -947,5 +947,23 @@
     "links": [],
     "image": "https://diverseintelligences.st-andrews.ac.uk/files/2025/02/AlexanderStewart.jpeg",
     "sourcePage": "https://diverseintelligences.st-andrews.ac.uk/people-new/"
+  },
+  {
+    "name": "Aaron A Arronson",
+    "role": "Global partner",
+    "centreRole": "Global partner",
+    "location": "Bega, Australia",
+    "affiliation": "Bega Cheese",
+    "expertise": [
+      "Game Theory",
+      "Social Complexity",
+      "Collective Behavior",
+      "Evolution",
+      "Mathematical modelling"
+    ],
+    "bio": "This is only a test, please ignore.",
+    "links": ["www.begacheese.com.au],
+    "image": "",
+    "sourcePage": ""
   }
 ]
