@@ -596,7 +596,7 @@ function createProfileLinks(person) {
   return `
     <div class="profile-links" aria-label="Profile links">
       ${person.links.map(link => `
-        <a href="${escapeHtml(link.url)}" target="_blank" rel="noopener noreferrer" data-profile-link>
+        <a href="${escapeHtml(link.url)}" target="_top">
           ${escapeHtml(link.label)}
         </a>
       `).join("")}
@@ -617,14 +617,6 @@ function setupBioDetails(card) {
     } else {
       expandBio(details, wrapper);
     }
-  });
-
-  card.querySelectorAll("[data-profile-link]").forEach(link => {
-    link.addEventListener("click", event => {
-      event.preventDefault();
-      event.stopPropagation();
-      window.open(link.href, "_blank", "noopener,noreferrer");
-    });
   });
 }
 
