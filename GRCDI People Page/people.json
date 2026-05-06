@@ -483,7 +483,7 @@
     "name": "Prof Silvia Paracchini",
     "role": "Local partner",
     "centreRole": "Local partner",
-    "location": "University of St Andrews / University of Bonn",
+    "location": "University of St Andrews",
     "affiliation": "School of Medicine, University of St Andrews; University of Bonn",
     "expertise": [
       "Human genetics",
@@ -921,7 +921,7 @@
     "name": "Jacob G. Foster",
     "role": "Global partner",
     "centreRole": "Global partner",
-    "location": "Indiana University / Santa Fe Institute, USA",
+    "location": "Indiana University, USA",
     "affiliation": "Professor of Informatics and Cognitive Science, Indiana University; External Professor, Santa Fe Institute",
     "expertise": [
       "Complex systems",
@@ -940,7 +940,7 @@
     "name": "Prof Kristen Frenzel",
     "role": "Global partner",
     "centreRole": "Global partner",
-    "location": "Emory University / Georgia Institute of Technology, USA",
+    "location": "Emory University, USA",
     "affiliation": "Associate Director of Education and Outreach, CAMBER, Coulter Department of Biomedical Engineering, Emory University and Georgia Institute of Technology",
     "expertise": [
       "Inclusive pedagogy",
@@ -1235,7 +1235,7 @@
     "name": "Alexander J. Stewart",
     "role": "Global partner",
     "centreRole": "Global partner",
-    "location": "Indiana University, Bloomington, USA",
+    "location": "Indiana University, USA",
     "affiliation": "Department of Informatics, Indiana University, Bloomington",
     "expertise": [
       "Game Theory",
