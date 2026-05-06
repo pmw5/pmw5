@@ -70,36 +70,6 @@ button:focus-visible {
   background: var(--accent-dark);
 }
 
-.view-toggle {
-  display: inline-flex;
-  margin-bottom: 28px;
-  border: 1px solid #b8b8b8;
-}
-
-.view-button {
-  min-height: 38px;
-  border: 0;
-  border-right: 1px solid #b8b8b8;
-  background: #fff;
-  color: #222;
-}
-
-.view-button:last-child {
-  border-right: 0;
-}
-
-.view-button.is-active,
-.view-button:hover,
-.view-button:focus-visible {
-  background: var(--accent);
-  color: #fff;
-}
-
-.view-button.is-active:hover,
-.view-button.is-active:focus-visible {
-  background: var(--accent-dark);
-}
-
 .people-grid {
   display: grid;
   grid-template-columns: repeat(3, minmax(0, 1fr));
@@ -158,6 +128,7 @@ button:focus-visible {
 }
 
 .map-view {
+  margin-bottom: 24px;
   opacity: 1;
   transform: translateY(0);
   transition:
@@ -168,13 +139,6 @@ button:focus-visible {
 .map-view.is-filtering {
   opacity: 0;
   transform: translateY(8px);
-}
-
-.map-layout {
-  display: grid;
-  grid-template-columns: minmax(0, 2fr) minmax(280px, 1fr);
-  gap: 22px;
-  align-items: start;
 }
 
 .member-map {
@@ -213,64 +177,6 @@ button:focus-visible {
 .member-location-icon span,
 .member-cluster-icon span {
   display: block;
-}
-
-.location-card-enter {
-  opacity: 0;
-  transform: translateY(8px);
-}
-
-.location-card-enter.is-visible {
-  opacity: 1;
-  transform: translateY(0);
-}
-
-.map-list {
-  display: grid;
-  gap: 12px;
-  max-height: 520px;
-  overflow: auto;
-}
-
-.location-card {
-  border: 1px solid #e2e2e2;
-  background: #f2f2f2;
-  padding: 16px;
-  transition:
-    opacity 160ms ease,
-    transform 160ms ease,
-    border-color 160ms ease;
-}
-
-.location-card:hover,
-.location-card:focus-within {
-  border-color: #d4d4d4;
-}
-
-.location-card h2 {
-  margin: 0 0 4px;
-  font-family: var(--heading-font);
-  font-size: 20px;
-  font-weight: 400;
-  line-height: 1.25;
-}
-
-.location-card p {
-  margin: 0 0 10px;
-  color: #555;
-  font-size: 14px;
-  font-weight: 700;
-}
-
-.location-card ul {
-  margin: 0;
-  padding-left: 18px;
-  color: #333;
-  font-size: 14px;
-}
-
-.location-card li + li {
-  margin-top: 3px;
 }
 
 .profile-image {
@@ -387,13 +293,6 @@ summary:focus-visible {
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 
-  .map-layout {
-    grid-template-columns: 1fr;
-  }
-
-  .map-list {
-    max-height: none;
-  }
 }
 
 @media (max-width: 620px) {
@@ -413,12 +312,6 @@ summary:focus-visible {
   .profile-image {
     width: 206px;
     height: 206px;
-  }
-
-  .view-toggle {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    width: 100%;
   }
 
   .member-map {

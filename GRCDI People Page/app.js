@@ -1,6 +1,5 @@
 let people = [];
 let searchTransitionTimer = null;
-let currentView = "directory";
 let memberMap = null;
 let memberMapMarkers = [];
 let memberMapCluster = null;
@@ -261,21 +260,6 @@ document.getElementById("locationFilter").addEventListener("change", renderFilte
 document.getElementById("continentFilter").addEventListener("change", renderFilteredResults);
 document.getElementById("expertiseFilter").addEventListener("change", renderFilteredResults);
 
-document.querySelectorAll(".view-button").forEach(button => {
-  button.addEventListener("click", () => {
-    currentView = button.dataset.view;
-
-    document.querySelectorAll(".view-button").forEach(viewButton => {
-      const isActive = viewButton === button;
-      viewButton.classList.toggle("is-active", isActive);
-      viewButton.setAttribute("aria-pressed", String(isActive));
-    });
-
-    clearTimeout(searchTransitionTimer);
-    render(true);
-  });
-});
-
 function resetFilters() {
   document.getElementById("search").value = "";
   document.getElementById("locationFilter").value = "";
@@ -290,12 +274,12 @@ function renderSearchResults() {
 }
 
 function renderFilteredResults() {
-  const activeContainer = currentView === "map"
-    ? document.getElementById("mapView")
-    : document.getElementById("results");
+  const mapContainer = document.getElementById("mapView");
+  const resultsContainer = document.getElementById("results");
 
   clearTimeout(searchTransitionTimer);
-  activeContainer.classList.add("is-filtering");
+  mapContainer.classList.add("is-filtering");
+  resultsContainer.classList.add("is-filtering");
 
   searchTransitionTimer = setTimeout(() => {
     render(true);
@@ -346,17 +330,8 @@ function getPersonExpertiseAreas(person) {
 
 function render(animateCards = false) {
   const { results, isFilteredView } = getFilteredPeople();
-  const mapView = document.getElementById("mapView");
-  const resultsContainer = document.getElementById("results");
 
-  mapView.hidden = currentView !== "map";
-  resultsContainer.hidden = currentView !== "directory";
-
-  if (currentView === "map") {
-    renderMap(results, animateCards);
-    return;
-  }
-
+  renderMap(results);
   renderDirectory(results, isFilteredView, animateCards);
 }
 
@@ -408,24 +383,11 @@ function renderMap(results, animateMarkers = false) {
   const groups = groupPeopleByLocation(results);
 
   container.innerHTML = `
-    <div class="map-layout">
-      <div id="memberMap" class="member-map" aria-label="Member locations map"></div>
-      <div class="map-list">
-        ${groups.map(group => createLocationCard(group, animateMarkers)).join("")}
-      </div>
-    </div>
+    <div id="memberMap" class="member-map" aria-label="Member locations map"></div>
   `;
 
   container.classList.remove("is-filtering");
   renderLeafletMap(groups);
-
-  if (animateMarkers) {
-    requestAnimationFrame(() => {
-      container.querySelectorAll(".location-card").forEach(item => {
-        item.classList.add("is-visible");
-      });
-    });
-  }
 }
 
 function groupPeopleByLocation(results) {
@@ -447,18 +409,6 @@ function groupPeopleByLocation(results) {
   return [...groups.values()]
     .filter(group => group.coordinates)
     .sort((a, b) => b.people.length - a.people.length || a.location.localeCompare(b.location));
-}
-
-function createLocationCard(group, animateMarkers) {
-  return `
-    <section class="location-card${animateMarkers ? " location-card-enter" : ""}">
-      <h2>${escapeHtml(group.location)}</h2>
-      <p>${escapeHtml(group.geography.countries.join(" / "))} · ${group.people.length} ${group.people.length === 1 ? "member" : "members"}</p>
-      <ul>
-        ${group.people.map(person => `<li>${escapeHtml(person.name)}</li>`).join("")}
-      </ul>
-    </section>
-  `;
 }
 
 function getLocationGeography(location) {
@@ -492,6 +442,7 @@ function renderLeafletMap(groups) {
   memberMapCluster = L.markerClusterGroup({
     maxClusterRadius: 44,
     showCoverageOnHover: false,
+    zoomToBoundsOnClick: false,
     spiderfyOnMaxZoom: true,
     disableClusteringAtZoom: 7,
     iconCreateFunction: cluster => {
@@ -505,23 +456,58 @@ function renderLeafletMap(groups) {
       });
     }
   });
+  memberMapCluster.on("clustermouseover", event => {
+    const markers = event.layer.getAllChildMarkers();
+    const memberCount = markers.reduce((total, marker) => total + marker.options.memberCount, 0);
+    const locations = markers.map(marker => marker.options.locationName).sort();
+    const visibleLocations = locations.slice(0, 6);
+    const remainingLocations = locations.length - visibleLocations.length;
+
+    event.layer.bindPopup(`
+      <strong>${memberCount} ${memberCount === 1 ? "member" : "members"}</strong><br>
+      ${visibleLocations.map(escapeHtml).join("<br>")}
+      ${remainingLocations > 0 ? `<br>+ ${remainingLocations} more locations` : ""}
+    `, {
+      autoPan: false,
+      maxHeight: 180
+    }).openPopup();
+  });
+  memberMapCluster.on("clustermouseout", event => {
+    event.layer.closePopup();
+  });
+  memberMapCluster.on("clusterclick", event => {
+    const targetZoom = Math.min(memberMap.getZoom() + 3, 8);
+    memberMap.flyToBounds(event.layer.getBounds().pad(0.35), {
+      duration: 0.35,
+      maxZoom: targetZoom
+    });
+  });
 
   groups.forEach(group => {
     const size = Math.min(54, 26 + group.people.length * 1.2);
     const marker = L.marker([group.coordinates.lat, group.coordinates.lng], {
       memberCount: group.people.length,
+      locationName: group.location,
       icon: L.divIcon({
         html: `<span>${group.people.length}</span>`,
         className: "member-location-icon",
         iconSize: L.point(size, size)
       })
     });
+    const popupPeople = group.people.slice(0, 8);
+    const remainingPeople = group.people.length - popupPeople.length;
 
     marker.bindPopup(`
       <strong>${escapeHtml(group.location)}</strong><br>
       ${group.people.length} ${group.people.length === 1 ? "member" : "members"}<br>
-      ${group.people.map(person => escapeHtml(person.name)).join("<br>")}
-    `);
+      ${popupPeople.map(person => escapeHtml(person.name)).join("<br>")}
+      ${remainingPeople > 0 ? `<br>+ ${remainingPeople} more` : ""}
+    `, {
+      autoPan: false,
+      maxHeight: 220
+    });
+    marker.on("mouseover focus", () => marker.openPopup());
+    marker.on("mouseout blur", () => marker.closePopup());
 
     memberMapCluster.addLayer(marker);
     memberMapMarkers.push(marker);

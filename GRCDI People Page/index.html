@@ -12,6 +12,8 @@
 <body>
 
 <div class="container">
+  <div id="mapView" class="map-view"></div>
+
   <input type="text" id="search" placeholder="Search people...">
 
   <div class="filters">
@@ -30,12 +32,6 @@
     <button onclick="resetFilters()">Reset</button>
   </div>
 
-  <div class="view-toggle" aria-label="People view">
-    <button type="button" class="view-button is-active" data-view="directory">Directory</button>
-    <button type="button" class="view-button" data-view="map">Map</button>
-  </div>
-
-  <div id="mapView" class="map-view" hidden></div>
   <div id="results"></div>
 </div>
 
