@@ -2,7 +2,7 @@
   {
     "name": "Prof Josep Call",
     "role": "Core Team",
-    "centreRole": "GRCDI Co-Director",
+    "centreRole": "CDI Co-Director",
     "location": "University of St Andrews",
     "affiliation": "School of Psychology and Neuroscience, University of St Andrews",
     "expertise": [
@@ -11,14 +11,19 @@
       "Primate cognition"
     ],
     "bio": "Josep grew up near Barcelona and obtained a BA (Psychology) from the Universitat Autonoma de Barcelona (Spain) and a Master and PhD (both in Psychology) from Emory University (USA). Prior to becoming Professor in the Evolutionary Origins of Mind at the University of St Andrews, he was a lecturer in the School of Biological Sciences at the University of Liverpool, and a senior scientist at the Max Planck Institute for Evolutionary Anthropology in Leipzig (Germany).\n\nJosep studies technical and social problem solving in animals with a special emphasis on the great apes. Some of his current projects focus on inferential reasoning, tool-use, coordination and social learning. Ultimately, his goal is to contribute to elucidate how cognition evolves.",
-    "links": [],
+    "links": [
+      {
+        "label": "Researcher profile",
+        "url": "https://research-portal.st-andrews.ac.uk/en/persons/josep-call"
+      }
+    ],
     "image": "https://diverseintelligences.st-andrews.ac.uk/files/2024/07/jcall2-300x200.jpg",
     "sourcePage": "https://diverseintelligences.st-andrews.ac.uk/people-new/"
   },
   {
     "name": "Prof Amanda Seed",
     "role": "Core Team",
-    "centreRole": "GRCDI Co-Director",
+    "centreRole": "CDI Co-Director",
     "location": "University of St Andrews",
     "affiliation": "School of Psychology and Neuroscience, University of St Andrews",
     "expertise": [
@@ -31,26 +36,36 @@
       "Active learning"
     ],
     "bio": "Amanda Seed is a comparative and developmental psychologist studying the evolution of cognition, in particular causal reasoning, cognitive control and active learning in primates and children.\n\nShe was recently awarded an ERC Starting Grant to explore the relationship between some of these different cognitive skills and how they combine to affect performance on problem-solving tasks. The motivation for this research is to shed light on the evolutionary changes in representational, mnemonic and executive processes that marked the origins of uniquely human thinking.\n\nAmanda is a Professor at the School of Psychology and Neuroscience at the University of St Andrews where she is a member of the Centre for Social Learning and Cognitive Evolution, and the Scottish Primate Research Group. She is the Director of the ‘Living Links to Human Evolution’ Centre at Edinburgh Zoo, where capuchin and squirrel monkeys take part in cognitive experiments in full view of the visiting public, with accompanying displays for public engagement with science.\n\nShe is also the co-director of the newly formed Global Research Centre for Diverse Intelligences bringing together research on intelligence across different systems and disciplines.",
-    "links": [],
+    "links": [
+      {
+        "label": "Researcher profile",
+        "url": "https://research-portal.st-andrews.ac.uk/en/persons/amanda-madeleine-seed"
+      }
+    ],
     "image": "https://diverseintelligences.st-andrews.ac.uk/files/2024/11/AmandaSeed-1-300x286.jpg",
     "sourcePage": "https://diverseintelligences.st-andrews.ac.uk/people-new/"
   },
   {
     "name": "Dr Sarah Bennison",
     "role": "Core Team",
-    "centreRole": "GRCDI Coordinator",
+    "centreRole": "CDI Coordinator",
     "location": "University of St Andrews",
     "affiliation": "School of Psychology and Neuroscience, University of St Andrews",
     "expertise": [],
     "bio": "More information coming soon.",
-    "links": [],
+    "links": [
+      {
+        "label": "Researcher profile",
+        "url": "https://research-portal.st-andrews.ac.uk/en/persons/sarah-bennison"
+      }
+    ],
     "image": "https://diverseintelligences.st-andrews.ac.uk/files/2024/11/Sarah-19-scaled.jpg",
     "sourcePage": "https://diverseintelligences.st-andrews.ac.uk/people-new/"
   },
   {
     "name": "Laura Pels Ferra",
     "role": "Core Team",
-    "centreRole": "GRCDI Coordinator",
+    "centreRole": "CDI Coordinator",
     "location": "University of St Andrews",
     "affiliation": "School of Psychology and Neuroscience, University of St Andrews",
     "expertise": [
@@ -61,14 +76,23 @@
       "Environmental practice"
     ],
     "bio": "Laura enjoys facilitating interdisciplinary research and to develop new creative initiatives that drive impact and engagement.\n\nLaura’s practice and research as an artist is an exploration of the human condition, increasingly with an environmental focus. Her work includes painting, drawing and installation.",
-    "links": [],
+    "links": [
+      {
+        "label": "Personal webpage",
+        "url": "http://www.laurapelsferra.com"
+      },
+      {
+        "label": "Staff profile",
+        "url": "https://research-portal.st-andrews.ac.uk/en/persons/laura-pels-ferra"
+      }
+    ],
     "image": "https://diverseintelligences.st-andrews.ac.uk/files/2024/11/IMG_1845-300x300.jpg",
     "sourcePage": "https://diverseintelligences.st-andrews.ac.uk/people-new/"
   },
   {
     "name": "Patrick Wood",
     "role": "Core Team",
-    "centreRole": "GRCDI Coordinator",
+    "centreRole": "CDI Coordinator",
     "location": "University of St Andrews",
     "affiliation": "School of Psychology and Neuroscience, University of St Andrews",
     "expertise": [],
@@ -90,7 +114,12 @@
       "Organisational behaviour"
     ],
     "bio": "Cinla is Senior Lecturer of Management at University of St Andrews Business School. Previously she held academic positions at the University of Surrey’s Business School. Cinla obtained her PhD in Management and Organisational Behaviour and MSc in International Business Management from University of Surrey, and BA(Hons) in Business and Economics from Trent University (Canada).\n\nHer research is focused on the role of intuition in judgement and decision making, and organisational learning, drawing on management, cognitive psychology and economics. She is particularly interested in decisions taken in real-world contexts and dynamic environments, under conditions of uncertainty.",
-    "links": [],
+    "links": [
+      {
+        "label": "Researcher profile",
+        "url": "https://research-portal.st-andrews.ac.uk/en/persons/cinla-akinci"
+      }
+    ],
     "image": "https://diverseintelligences.st-andrews.ac.uk/files/2024/08/Cinla-Akinci-300x229.jpg",
     "sourcePage": "https://diverseintelligences.st-andrews.ac.uk/people-new/"
   },
@@ -107,7 +136,16 @@
       "Optimisation"
     ],
     "bio": "Özgür is a Senior Lecturer at the University of St Andrews. After completing his undergraduate degree in Izmir, Turkey, he came to St Andrews to pursue a PhD and has remained there ever since. Özgür’s main research interest lies in high-level modelling within constraint programming. He has published several research papers on various aspects of this topic and has led the development of the automated modelling system Conjure since 2010.\n\nConjure has provided a fruitful platform for further research into constraint programming. St Andrews hosts one of the largest and most active research groups in the world specialising in constraint programming.",
-    "links": [],
+    "links": [
+      {
+        "label": "Personal webpage",
+        "url": "http://ozgurakgun.github.io"
+      },
+      {
+        "label": "Researcher profile",
+        "url": "https://research-portal.st-andrews.ac.uk/en/persons/ozgur-akgun"
+      }
+    ],
     "image": "https://diverseintelligences.st-andrews.ac.uk/files/2024/11/2022-bowtie-scaled.jpg",
     "sourcePage": "https://diverseintelligences.st-andrews.ac.uk/people-new/"
   },
@@ -122,7 +160,12 @@
       "Philosophy of language"
     ],
     "bio": "Derek holds a BA from Whitman College and a PhD from the University of Texas at Austin. His research interests span a wide range of issues in philosophy of mind and language, and he has collaborated on projects in developmental and comparative psychology. Derek’s current research includes foundational issues about linguistic meaning and mental content – his recent book Definition and Dispute (Oxford, 2024) defends a novel view of how words get their meaning across temporally extended investigations and social interactions — and contemporary ways of talking and thinking about speech acts and mental states (such as quotative ‘be like’).",
-    "links": [],
+    "links": [
+      {
+        "label": "Researcher profile",
+        "url": "https://research-portal.st-andrews.ac.uk/en/persons/derek-nelson-ball"
+      }
+    ],
     "image": "https://diverseintelligences.st-andrews.ac.uk/files/2024/08/Derek-Ball.jpg",
     "sourcePage": "https://diverseintelligences.st-andrews.ac.uk/people-new/"
   },
@@ -158,7 +201,12 @@
       "Prosocial behaviour"
     ],
     "bio": "Malinda obtained her undergraduate degree from the University of Florida, and her Masters degree and PhD in Developmental Psychology from Emory University in the US. After postdoctoral positions in Denver (working on autism) and Liverpool, she worked in the Department of Developmental and Comparative Psychology at the Max Planck Institute for Evolutionary Anthropology for many years, before becoming a Professor of Developmental Psychology at the University of St Andrews. She studies infants’ and young children’s participation in shared activities (e.g., joint attention, gestural communication, imitation, collaboration) and prosocial and affiliative behaviour. She also does some comparative work on similar topics with apes and dogs.",
-    "links": [],
+    "links": [
+      {
+        "label": "Researcher profile",
+        "url": "https://research-portal.st-andrews.ac.uk/en/persons/malinda-carpenter"
+      }
+    ],
     "image": "https://diverseintelligences.st-andrews.ac.uk/files/2024/11/Malinda-Carpenter-photo.jpeg",
     "sourcePage": "https://diverseintelligences.st-andrews.ac.uk/people-new/"
   },
@@ -174,7 +222,12 @@
       "Behavioural economics"
     ],
     "bio": "Tugce was born in Turkey and received her BA from Bogazici University and MSc from Bilgi University. After completing her PhD at Universitat Autònoma de Barcelona, she moved to the University of St Andrews, where she is currently employed. She also serves as a co-director at the Institute of Behavioural and Neural Sciences. Tugce’s research interests revolve around exploring individual decision processes, primarily in a social context.\n\nIn particular, she is interested in social interactions and how peer effects alter individual behaviour.",
-    "links": [],
+    "links": [
+      {
+        "label": "Researcher profile",
+        "url": "https://www.st-andrews.ac.uk/business-school/people/economics/tc48/"
+      }
+    ],
     "image": "https://diverseintelligences.st-andrews.ac.uk/files/2024/11/photo.jpeg",
     "sourcePage": "https://diverseintelligences.st-andrews.ac.uk/people-new/"
   },
@@ -195,7 +248,12 @@
       "Science policy"
     ],
     "bio": "Martin is a Reader in Physics & Astronomy at the University of St Andrews and Co-Director of the St Andrews Centre for Exoplanet Science (StA-CES), as well as President of the Network of Researchers on the Chemical Emergence of Life (NoRCEL). He received a doctorate in Physics from the University of Dortmund (Germany).\n\nBesides research on the astrophysical applications of the gravitational bending of light, in particular for studying planets or black holes, he explores links across both the sciences and humanities, embracing science as integral part of society and culture. He facilitated the establishment of the St Andrews SETI Post-Detection Hub.",
-    "links": [],
+    "links": [
+      {
+        "label": "Researcher profile",
+        "url": "https://research-portal.st-andrews.ac.uk/en/persons/martin-dominik"
+      }
+    ],
     "image": "https://diverseintelligences.st-andrews.ac.uk/files/2024/11/image.jpeg",
     "sourcePage": "https://diverseintelligences.st-andrews.ac.uk/people-new/"
   },
@@ -212,7 +270,16 @@
       "Slavic languages and cultures"
     ],
     "bio": "Co-Director of St Andrews Centre for Exoplanet Science\n\nEmily researches transnational and multilingual interactions between English, Polish, Ukrainian, Yiddish and Russian language cultures. Her current focus is on intersections between global science fiction, exoplanet science, and space policy.\n\nShe was recently PI for a St Andrews STAIRS grant ‘Forecasting Reproduction in Space’ which investigates whether science fiction and scientific papers address similar issues around reproduction and agency and explores the techniques used in literary and scientific writing to communicate complex ethical issues. She contributed to the Wardlaw Museum’s Alien Worlds Exhibition, BBC Radio 4’s Red Mars Series, and the Futurescaping Space podcast.",
-    "links": [],
+    "links": [
+      {
+        "label": "St Andrews Centre for Exoplanet Science",
+        "url": "https://exoplanets.wp.st-andrews.ac.uk/"
+      },
+      {
+        "label": "Researcher profile",
+        "url": "https://research-portal.st-andrews.ac.uk/en/persons/emily-finer"
+      }
+    ],
     "image": "https://diverseintelligences.st-andrews.ac.uk/files/2024/10/Emily-Finer-Photo-1024x1024.jpg",
     "sourcePage": "https://diverseintelligences.st-andrews.ac.uk/people-new/"
   },
@@ -229,7 +296,12 @@
       "Animal culture"
     ],
     "bio": "Ellen grew up in New Zealand and obtained a BSc Hons (Marine Biology) from Victoria University of Wellington. She completed her Ph.D. in Bioacoustics at the University of Queensland, Australia (2011) followed by a National Academy of Sciences (NRC) postdoctoral fellowship at the Marine Mammal Lab at NOAA (Seattle, USA) and a Royal Society Newton International Fellowship at the University of St Andrews (UK).\n\nIn 2017, she started a Royal Society University Research Fellowship investigating the cultural transmission, vocal learning, and function of humpback whale song. Her board research interests include animal culture, social learning, bioacoustics, and behavioural ecology.\n\nBluesky: @ellengarland.bsky.social",
-    "links": [],
+    "links": [
+      {
+        "label": "Researcher profile",
+        "url": "https://research-portal.st-andrews.ac.uk/en/persons/ellen-clare-garland"
+      }
+    ],
     "image": "https://diverseintelligences.st-andrews.ac.uk/files/2025/01/Ellen_portrait-scaled.jpeg",
     "sourcePage": "https://diverseintelligences.st-andrews.ac.uk/people-new/"
   },
@@ -247,7 +319,12 @@
       "History and conceptual issues in cognitive and behavioural sciences"
     ],
     "bio": "Degree and PhD in psychology (Universidad Autonoma de Madrid). Since 1995 I have been Lecturer and then Reader in the University of St. Andrews. I have studied the onset of intentional communication in hand-reared gorillas and chimpanzees compared with human infants, joint attention and theory of mind skills bilities in nonhuman primates and in diverse populations (typical and atypically developing humans), and conceptual and historical issues in psychology from an interdisciplinary perspective.",
-    "links": [],
+    "links": [
+      {
+        "label": "Researcher profile",
+        "url": "https://research-portal.st-andrews.ac.uk/en/persons/juan-carlos-gomez"
+      }
+    ],
     "image": "https://diverseintelligences.st-andrews.ac.uk/files/2024/10/Juan-Carlos-Gomez.jpg",
     "sourcePage": "https://diverseintelligences.st-andrews.ac.uk/people-new/"
   },
@@ -263,7 +340,16 @@
       "Spatial learning and memory"
     ],
     "bio": "Centre for Biological Diversity, School of Biology\n\nSue grew up in New Zealand took her first degree (BSc Hons) in Zoology and Physiology at the University of Otago. Her second degree (DPhil) was in Zoology from the University of Oxford and was based on work on food storing, spatial memory, and the hippocampus in birds. After a Junior Research Fellowship held at St John’s College, Oxford, she has had lectureships at the Universities of Newcastle, Edinburgh, and St Andrews. These have been held in both Psychology and Biology departments.\n\nSue works on understanding the role that learning and memory plays in the lives of ‘real’ animals, working on cognitive capacities of wild hummingbirds in the Rocky Mountains, Canada, and on nest building in birds. This latter work includes experiments using laboratory zebra finches and observational data on blue tits building in boxes in St Andrews, and sparrow weavers building in the Kalahari desert. She also works on the hormonal and neural bases of nest building.",
-    "links": [],
+    "links": [
+      {
+        "label": "Healy Lab: Cognition in the wild",
+        "url": "http://cognitioninthewild.wp.st-andrews.ac.uk"
+      },
+      {
+        "label": "Researcher profile",
+        "url": "https://research-portal.st-andrews.ac.uk/en/persons/susan-healy"
+      }
+    ],
     "image": "https://diverseintelligences.st-andrews.ac.uk/files/2024/11/Susan-Healy.jpg",
     "sourcePage": "https://diverseintelligences.st-andrews.ac.uk/people-new/"
   },
@@ -280,7 +366,20 @@
       "Communication"
     ],
     "bio": "Cat grew up in Lebanon, England, and France. She has worked with primates across Africa for 20-years. She earned her PhD from the University of St Andrews in 2011. Today her group, the Wild Minds Lab, concentrates on long-term field studies of communication and cognition in wild African apes, elephants, and more. She continues to spend around half the year in the field, and directs field sites in Uganda and Guinea. She likes good coffee and bad science-fiction.\n\nYou can find more about her research here: Wild Minds Lab, The Great Ape Dictionary",
-    "links": [],
+    "links": [
+      {
+        "label": "Wild Minds Lab",
+        "url": "https://www.wildminds.ac.uk/"
+      },
+      {
+        "label": "The Great Ape Dictionary",
+        "url": "https://greatapedictionary.ac.uk/"
+      },
+      {
+        "label": "Researcher profile",
+        "url": "https://research-portal.st-andrews.ac.uk/en/persons/cat-hobaiter"
+      }
+    ],
     "image": "https://diverseintelligences.st-andrews.ac.uk/files/2024/08/Cat-and-chimps.jpg",
     "sourcePage": "https://diverseintelligences.st-andrews.ac.uk/people-new/"
   },
@@ -297,7 +396,12 @@
       "Cryptography"
     ],
     "bio": "Dr Huczynska obtained her PhD in pure mathematics from the University of Glasgow then worked as a researcher in the School of Informatics at the University of Edinburgh, before joining the School of Mathematics and Statistics at the University of St Andrews, where she held a Royal Society Dorothy Hodgkin Research Fellowship from 2004-2010. She became a Lecturer in 2010, Senior Lecturer in 2015 and Reader in 2023. She has worked part-time since 2008. Her research interests are in the area of combinatorics and finite fields, in particular their applications to cryptography and communications.\n\nShe has strong interdisciplinary links to theoretical computer science and AI.",
-    "links": [],
+    "links": [
+      {
+        "label": "Researcher profile",
+        "url": "https://research-portal.st-andrews.ac.uk/en/persons/sophie-huczynska"
+      }
+    ],
     "image": "https://diverseintelligences.st-andrews.ac.uk/files/2024/11/Sofie-H.jpg",
     "sourcePage": "https://diverseintelligences.st-andrews.ac.uk/people-new/"
   },
@@ -314,7 +418,20 @@
       "Biodiversity monitoring"
     ],
     "bio": "Co-Director of Centre for Research into Ecological and Environmental Modelling (CREEM)\n\nAlison develops analytical methods to analyse ecological data and track changes in the natural world. Using combinations of statistical and machine learning approaches, she leverages the information from complex and messy ecological datasets. She has a particular interest in using citizen science data, which uses the power of the general public engaging with nature in order to increase our understanding of dynamic ecological systems. She is also interested in using acoustics to monitor biodiversity.",
-    "links": [],
+    "links": [
+      {
+        "label": "Centre for Research into Ecological and Environmental Modelling (CREEM)",
+        "url": "https://www.creem.st-andrews.ac.uk/"
+      },
+      {
+        "label": "Researcher profile",
+        "url": "https://research-portal.st-andrews.ac.uk/en/persons/alison-johnston"
+      },
+      {
+        "label": "Google Scholar Citations",
+        "url": "https://scholar.google.com/citations?user=XNC5KCoAAAAJ&hl=en&oi=ao"
+      }
+    ],
     "image": "https://diverseintelligences.st-andrews.ac.uk/files/2024/10/Ali-Johnson-2023_London_sq_zoom.jpg",
     "sourcePage": "https://diverseintelligences.st-andrews.ac.uk/people-new/"
   },
@@ -331,7 +448,12 @@
       "Multilingualism"
     ],
     "bio": "Yu-Hui grew up in Taiwan and developed a fascination with how people acquire languages. Her primary research focuses on the cross-linguistic aspects of language acquisition and processing. She is also interested in the relationship between language production and processing in both bilingual children and adults, as well as the connection between language and thought.\n\nBefore joining St Andrews, she earned a PhD in linguistics from the University of Edinburgh, where she taught various courses on linguistics and language acquisition.",
-    "links": [],
+    "links": [
+      {
+        "label": "Researcher profile",
+        "url": "https://research-portal.st-andrews.ac.uk/en/persons/yu-hui-liao"
+      }
+    ],
     "image": "https://diverseintelligences.st-andrews.ac.uk/files/2025/03/Yuhui_Liao-277x300.jpg",
     "sourcePage": "https://diverseintelligences.st-andrews.ac.uk/people-new/"
   },
@@ -348,7 +470,12 @@
       "Toxic behaviour"
     ],
     "bio": "Fergus grew up in Dundee and obtained his BSc, MRes and PhD from the School of Psychology & Neuroscience at the University of St Andrews interspersed with time as a Robert Jones Scholar at Emory University. Since 2019 Fergus has held a faculty position in the University of St Andrews Business School (Department of Management). He has also held honorary positions at Bayreuth University and the University of Dundee.\n\nFergus researches a range of phenomena which are central to understandings of organisations and their management, including social identity, leadership and influence, normative processes, social support and toxic behaviour in groups.",
-    "links": [],
+    "links": [
+      {
+        "label": "Researcher profile",
+        "url": "https://research-portal.st-andrews.ac.uk/en/persons/fergus-gilmour-neville"
+      }
+    ],
     "image": "https://diverseintelligences.st-andrews.ac.uk/files/2024/08/Fergus-Neville.jpg",
     "sourcePage": "https://diverseintelligences.st-andrews.ac.uk/people-new/"
   },
@@ -365,7 +492,12 @@
       "Neurodevelopmental genomics"
     ],
     "bio": "Prof Paracchini graduated in Biological Sciences (cum laude) from University of Pavia in 1998 and obtained a DPhil in Human Genetics from Oxford University in 2003. She conducted her post-doctoral training in Prof. Anthony Monaco’s group at the Wellcome Trust Centre for Human Genetics, Oxford University where she became interested in dyslexia genetics.\n\nIn 2011, she was awarded a Royal Society University Research Fellowship to set up her group at The University of St Andrews where she continues to investigate the genetics of specific learning difficulties and cognitive abilities. In 2024, she was appointed as Professor of Neurodevelopmental Genomics at the University of Bonn. Her research focusses on dyslexia and reading abilities and she has a specific interest in dissecting the complex link between human handedness, brain asymmetries and cognition.",
-    "links": [],
+    "links": [
+      {
+        "label": "Researcher profile",
+        "url": "https://research-portal.st-andrews.ac.uk/en/persons/silvia-paracchini"
+      }
+    ],
     "image": "https://diverseintelligences.st-andrews.ac.uk/files/2024/10/Silvia-Paracchini.jpg",
     "sourcePage": "https://diverseintelligences.st-andrews.ac.uk/people-new/"
   },
@@ -380,7 +512,12 @@
       "Animal protection activism"
     ],
     "bio": "Adam Reed worked closely with a Scottish based animal protection organisation for 10 years. The project focused on animal ethics and everyday activism, professionalism in animal activism, shifting understandings of human-animal relationships, and relationships between animal activism and animal science.\n\nKey publications: Animal People: Moral Subjects in the Work of Animal Protection. Cornell University Press. 2025",
-    "links": [],
+    "links": [
+      {
+        "label": "Researcher profile",
+        "url": "https://research-portal.st-andrews.ac.uk/en/persons/adam-douglas-evelyn-reed"
+      }
+    ],
     "image": "https://diverseintelligences.st-andrews.ac.uk/files/2024/10/Adam-Reed.jpeg",
     "sourcePage": "https://diverseintelligences.st-andrews.ac.uk/people-new/"
   },
@@ -397,7 +534,12 @@
       "Marine mammals"
     ],
     "bio": "Luke graduated with BSc Marine Zoology from the University College of North Wales, Bangor, UK in 1995 and obtained his PhD from Dalhousie University, Canada, in 2003. He then moved to the University of St Andrews with a NERC Postdoctoral Fellowship, and after 9 years of postdoctoral research there became Lecturer in 2012.\n\nHe is now Reader in Biology affiliated with the Scottish Ocean Institute, Sea Mammal Research Unit, the Centre for Biological Diversity, and the Centre for Social Learning and Cognitive Evolution. He has broad research interests, largely centred around the evolution of learning, behaviour and communication, with a special focus on marine mammals. Current projects include long-term sperm whale research, studies of humpback whale song, vocal behaviour of monk seals, employing neural networks for detecting and classifying cetacean calls, and behaviour and genetics of humpbacks of western Canada.\n\nBluesky: @lrendell.bsky.social",
-    "links": [],
+    "links": [
+      {
+        "label": "Researcher profile",
+        "url": "https://research-portal.st-andrews.ac.uk/en/persons/luke-edward-rendell"
+      }
+    ],
     "image": "https://diverseintelligences.st-andrews.ac.uk/files/2025/01/Luke-Rendell-profile-pic.jpg",
     "sourcePage": "https://diverseintelligences.st-andrews.ac.uk/people-new/"
   },
@@ -413,7 +555,16 @@
       "Cooperation"
     ],
     "bio": "Manon Schweinfurth grew up in Germany and studied Biology with Psychology as minor in Mainz (Germany). During her studies, she participated in projects on ants, baboons, geese and ravens to study why and how animals get along with other. For her PhD, she moved to Bern (Switzerland) to study the evolution of social behaviours in rats. Thereafter, she was awarded a Swiss National Science Foundation fellowship to study chimpanzees in Chimfunshi (Zambia).\n\nToday, she is a Senior Lecturer in St Andrews (UK) and leads the CooperationLab, investigating how and why seemingly altruistic behaviours emerge and persist in a competitive world.",
-    "links": [],
+    "links": [
+      {
+        "label": "CooperationLab",
+        "url": "https://manon-schweinfurth.jimdofree.com/"
+      },
+      {
+        "label": "Researcher profile",
+        "url": "https://research-portal.st-andrews.ac.uk/en/persons/manon-karin-schweinfurth"
+      }
+    ],
     "image": "https://diverseintelligences.st-andrews.ac.uk/files/2024/08/Manon-Schweinfurth-scaled.jpg",
     "sourcePage": "https://diverseintelligences.st-andrews.ac.uk/people-new/"
   },
@@ -429,7 +580,12 @@
       "Artificial Intelligence"
     ],
     "bio": "Kasim holds a BEng in Electronic Engineering from the University of East Anglia, an MSc in Information and Communication Systems from the Hamburg University of Technology, and a PhD in Computer Science from the University of Hamburg. After postdoctoral appointments at the University of the Algarve and Queen Mary University of London, he joined the University of St Andrews.\n\nKasim is interested in computational and biological models of vision and perception, understanding of visual scenes, as well as relationship between perception and action.",
-    "links": [],
+    "links": [
+      {
+        "label": "Researcher profile",
+        "url": "https://research-portal.st-andrews.ac.uk/en/persons/kasim-terzic"
+      }
+    ],
     "image": "https://diverseintelligences.st-andrews.ac.uk/files/2024/10/Kasim.jpg",
     "sourcePage": "https://diverseintelligences.st-andrews.ac.uk/people-new/"
   },
@@ -446,7 +602,12 @@
       "Artificial intelligence"
     ],
     "bio": "Alice Toniolo is a Lecturer in the School of Computer Science at the University of St Andrews. She obtained a PhD in Computing Science from the University of Aberdeen, and a BSc and MSc in Computer Engineering from the University of Padua.\n\nDrawing from philosophical studies of human argumentation, her research aims to develop intelligent systems that can help people reason, debate, and explain decisions more effectively when confronted with conflicting and uncertain information such as in critical situations. Her research lies on computational models of argumentation, and spans across different areas such as normative and evidential reasoning, argument visualisation, and deliberation.",
-    "links": [],
+    "links": [
+      {
+        "label": "Researcher profile",
+        "url": "https://research-portal.st-andrews.ac.uk/en/persons/alice-toniolo"
+      }
+    ],
     "image": "https://diverseintelligences.st-andrews.ac.uk/files/2024/11/AToniolo.jpg",
     "sourcePage": "https://diverseintelligences.st-andrews.ac.uk/people-new/"
   },
@@ -463,7 +624,16 @@
       "Sampling bias"
     ],
     "bio": "Mike obtained his PhD in behavioural ecology from the University of Leicester. He moved to St Andrews to take up a postdoc in 2007 and has remained there since, becoming a member of academic staff in the School of Biology. His research has two strands. First, he is interested in the costs and benefits, functions and underlying mechanisms, and evolution of living in groups.\n\nHis research in this area takes in recognition and social organisation, social learning, predator-prey interactions and resource competition. The second strand of his research explores how sampling biases and experimental design decisions affect the outcomes of experimental research into animal behaviour. He is one of the authors of the STRANGE framework, which aims to help identify and mitigate the effects of sampling biases in animal behaviour research.",
-    "links": [],
+    "links": [
+      {
+        "label": "ADSGlab",
+        "url": "https://sites.google.com/view/big-lab-webster/home"
+      },
+      {
+        "label": "Researcher profile",
+        "url": "https://research-portal.st-andrews.ac.uk/en/persons/michael-munro-webster"
+      }
+    ],
     "image": "https://diverseintelligences.st-andrews.ac.uk/files/2024/11/Screenshot-2024-11-14-at-10.31.00.png",
     "sourcePage": "https://diverseintelligences.st-andrews.ac.uk/people-new/"
   },
@@ -482,7 +652,12 @@
       "Developmental psychology"
     ],
     "bio": "Andy’s interest in diverse intelligences began during field studies of wild baboons that led him and collaborator Richard Byrne to develop the concepts of ‘tactical deception’ and more broadly, social or ‘Machiavellian’ intelligence. This evolved into a focus on the evolution of social learning and culture, including ‘cultural intelligence’ – cognitive processes that underwrite human and nonhuman primate culture.\n\nStudies of these topics in the wild and with captive participants has ranged over human adults and children, chimpanzees, other apes, marmosets, squirrel monkeys and capuchins. Since 2001 Andy has been Wardlaw Professor of Evolutionary and Developmental Psychology, now Emeritus Professor.",
-    "links": [],
+    "links": [
+      {
+        "label": "Researcher profile",
+        "url": "https://research-portal.st-andrews.ac.uk/en/persons/andrew-whiten"
+      }
+    ],
     "image": "https://diverseintelligences.st-andrews.ac.uk/files/2025/03/Whiten-Andy-portrait-scaled.jpg",
     "sourcePage": "https://diverseintelligences.st-andrews.ac.uk/people-new/"
   },
@@ -498,7 +673,12 @@
       "Judgement and decision making"
     ],
     "bio": "Conny obtained a BSc Economics from the University of York, an MSc Environment and Development from the London School of Economics and Political Science, and a PhD in Economics from the University of Gothenburg. Before joining St Andrews as Professor of Economics and Finance, he was Professor of Economics and Director of the Behavioural Science Centre at the University of Stirling.\n\nConny studies human behaviour and motivation with particular emphasis on design of interventions that target social dilemma problems. Current projects focus on design of interventions and incentives aiming to reduce the spread of antimicrobial resistance and promoting vaccine uptake, in addition to the human capacity for forecasting policy effects. The overarching goal is to refine understanding of human motivation and enhance accuracy of human judgment and forecasts.",
-    "links": [],
+    "links": [
+      {
+        "label": "Researcher profile",
+        "url": "https://research-portal.st-andrews.ac.uk/en/persons/conny-wollbrant"
+      }
+    ],
     "image": "https://diverseintelligences.st-andrews.ac.uk/files/2024/10/Conny-Wollbrant-photo.jpg",
     "sourcePage": "https://diverseintelligences.st-andrews.ac.uk/people-new/"
   },
@@ -516,7 +696,12 @@
       "Applied machine learning"
     ],
     "bio": "Juan is a Reader in School of Computer Science at the University of St Andrews, UK. Her research is to make best use of sensor data in understanding the environment and the people, and thus in making informed decisions. Her expertise centres around applied machine learning, continual learning, and domain adaptation. Juan has obtained BSc and MSc in Computer Science from Wuhan University, China and PhD from University College Dublin, Ireland.",
-    "links": [],
+    "links": [
+      {
+        "label": "Researcher profile",
+        "url": "https://research-portal.st-andrews.ac.uk/en/persons/juan-ye"
+      }
+    ],
     "image": "https://diverseintelligences.st-andrews.ac.uk/files/2024/08/Juan-Ye.jpg",
     "sourcePage": "https://diverseintelligences.st-andrews.ac.uk/people-new/"
   },
@@ -551,7 +736,12 @@
       "Artificial consciousness"
     ],
     "bio": "Prof Minoru Asada is a distinguished professor at the University of Osaka, renowned for his work in cognitive developmental robotics, artificial intelligence, and robotics. He explores human cognitive development by designing humanoid robots that simulate learning and social interaction. As a founding figure of RoboCup, an international robotics competition aimed at advancing AI and robotics through challenges like robot soccer, Prof. Asada has played a key role in promoting research on intelligent, autonomous robots. His work also addresses robot ethics and artificial consciousness, bridging the gap between human cognitive processes and artificial systems.\n\nVisiting Professor at Chubu University Academy of Emerging Sciences, Japan\n\nPrincipal investigator at Center for Information and Neural Networks (CiNet), National Institute of Information and Communications Technology (NICT)",
-    "links": [],
+    "links": [
+      {
+        "label": "Emergent Robotics Laboratory",
+        "url": "http://www.er.ams.eng.osaka-u.ac.jp/asadalab/?lang=en"
+      }
+    ],
     "image": "https://diverseintelligences.st-andrews.ac.uk/files/2024/11/MyFaceWinter.jpg",
     "sourcePage": "https://diverseintelligences.st-andrews.ac.uk/people-new/"
   },
@@ -569,7 +759,16 @@
       "Technical innovation"
     ],
     "bio": "Alice is a cognitive biologist with Bavarian roots. After studying Zoology at Edinburgh University she did her PhD (in Zoology) at Vienna University (Austria) and Postdocs at Vienna University and Oxford University (UK) as a FWF Erwin Schrödinger fellow.\n\nThereafter she worked as senior scientist, Assistant and Associate Professor at the Messerli Research Institute at the University of Veterinary Medicine Vienna (Austria) Alice is interested in the processes of technical innovations across agents (with focus on birds), particularly in tool use and other forms of instrumental problem solving. Her goal is to better our understanding of the evolution of technology.",
-    "links": [],
+    "links": [
+      {
+        "label": "Researcher Profile",
+        "url": "https://www.vetmeduni.ac.at/en/cognition/team#c133673"
+      },
+      {
+        "label": "Goffin Labs",
+        "url": "https://www.vetmeduni.ac.at/en/cognition/goffin-lab"
+      }
+    ],
     "image": "https://diverseintelligences.st-andrews.ac.uk/files/2024/08/Alice-Auersperg.png",
     "sourcePage": "https://diverseintelligences.st-andrews.ac.uk/people-new/"
   },
@@ -586,7 +785,20 @@
       "Biodiversity conservation"
     ],
     "bio": "Filippo holds a degree in Biology from the University “La Sapienza” in Rome (Italy) and a PhD in Ethology from the University of Utrecht (Netherlands). He was a postdoctoral fellow at Emory University (USA), and then a Professor of Animal Behaviour and Director of the Center for Evolutionary Anthropology and Paleontology Research at Liverpool John Moores University (United Kingdom), of which is now an Emeritus Professor.\n\nFilippo is currently a Research Professor at the Instituto de Neuroetologia of Universidad Veracruzana (Mexico). He has 40 years of research experience in primate behaviour, focusing on the regulation of social relationships, conflict management, uncertainty, and fission-fusion dynamics. Over the past 25 years, he has dedicated himself to the study of the behavioural ecology, cognition, and conservation of spider monkeys in Mexico and Costa Rica.",
-    "links": [],
+    "links": [
+      {
+        "label": "Researcher Profile",
+        "url": "https://www.uv.mx/personal/faureli"
+      },
+      {
+        "label": "Google Scholar Citations",
+        "url": "http://scholar.google.com/citations?hl=en&user=0EABvHoAAAAJ"
+      },
+      {
+        "label": "National Geographic Explorer Directory",
+        "url": "https://explorers.nationalgeographic.org/directory/filippo-aureli"
+      }
+    ],
     "image": "https://diverseintelligences.st-andrews.ac.uk/files/2024/08/Filippo-Aureli.jpg",
     "sourcePage": "https://diverseintelligences.st-andrews.ac.uk/people-new/"
   },
@@ -603,7 +815,12 @@
       "Learning and memory"
     ],
     "bio": "Andrew Barron is the Director of the Macquarie Minds and Intelligences Initiative. He is a neuroethologist, which is a discipline of neuroscience studying the neural mechanisms of natural animal behaviour. Most of his research focuses on insects, especially honey bees.\n\nUsing advanced techniques to visualise, manipulate, map and record from the insect brain Barron’s team has made important contributions to the understanding of fundamental behavioural systems such as cognition, navigation, social behaviour and learning and memory. He also conducts research to improve honey bee health and welfare. He is studying how bees and bee colonies are impacted by pesticide and disease stressors, and how to best intervene to help bee colonies under stress.",
-    "links": [],
+    "links": [
+      {
+        "label": "Researcher profile",
+        "url": "http://andrewbarron.org/"
+      }
+    ],
     "image": "https://diverseintelligences.st-andrews.ac.uk/files/2024/08/Andrew-Barron.jpg",
     "sourcePage": "https://diverseintelligences.st-andrews.ac.uk/people-new/"
   },
@@ -621,7 +838,12 @@
       "Computational cognitive science"
     ],
     "bio": "Neil grew up in Bristol and Edinburgh and obtained an MA in Philosophy from the University of Glasgow, followed by an MSc in Cognitive & Decision Sciences, an MRes in Computer Science, and a PhD in Experimental Psychology from UCL in London. Prior to becoming a Reader in Cognitive Psychology at the University of Edinburgh, he worked as a postdoctoral researcher in Data Science and Psychology at NYU in New York.\n\nNeil studies how humans form models of the structure of their environment and how they use these models to plan, imagine, explain, and solve problems. He typically employs interactive experiments and games combined with computational modelling to investigate these processes in adults, children, and recently, in groups.",
-    "links": [],
+    "links": [
+      {
+        "label": "Bramley Computational Cognitive Science Lab",
+        "url": "https://bramleylab.ppls.ed.ac.uk/"
+      }
+    ],
     "image": "https://diverseintelligences.st-andrews.ac.uk/files/2025/02/NeilBramley.jpeg",
     "sourcePage": "https://diverseintelligences.st-andrews.ac.uk/people-new/"
   },
@@ -638,7 +860,12 @@
       "Primate behaviour"
     ],
     "bio": "Erica earned a BA (linguistics) from Swarthmore College with a senior thesis on comparisons between human language and animal communication. She received her PhD (psychology) from the University of St Andrews for work on the gestural communication of orangutang. She was a postdoctoral scholar at the University of Chicago, studying children’s language acquisition and gesture with Susan Goldin-Meadow.\n\nErica then took a faculty position in the Departments of Anthropology and Psychology UCLA, where she taught for 10 years. In 2024, Erica moved to Indiana University where she is professor of anthropology, animal behaviour, cognitive science, and psychology. Erica studies communication, social cognition, and learning in great apes and human children. Her collaborative work also includes dogs, parrots, songbirds, and dolphins.\n\nErica is the co-founder and co-director of the Diverse Intelligences Summer Institute. Together with Jacob Foster, she is establishing a center for the study of Diverse Intelligences at Indiana University.",
-    "links": [],
+    "links": [
+      {
+        "label": "COMPARE Lab",
+        "url": "https://www.comparelab.org/"
+      }
+    ],
     "image": "https://diverseintelligences.st-andrews.ac.uk/files/2024/11/Erica-Cartmill-IMG_2515_color_crop_suggestion.jpg",
     "sourcePage": "https://diverseintelligences.st-andrews.ac.uk/people-new/"
   },
@@ -655,7 +882,12 @@
       "Technological evolution"
     ],
     "bio": "Mathieu is an Associate Professor at Mohammed VI Polytechnic University, in Rabat (Morocco). Originally from Montréal (Canada), he earned his PhD in Philosophy at the Université de Montréal, focusing on analogies in scientific reasoning, especially in evolutionary biology. This interest extended to the relationship between biological and cultural inheritance.\n\nHe was a post-doctoral researcher at the Konrad Lorenz Institute for Evolution and Cognition Research in Vienna (Austria), and at the Cognitive Science Department at the Central European University, in Budapest (Hungary). Mathieu’s research explores the mechanisms and processes of technological change and tries to understand what makes human technological evolution apparently open-ended.\n\nThese interests led him to collaborate with comparative and experimental psychologists, archaeologists, and anthropologists, among others.",
-    "links": [],
+    "links": [
+      {
+        "label": "Researcher profile",
+        "url": "https://mathieucharbonneau.wordpress.com/"
+      }
+    ],
     "image": "https://diverseintelligences.st-andrews.ac.uk/files/2024/08/Mathieu-Charbonneau.jpg",
     "sourcePage": "https://diverseintelligences.st-andrews.ac.uk/people-new/"
   },
@@ -672,7 +904,16 @@
       "Nature connectedness"
     ],
     "bio": "David is the CEO of the Ryal Zoological society of Scotland the conservation charity that leads Edinburgh Zoo and Highland Wildlife Park. David is also the Vice President of the World Association of Zoos and Aquaria (WAZA) and the Co-Chair of Reverse the Red – a coalition of conservation NGO’s supporting the implementation of Target 4 of the Global Biodiversity Framework. David seeks to maximise the conservation impact of zoos and drives improved welfare of zoo animals at a global level.",
-    "links": [],
+    "links": [
+      {
+        "label": "Royal Zoological Society of Scotland",
+        "url": "https://www.rzss.org.uk/"
+      },
+      {
+        "label": "World Association of Zoos and Aquariums",
+        "url": "https://www.waza.org/"
+      }
+    ],
     "image": "https://diverseintelligences.st-andrews.ac.uk/files/2024/11/David-Field-and-Penguins-scaled.jpg",
     "sourcePage": "https://diverseintelligences.st-andrews.ac.uk/people-new/"
   },
@@ -726,7 +967,12 @@
       "Social behaviour prediction"
     ],
     "bio": "Shiry Ginosar is an assistant professor at the Toyota Technological Institute at Chicago. Shiry studies computer vision, machine learning, and AI. She received her BSc from Carnegie Mellon University and her Ph.D. in Computer Science from UC Berkeley. Shiry was a Computing Innovation postdoctoral fellow at the EECS department and at the Simons Institute for the Theory of Computing at UC Berkeley. Shiry’s research has distinctly influenced the areas of video synthesis and social behavior prediction.\n\nShe focuses on understanding intelligence, one pixel at a time. While her background is in machine perception, Shiry’s work draws upon insights from other disciplines, including Psychology, Neuroscience, and the arts.",
-    "links": [],
+    "links": [
+      {
+        "label": "Shiry Ginosar website",
+        "url": "https://shiry.ttic.edu/"
+      }
+    ],
     "image": "https://diverseintelligences.st-andrews.ac.uk/files/2025/03/Shiry_2023_small-copy.png",
     "sourcePage": "https://diverseintelligences.st-andrews.ac.uk/people-new/"
   },
@@ -762,7 +1008,12 @@
       "Cognitive control"
     ],
     "bio": "Rob Hampton grew up in the US, Venezuela, and Kenya. He graduated with a BA in Psychology from Macalester College in St. Paul, MN, USA, then earned his MA and PhD at the University of Toronto studying memory in food-storing birds. After a brief postdoc in circadian rhythm biology in Toronto, Rob began studying primate cognition at the National Institutes of Health in Bethesda, MD. He has been on faculty at Emory University since 2004.\n\nThe Laboratory of Comparative Primate Cognition has studied primate metacognition, transitive inference, working memory, and various aspects of cognitive control. The laboratory has recently started a new research program on cognition in chickens.",
-    "links": [],
+    "links": [
+      {
+        "label": "Laboratory of Comparative Primate Cognition",
+        "url": "https://hamptonlab.wordpress.com/"
+      }
+    ],
     "image": "https://diverseintelligences.st-andrews.ac.uk/files/2024/08/Rob-Hampton.png",
     "sourcePage": "https://diverseintelligences.st-andrews.ac.uk/people-new/"
   },
@@ -828,7 +1079,12 @@
       "Field trials"
     ],
     "bio": "Takayuki Kanda is a professor in Informatics at Kyoto University, Japan. He is also a Visiting Group Leader at ATR Intelligent Robotics and Communication Laboratories, Kyoto, Japan. He received his B. Eng, M. Eng, and Ph. D. degrees in computer science from Kyoto University, Kyoto, Japan, in 1998, 2000, and 2003, respectively. He is one of the starting members of Communication Robots project at ATR.\n\nHe has developed a communication robot, Robovie, and applied it in daily situations, such as peer-tutor at elementary school and a museum exhibit guide. His research interests include human-robot interaction, interactive humanoid robots, and field trials.",
-    "links": [],
+    "links": [
+      {
+        "label": "HRI Laboratory – Kyoto University",
+        "url": "https://www.robot.soc.i.kyoto-u.ac.jp/en/"
+      }
+    ],
     "image": "https://diverseintelligences.st-andrews.ac.uk/files/2024/08/takayuki-Kanda.jpg",
     "sourcePage": "https://diverseintelligences.st-andrews.ac.uk/people-new/"
   },
@@ -845,7 +1101,16 @@
       "Rational agency"
     ],
     "bio": "Giacomo is a UKRI Future Leader Fellow on the project Agency, Rationality and Epistemic Defeat, the first long term collaboration between epistemology, developmental psychology and comparative cognition. Giacomo was born in Sardinia, and did his BA and MA at the University of Bologna. He obtained his PhD in 2014 at the University of Aberdeen, under the guidance of Professors Crispin Wright and Carrie Jenkins, and has held postdoctoral fellowships at the Universities of Aberdeen, Copenhagen, and Stirling.\n\nHis interdisciplinary research concerns primarily how the study of counterevidence helps to shed light on the nature of rational agency.",
-    "links": [],
+    "links": [
+      {
+        "label": "Agency, Rationality and Epistemic Defeat (ARED)",
+        "url": "https://ared.stir.ac.uk/"
+      },
+      {
+        "label": "Empirical Epistemology Network",
+        "url": "https://empiricalepistemology.stir.ac.uk/"
+      }
+    ],
     "image": "https://diverseintelligences.st-andrews.ac.uk/files/2025/02/GiacomoMelis.jpg",
     "sourcePage": "https://diverseintelligences.st-andrews.ac.uk/people-new/"
   },
@@ -861,7 +1126,20 @@
       "Collective intelligence"
     ],
     "bio": "Gabriel was born and raised in Mexico City and obtained a BSc. (Basic Biomedical Research) from the Universidad Nacional Autónoma de México (UNAM) and a PhD (in Biology) from the University of Pennsylvania (USA). He worked as an academic advisor to a conservation organisation in the Yucatan peninsula, did a postdoctoral stay at the Complex Systems department in the Institute of Physics and then joined the Instituto Politécnico Nacional as a lecturer, a position he held for 12 years.\n\nSince 2018 he works as a researcher at UNAM, holding joint appointments at the Mathematical Modeling of Social Systems department and the Centre for Complexity Sciences. Gabriel is very interested in the relationship between social complexity and cognition, particularly on how groups of human and nonhuman animals solve problems collectively.",
-    "links": [],
+    "links": [
+      {
+        "label": "Researcher profile",
+        "url": "https://mmss.iimas.unam.mx/gabriel-ramos-fernandez/"
+      },
+      {
+        "label": "Proyecto CONAHCYT Ciencia de Frontera",
+        "url": "https://mmss.iimas.unam.mx/proyectos/redes-multiplex/"
+      },
+      {
+        "label": "ORCID",
+        "url": "https://orcid.org/0000-0001-7175-3905"
+      }
+    ],
     "image": "https://diverseintelligences.st-andrews.ac.uk/files/2024/08/Gabriel-Ramos-Fernandez.jpg",
     "sourcePage": "https://diverseintelligences.st-andrews.ac.uk/people-new/"
   },
@@ -879,7 +1157,12 @@
       "Infant development"
     ],
     "bio": "Philippe Rochat is Professor of Psychology at Emory University and Director of the Emory Infant and Child Laboratory. He was born and raised in Geneva, Switzerland. He was trained by Jean Piaget and his close collaborators and received his Ph.D. from the University of Geneva, Switzerland in 1984. He then began a series of Post Doctoral internships in the United States at Brown University, the University of Pennsylvania, and collaborative research at Johns Hopkins University.\n\nDuring this time, he conducted research on action, perception, and cognitive development in human infants. He taught and did research in developmental psychology at the University of Massachusetts, and joined the faculty at Emory University in Atlanta in the 1990s, where he is currently a professor of psychology and head of the Emory Infant and Child Lab (see the complete list of publications and PDFs at Emory Infant and Child Lab).\n\nThe main focus of his current research is on the early sense of self, emerging self-concept, the developmental origins of self-consciousness, the development of social cognition and relatedness, and the emergence of a moral sense during the preschool years in children from all over the world. Philippe Rochat and collaborators’ research emphasises differences in populations growing up in highly contrasted cultural environments, as well as highly contrasted socio-economic circumstances.",
-    "links": [],
+    "links": [
+      {
+        "label": "Emory Infant and Child Lab",
+        "url": "https://scholarblogs.emory.edu/rochatlab/"
+      }
+    ],
     "image": "https://diverseintelligences.st-andrews.ac.uk/files/2024/10/Philippe-Rochat-1.jpg",
     "sourcePage": "https://diverseintelligences.st-andrews.ac.uk/people-new/"
   },
@@ -895,7 +1178,12 @@
       "Robotics"
     ],
     "bio": "Prof José Santos-Victor (Fellow, IEEE) received the Ph.D. degree in electrical and computer engineering from Instituto Superior Técnico (IST), Lisbon, Portugal, in 1995. He is a Full Professor of Computer Vision and Robotics with IST. He is a researcher and past-president of the Institute for Systems and Robotics, Lisbon, and the founding head of the Computer and Robot Vision Laboratory, Lisbon.\n\nHe carries out research in cognitive vision and robotics, using biologically plausible principles, and aiming at better understanding human cognition. He was the Scientist responsible for the IST participation in many European and national research projects in cognitive and bioinspired computer vision and robotics. He is a Member of the Academy of Sciences of Lisbon and a Fellow of the IEEE.",
-    "links": [],
+    "links": [
+      {
+        "label": "Researcher profile",
+        "url": "http://users.isr.ist.utl.pt/~jasv/"
+      }
+    ],
     "image": "https://diverseintelligences.st-andrews.ac.uk/files/2024/11/jasv-pic-2024-10-13-crop.jpg",
     "sourcePage": "https://diverseintelligences.st-andrews.ac.uk/people-new/"
   },
@@ -926,7 +1214,20 @@
       "Human–nonhuman coexistence"
     ],
     "bio": "Anindya has studied the molecular biochemistry of yeast metabolism for his doctorate at the Tata Institute of Fundamental Research in Mumbai, India and subsequently, the social biology of wasps, classical genetics of human disease, and social cognition in wild bonnet macaques at the Centre for Ecological Sciences of the Indian Institute of Science and at the National Centre for Biological Sciences, both in Bangalore, India.\n\nHis principal research, over the last three decades, has, however, primarily been on the behavioural ecology, cognitive ethology, population and behavioural genetics, evolutionary biology, conservation studies and ethnobiology of primates and other nonhuman species.\n\nHis current research in natural philosophies, urban ecologies, art heritage and performance studies involve etho-ethnographic explorations of nonhuman synurbisation, human–nonhuman coexistence and the lived experiences of nonhumans, promising unique insights into other-than-human lifeworlds – of the past, today and in the future.",
-    "links": [],
+    "links": [
+      {
+        "label": "Animal Behaviour and Cognition Programme, National Institute of Advanced Studies",
+        "url": "https://www.nias.res.in/academics/academics-facility-member-info/School%20of%20Natural%20Sciences%20and%20Engineering/Animal%20Behaviour%20and%20Cognition/Current%20Programmes/Anindya%20Sinha"
+      },
+      {
+        "label": "Coexistence Studies Group, University of Transdisciplinary Health Sciences and Technology",
+        "url": "https://www.tdu.edu.in/research-themes/coexistence-studies"
+      },
+      {
+        "label": "Centre for Neuroscience, Indian Institute of Science",
+        "url": "https://cns.iisc.ac.in/people/anindya-sinha/"
+      }
+    ],
     "image": "https://diverseintelligences.st-andrews.ac.uk/files/2025/02/Anindya-Sinha-in-Thought-Mysore-M-D-Madhusudan-July-2012.jpg",
     "sourcePage": "https://diverseintelligences.st-andrews.ac.uk/people-new/"
   },
@@ -944,7 +1245,12 @@
       "Mathematical modelling"
     ],
     "bio": "Alex is an Associate Professor in the Luddy School of Informatics, Computing and Engineering at Indiana University, Bloomington. Earlier in his career he received an MSci in Physics from Imperial College London, then an MRes and PhD from University College London (UCL). This was followed by a postdoc at the University of Pennsylvania before returning to UCL as a Royal Society University Research Fellow. More recently he was a professor in the School of Mathematics and Statistics at St Andrews.\n\nIn his research, Alex uses mathematical and computational models to study learning and decision-making in humans. His current focus is on combining such models with data and experiments to understand better how individual-level decision-making scales up to produce population-level phenomena such as polarization, echo-chambers, or widespread misinformation and extremism.\n\nHe is especially interested in how these phenomena play out in online environments, in which information flow is shaped by the interaction between individual decisions and platform rules and algorithms.",
-    "links": [],
+    "links": [
+      {
+        "label": "webpage",
+        "url": "https://alexanderjstewart.org/"
+      }
+    ],
     "image": "https://diverseintelligences.st-andrews.ac.uk/files/2025/02/AlexanderStewart.jpeg",
     "sourcePage": "https://diverseintelligences.st-andrews.ac.uk/people-new/"
   }

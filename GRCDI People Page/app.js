@@ -322,6 +322,7 @@ function getFilteredPeople() {
         person.bio.toLowerCase().includes(search) ||
         (person.affiliation || "").toLowerCase().includes(search) ||
         person.expertise.some(item => item.toLowerCase().includes(search)) ||
+        (person.links || []).some(link => `${link.label} ${link.url}`.toLowerCase().includes(search)) ||
         geography.countries.some(item => item.toLowerCase().includes(search)) ||
         geography.continents.some(item => item.toLowerCase().includes(search))
       )
@@ -561,6 +562,7 @@ function createPersonCard(person, animateCard = false) {
     .filter(Boolean)
     .map(paragraph => `<p>${escapeHtml(paragraph)}</p>`)
     .join("");
+  const profileLinks = createProfileLinks(person);
 
   card.innerHTML = `
     <img class="profile-image" src="${escapeHtml(person.image)}" alt="${escapeHtml(person.name)}">
@@ -574,6 +576,7 @@ function createPersonCard(person, animateCard = false) {
           <div class="bio">
             ${person.expertise.length ? `<p class="research-areas"><strong>Research areas:</strong> ${person.expertise.map(escapeHtml).join(", ")}</p>` : ""}
             ${bioParagraphs}
+            ${profileLinks}
           </div>
         </div>
       </details>
@@ -583,6 +586,22 @@ function createPersonCard(person, animateCard = false) {
   setupBioDetails(card);
 
   return card;
+}
+
+function createProfileLinks(person) {
+  if (!person.links || !person.links.length) {
+    return "";
+  }
+
+  return `
+    <div class="profile-links" aria-label="Profile links">
+      ${person.links.map(link => `
+        <a href="${escapeHtml(link.url)}" target="_blank" rel="noopener noreferrer">
+          ${escapeHtml(link.label)}
+        </a>
+      `).join("")}
+    </div>
+  `;
 }
 
 function setupBioDetails(card) {
