@@ -11,3 +11,5 @@
 [Working Memory Grid Game](https://pmw5.github.io/pmw5/working-memory/memory-rows-game.html)
 
 [Interrupted Task Memory Game](https://pmw5.github.io/pmw5/interrupted-memory/interrupted-memory-task.html)
+
+[Event Time Finder](https://pmw5.github.io/pmw5/event-time-finder.html)
