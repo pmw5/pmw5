@@ -1047,8 +1047,8 @@ html&gt;body{padding:0}&lt;/style&gt;
   &lt;/div&gt;
   &lt;div data-error class=&quot;text-destructive&quot; role=&quot;alert&quot; hidden&gt;&lt;/div&gt;
   &lt;div class=&quot;viz-row text-small&quot; style=&quot;margin-top:16px&quot;&gt;&lt;span class=&quot;legend-mark active&quot;&gt;&lt;/span&gt;&lt;span data-window&gt;Whole event within local hours&lt;/span&gt;&lt;span class=&quot;legend-mark inactive&quot;&gt;&lt;/span&gt;&lt;span&gt;Event does not fit&lt;/span&gt;&lt;/div&gt;
-  &lt;div data-map&gt;&lt;svg class=&quot;timezone-map&quot; role=&quot;img&quot; aria-label=&quot;World map highlighting time zones within the selected local hours&quot;&gt;&lt;/svg&gt;&lt;/div&gt;
-  &lt;div data-detail class=&quot;tabular-nums&quot; aria-live=&quot;polite&quot; style=&quot;min-height:2.5em&quot;&gt;Select a region to see its local time.&lt;/div&gt;
+  &lt;div data-map&gt;&lt;svg class=&quot;timezone-map&quot; role=&quot;img&quot; aria-label=&quot;World map highlighting time zones within the selected local hours. Hover or tap a region for event times.&quot;&gt;&lt;/svg&gt;&lt;div data-detail class=&quot;tabular-nums&quot; role=&quot;tooltip&quot; hidden&gt;&lt;/div&gt;&lt;/div&gt;
+
   &lt;div class=&quot;text-small text-muted&quot; data-status&gt;&lt;/div&gt;
   &lt;div class=&quot;text-small text-muted&quot; style=&quot;margin-top:8px&quot;&gt;The whole event must fit; finishing exactly at closing time is allowed · Overnight ranges supported · All days, including weekends&lt;/div&gt;
   &lt;div class=&quot;text-small text-muted&quot; style=&quot;margin-top:8px&quot;&gt;Simplified land boundaries: &lt;a href=&quot;https://github.com/evansiroky/timezone-boundary-builder/releases/tag/2026c&quot; target=&quot;_blank&quot; rel=&quot;noopener noreferrer&quot;&gt;Timezone Boundary Builder 2026c&lt;/a&gt; / &lt;a href=&quot;https://www.openstreetmap.org/copyright&quot; target=&quot;_blank&quot; rel=&quot;noopener noreferrer&quot;&gt;© OpenStreetMap contributors&lt;/a&gt;. Small islands may be omitted.&lt;/div&gt;
@@ -1057,7 +1057,8 @@ html&gt;body{padding:0}&lt;/style&gt;
 #timezone-window .legend-mark{display:inline-block;width:12px;height:12px;flex-shrink:0}
 #timezone-window .legend-mark.active{background:var(--viz-series-1)}
 #timezone-window .legend-mark.inactive{background:var(--muted);border:1px solid var(--border)}
-#timezone-window [data-map]{margin:12px 0}
+#timezone-window [data-map]{margin:12px 0;position:relative}
+#timezone-window [data-detail]{position:absolute;z-index:5;pointer-events:none;white-space:pre-line;max-width:min(310px,calc(100% - 16px));box-sizing:border-box;padding:12px;background:var(--popover);color:var(--popover-foreground);border:1px solid var(--border);border-radius:8px;box-shadow:0 4px 16px color-mix(in srgb,var(--foreground) 15%,transparent)}
 #timezone-window .timezone-map{display:block;width:100%;height:auto;overflow:visible}
 #timezone-window .zone{fill:var(--muted);stroke:var(--border);stroke-width:.45;vector-effect:non-scaling-stroke;cursor:pointer}
 #timezone-window .zone.in-range{fill:var(--viz-series-1);fill-opacity:.65}
@@ -1113,16 +1114,33 @@ function eventFits(stamp,zone,duration,start,end){
 let instant=null,selected=&#x27;Europe/London&#x27;,zoneStates=new Map();
 const svg=d3.select(q(&#x27;svg&#x27;)),projection=d3.geoEqualEarth(),path=d3.geoPath(projection);
 svg.append(&#x27;path&#x27;).datum(d3.geoGraticule10()).attr(&#x27;class&#x27;,&#x27;graticule&#x27;);
-const zones=svg.append(&#x27;g&#x27;).selectAll(&#x27;path&#x27;).data(data.features).join(&#x27;path&#x27;).attr(&#x27;class&#x27;,&#x27;zone&#x27;);
+const zones=svg.append(&#x27;g&#x27;).selectAll(&#x27;path&#x27;).data(data.features).join(&#x27;path&#x27;).attr(&#x27;class&#x27;,&#x27;zone&#x27;).attr(&#x27;data-zone&#x27;,f=&gt;f.properties.tzid);
 function draw(){const width=q(&#x27;[data-map]&#x27;).clientWidth,height=Math.max(210,width*.53);svg.attr(&#x27;viewBox&#x27;,`0 0 ${width} ${height}`);projection.fitExtent([[4,4],[width-4,height-4]],{type:&#x27;Sphere&#x27;});svg.selectAll(&#x27;path&#x27;).attr(&#x27;d&#x27;,path);}
 new ResizeObserver(draw).observe(q(&#x27;[data-map]&#x27;));draw();
 function detail(zone){
  const state=zoneStates.get(zone);if(!state){q(&#x27;[data-detail]&#x27;).textContent=zone+&#x27; · Local time unavailable&#x27;;return;}
  const p=state.p,e=state.end;
  const local=p=&gt;`${pad(p.hour)}:${pad(p.minute)} ${pad(p.day)}/${pad(p.month)}/${p.year}`;
- q(&#x27;[data-detail]&#x27;).textContent=`${label(zone)} · ${local(p)} → ${local(e)} · ${state.active?&#x27;Whole event fits&#x27;:state.startsWithin?&#x27;Starts within hours; event runs outside hours&#x27;:&#x27;Starts outside hours&#x27;}`;
+ q(&#x27;[data-detail]&#x27;).textContent=`${label(zone)}\nEvent start: ${local(p)}\nEvent end: ${local(e)}\n${state.active?&#x27;Whole event fits&#x27;:state.startsWithin?&#x27;Starts within hours; event runs outside hours&#x27;:&#x27;Starts outside hours&#x27;}`;
 }
-zones.on(&#x27;click&#x27;,(_,f)=&gt;{selected=f.properties.tzid;zones.classed(&#x27;selected&#x27;,d=&gt;d.properties.tzid===selected);detail(selected);}).on(&#x27;pointerenter&#x27;,(_,f)=&gt;detail(f.properties.tzid)).on(&#x27;pointerleave&#x27;,()=&gt;detail(selected));
+function showTooltip(event,f){
+ selected=f.properties.tzid;detail(selected);
+ const tip=q(&#x27;[data-detail]&#x27;),map=q(&#x27;[data-map]&#x27;),bounds=map.getBoundingClientRect();
+ tip.hidden=false;
+ const x=event.clientX-bounds.left,y=event.clientY-bounds.top;
+ let left=x+14,top=y+14;
+ if(left+tip.offsetWidth&gt;bounds.width-8)left=x-tip.offsetWidth-14;
+ if(top+tip.offsetHeight&gt;bounds.height-8)top=y-tip.offsetHeight-14;
+ tip.style.left=Math.max(8,Math.min(left,bounds.width-tip.offsetWidth-8))+&#x27;px&#x27;;
+ tip.style.top=Math.max(8,Math.min(top,bounds.height-tip.offsetHeight-8))+&#x27;px&#x27;;
+ zones.classed(&#x27;selected&#x27;,d=&gt;d.properties.tzid===selected);
+}
+function hideTooltip(){q(&#x27;[data-detail]&#x27;).hidden=true;zones.classed(&#x27;selected&#x27;,false);}
+zones.on(&#x27;pointerenter&#x27;,showTooltip).on(&#x27;pointermove&#x27;,showTooltip)
+ .on(&#x27;pointerleave&#x27;,event=&gt;{if(event.pointerType!==&#x27;touch&#x27;)hideTooltip();})
+ .on(&#x27;click&#x27;,(event,f)=&gt;{event.stopPropagation();showTooltip(event,f);});
+root.addEventListener(&#x27;click&#x27;,event=&gt;{if(!event.target.closest(&#x27;.zone&#x27;))hideTooltip();});
+root.addEventListener(&#x27;keydown&#x27;,event=&gt;{if(event.key===&#x27;Escape&#x27;)hideTooltip();});
 function update(){
  try{
   if(!controls.date.value||!controls.time.value||!controls.start.value||!controls.end.value)throw new Error(&#x27;Enter a date, base time, start time and end time.&#x27;);
@@ -1136,7 +1154,7 @@ function update(){
   zoneStates=new Map();
   for(const f of data.features){const z=f.properties.tzid;try{const p=parts(instant,z);zoneStates.set(z,{p,end:parts(instant+duration*60000,z),startsWithin:within(p.hour*60+p.minute,start,end),active:eventFits(instant,z,duration,start,end)});}catch(e){}}
   if(!zoneStates.has(selected))selected=data.features[0].properties.tzid;
-  zones.classed(&#x27;in-range&#x27;,f=&gt;zoneStates.get(f.properties.tzid)?.active||false).classed(&#x27;selected&#x27;,f=&gt;f.properties.tzid===selected);
+  zones.classed(&#x27;in-range&#x27;,f=&gt;zoneStates.get(f.properties.tzid)?.active||false).classed(&#x27;selected&#x27;,f=&gt;!q(&#x27;[data-detail]&#x27;).hidden&amp;&amp;f.properties.tzid===selected);
   q(&#x27;[data-window]&#x27;).textContent=`Whole ${duration}-minute event fits · `+(start===end?&#x27;All 24 hours&#x27;:`${controls.start.value}–${controls.end.value} local time${start&gt;end?&#x27; (overnight)&#x27;:&#x27;&#x27;}`);
   const utc=new Date(instant).toISOString();
   q(&#x27;[data-status]&#x27;).textContent=`${label(controls.city.value)} · ${controls.time.value} on ${controls.date.value} = ${utc.slice(11,16)} UTC on ${utc.slice(0,10)} · Daylight saving applied${unsupported.length?&#x27; · Some zones unavailable in this browser&#x27;:&#x27;&#x27;}`;
