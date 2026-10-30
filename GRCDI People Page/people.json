@@ -328,6 +328,33 @@
     "image": "https://diverseintelligences.st-andrews.ac.uk/files/2024/10/Juan-Carlos-Gomez.jpg",
     "sourcePage": "https://diverseintelligences.st-andrews.ac.uk/people-new/"
   },
+   {
+    "name": "Dr Rose Harris-Birtill",
+    "role": "Local partner",
+    "centreRole": "Local partner",
+    "location": "University of St Andrews",
+    "affiliation": "School of English, University of St Andrews, Open Library of Humanities, University of London",
+    "expertise": [
+      "Animal cognition",
+      "Nest building",
+      "Spatial learning and memory"
+    ],
+    "bio": "Rose is an Honorary Senior Lecturer at the University of St Andrews and Director of Publishing Strategy at the Open Library of Humanities, a diamond open access academic publisher based at the University of London. She has over twenty years of editorial experience and is the Editor-in-Chief of the Open Library of Humanities Journal, a Fellow of the Royal Society of Arts (FRSA), and founder of the OLH Open Access Awards, a fund dedicated to furthering access to knowledge worldwide that has funded 17 global projects since 2020. \n\n
+She is an invited member of Crossref’s Membership and Fees Committee, and a full member of the Council of Editors of Learned Journals, where she serves on its Advisory board for the Mellon Foundation funded project ‘Re-Imagining Peer Review’. Rose is also the UK National Expert for the European Reference Index for the Humanities and Social Sciences (ERIH PLUS), and holds a PhD in English from the University of St Andrews.\n\n
+Rose’s current research interests include giftedness across the lifespan, the complex interplay between human and artificial intelligence, and systems of global knowledge production and dissemination.",
+    "links": [
+      {
+        "label": "Researcher Profile",
+        "url": "https://research-portal.st-andrews.ac.uk/en/persons/rose-harris-birtill/"
+      },
+      {
+        "label": "Director Profile",
+        "url": "https://www.openlibhums.org/profile/76ce2832-629c-4240-a37b-a3772baba951/ "
+      }
+    ],
+    "image": "https://grcdi.wp.st-andrews.ac.uk/files/2026/10/RHB-photo-2-scaled.jpg",
+    "sourcePage": ""
+  },
   {
     "name": "Prof Susan Healy",
     "role": "Local partner",
