@@ -574,6 +574,7 @@ function createPersonCard(person, animateCard = false) {
   return card;
 }
 
+
 function createProfileLinks(person) {
   if (!person.links || !person.links.length) {
     return "";
@@ -582,13 +583,16 @@ function createProfileLinks(person) {
   return `
     <div class="profile-links" aria-label="Profile links">
       ${person.links.map(link => `
-        <a href="${escapeHtml(link.url)}" target="_top">
+        <a href="${escapeHtml(link.url)}"
+           target="_blank"
+           rel="noopener noreferrer">
           ${escapeHtml(link.label)}
         </a>
       `).join("")}
     </div>
   `;
 }
+
 
 function setupBioDetails(card) {
   const details = card.querySelector(".bio-details");
